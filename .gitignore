@@ -1,0 +1,6 @@
+node_modules
+gamekeeper*.tgz
+*.log
+*.db
+.vscode
+dist

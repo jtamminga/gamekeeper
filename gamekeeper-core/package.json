@@ -1,0 +1,25 @@
+{
+  "name": "gamekeeper-core",
+  "version": "1.0.22",
+  "description": "core parts of game keeper",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "author": "John Tamminga",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "test": "yarn build && node ./dist/test/index.js",
+    "deploy": "yarn build && yarn version --patch && yarn pack",
+    "db:reset": "cd data && ./create_db.sh"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.13",
+    "sqlite": "^4.1.2",
+    "sqlite3": "^5.1.2",
+    "tsyringe": "^4.7.0"
+  },
+  "devDependencies": {
+    "tsc-alias": "^1.7.0",
+    "typescript": "^4.8.4"
+  }
+}
