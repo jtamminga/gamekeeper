@@ -3,7 +3,7 @@ import { NotFoundError } from '@core'
 import { Game, GameId, Playthrough } from '@domains'
 import { GameFactory } from '@factories'
 import { GameRepository } from './GameRepository'
-import { DbRepo } from '../DbRepo'
+import { DataService } from '@services'
 
 
 // types
@@ -17,13 +17,14 @@ export interface GameDto {
 
 // repository
 @injectable()
-export class DbGameRepository extends DbRepo implements GameRepository {
+export class DbGameRepository implements GameRepository {
 
   private _games: Game[]
   private _loadedAll: boolean
 
-  public constructor() {
-    super()
+  public constructor(
+    private _dataService: DataService
+  ) {
     this._games = []
     this._loadedAll = false
   }

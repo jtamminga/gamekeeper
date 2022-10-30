@@ -1,16 +1,15 @@
 import { PlayerRepository } from '@repos'
-import { container } from 'tsyringe'
+import { injectable } from 'tsyringe'
 import { Player, PlayerId } from './Player'
 
 
 // class
+@injectable()
 export class Players {
 
-  private _repo: PlayerRepository
-
-  public constructor() {
-    this._repo = container.resolve('PlayerRepository')
-  }
+  public constructor(
+    private _repo: PlayerRepository
+  ) { }
 
   public async all(): Promise<readonly Player[]> {
     return this._repo.getPlayers()

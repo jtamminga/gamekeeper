@@ -1,12 +1,16 @@
 import 'bootstrap'
 import { CoopGame, GameId, GameKeeper, GameType, PlayerId, VsGame } from '@domains'
-import { GameFactory } from '@factories'
+import { GameFactory, GameKeeperFactory } from '@factories'
 
 
 // repo test
 async function run() {
 
-  const gamekeeper = new GameKeeper()
+  console.log('starting test...')
+
+  const gamekeeper = GameKeeperFactory.create('./data/gamekeeper.db')
+
+  console.log('created gamekeeper')
 
   // const game = GameFactory.create({
   //   name: 'The Crew',
@@ -27,8 +31,10 @@ async function run() {
   // const players = await gamekeeper.players.all()
   // console.log('players', players)
 
-
+  console.log('getting games...')
   const games = await gamekeeper.games.all()
+  console.log('got games')
+
 
   for (const game of games) {
     console.log(`game ${game.name} last played ${game.getLastPlayed()}`)

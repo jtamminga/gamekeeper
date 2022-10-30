@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { GameData, GameFactory, GameKeeper, GameType, ScoringType } from 'gamekeeper'
+import { GameFactory, GameKeeper, GameType, ScoringType } from 'gamekeeper-core'
 import inquirer from 'inquirer'
 import { GameKeeperCommand } from '../GameKeeperCommand'
 
@@ -14,9 +14,6 @@ export default class AddGame extends GameKeeperCommand {
   ]
 
   public async run(): Promise<void> {
-
-    // create root
-    const gamekeeper = new GameKeeper()
 
     // ask user questions
     const gameData = await inquirer.prompt<GameFactory.CreateGameData>([
@@ -50,7 +47,7 @@ export default class AddGame extends GameKeeperCommand {
     const game = GameFactory.create(gameData)
 
     // add game
-    gamekeeper.games.add(game)
+    this.gamekeeper.games.add(game)
 
     // feedback
     this.success('added ' + chalk.bold.blue(game.name))

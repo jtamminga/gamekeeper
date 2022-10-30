@@ -10,15 +10,18 @@
     "build": "tsc && tsc-alias",
     "test": "yarn build && node ./dist/test/index.js",
     "deploy": "yarn build && yarn version --patch && yarn pack",
-    "db:reset": "cd data && ./create_db.sh"
+    "db:reset": "cd data && ./create_db.sh",
+    "migrate": "yarn build && node ./dist/tools/importer.js"
   },
   "dependencies": {
+    "date-fns": "^2.29.3",
     "reflect-metadata": "^0.1.13",
     "sqlite": "^4.1.2",
     "sqlite3": "^5.1.2",
     "tsyringe": "^4.7.0"
   },
   "devDependencies": {
+    "@types/node": "^18.11.7",
     "tsc-alias": "^1.7.0",
     "typescript": "^4.8.4"
   }

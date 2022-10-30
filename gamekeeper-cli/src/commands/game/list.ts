@@ -1,6 +1,6 @@
-import { CliUx, Command, Flags } from '@oclif/core'
+import { CliUx } from '@oclif/core'
 import chalk from 'chalk'
-import { GameKeeper, GameType, ScoringType } from 'gamekeeper'
+import { GameType, ScoringType } from 'gamekeeper-core'
 import { GameKeeperCommand } from '../GameKeeperCommand'
 
 
@@ -10,11 +10,8 @@ export default class ListGames extends GameKeeperCommand {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(ListGames)
 
-    // create root
-    const gamekeeper = new GameKeeper()
-
     // get games
-    const games = await gamekeeper.games.all()
+    const games = await this.gamekeeper.games.all()
 
     if (games.length === 0) {
       this.muted('(no games)')

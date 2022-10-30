@@ -1,16 +1,20 @@
 import { open, Database } from 'sqlite'
-import { singleton } from 'tsyringe'
+import { injectable } from 'tsyringe'
 import sqlite3 from 'sqlite3'
 
 
-@singleton()
+@injectable()
 export class DataService {
 
   private _db?: Database
 
+  public constructor(
+    private _path: string
+  ) { }
+
   public async open(): Promise<void> {
     this._db =  await open({
-      filename: './data/gamekeeper.db',
+      filename: this._path,
       driver: sqlite3.Database
     })
   }

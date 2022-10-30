@@ -1,7 +1,7 @@
 import { NotFoundError } from '@core'
 import { Player, PlayerId } from '@domains'
+import { DataService } from '@services'
 import { injectable } from 'tsyringe'
-import { DbRepo } from '../DbRepo'
 import { PlayerRepository } from './PlayerRespository'
 
 
@@ -14,9 +14,13 @@ interface PlayerDto {
 
 // repository
 @injectable()
-export class DbPlayerRepository extends DbRepo implements PlayerRepository {
+export class DbPlayerRepository implements PlayerRepository {
 
   private _players: Map<PlayerId, Player> | undefined
+
+  public constructor(
+    private _dataService: DataService
+  ) { }
 
   public static create(dto: PlayerDto): Player {
     return new Player({ id: dto.id.toString() as PlayerId, name: dto.name })

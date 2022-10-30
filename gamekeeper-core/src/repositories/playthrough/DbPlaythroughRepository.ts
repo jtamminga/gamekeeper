@@ -1,5 +1,5 @@
+import { DataService } from '@services'
 import { CoopPlaythrough, Game, GameId, GameType, PlayerId, Playthrough, PlaythroughId, VsPlaythrough } from 'domains'
-import { DbRepo } from '../DbRepo'
 import { injectable } from 'tsyringe'
 import { PlaythroughRepository } from './PlaythroughRepository'
 
@@ -25,7 +25,11 @@ export interface PlaythroughWithGameDto extends PlaythroughDto {
 
 // repository
 @injectable()
-export class DbPlaythroughRepository extends DbRepo implements PlaythroughRepository {
+export class DbPlaythroughRepository implements PlaythroughRepository {
+
+  public constructor(
+    private _dataService: DataService
+  ) { }
 
   public static create(dto: PlaythroughWithGameDto): Playthrough {
 

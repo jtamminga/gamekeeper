@@ -1,8 +1,8 @@
 import fuzzy from 'fuzzy'
-import inquirer, { Answers, QuestionCollection } from 'inquirer'
+import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import { GameKeeperCommand } from './GameKeeperCommand'
-import { Game, GameKeeper, Player, PlayerId, Playthrough, VsGame, PlaythroughFactory, CoopGame } from 'gamekeeper'
+import { Game, Player, PlayerId, Playthrough, VsGame, PlaythroughFactory, CoopGame } from 'gamekeeper-core'
 import chalk from 'chalk'
 
 
@@ -19,20 +19,17 @@ export default class PlaythroughCommand extends GameKeeperCommand {
 
   public async run(): Promise<void> {
 
-    // create root
-    const gamekeeper = new GameKeeper()
+    // get all games
+    const game = await this.selectGameFlow()
 
     // get all games
-    const game = await this.selectGameFlow(gamekeeper)
-
-    // get all games
-    const players = await gamekeeper.players.all()
+    const players = await this.gamekeeper.players.all()
     
     let playthrough: Playthrough
 
     // vs game
     if (game instanceof VsGame) {
-      const answers = await this.vsGameFlow(gamekeeper, game)
+      const answers = await this.vsGameFlow(game)
       playthrough = await PlaythroughFactory.createVs({
         game, players, ...answers
       })
@@ -52,7 +49,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     }
 
     // save the playthrough
-    await gamekeeper.record(playthrough)
+    await this.gamekeeper.record(playthrough)
 
     this.success(`added playthough`)
   }
@@ -61,8 +58,8 @@ export default class PlaythroughCommand extends GameKeeperCommand {
    * select game flow
    * this will ask user to select a game
    */
-  private async selectGameFlow(gamekeeper: GameKeeper): Promise<Game> {
-    const games = await gamekeeper.games.all()
+  private async selectGameFlow(): Promise<Game> {
+    const games = await this.gamekeeper.games.all()
 
     // transform into choices for the prompt
     const gameChoices = games.map(game => ({
@@ -92,8 +89,8 @@ export default class PlaythroughCommand extends GameKeeperCommand {
    * vs game flow
    * this will ask user to select winner and ask scores for each player
    */
-  private async vsGameFlow(gamekeeper: GameKeeper, game: VsGame) {
-    const players = await gamekeeper.players.all()
+  private async vsGameFlow(game: VsGame) {
+    const players = await this.gamekeeper.players.all()
     const scores = new Map<Player, number>()
 
     // only ask for scoring if game requires it

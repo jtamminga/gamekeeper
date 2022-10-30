@@ -7,7 +7,10 @@ import {
   PlayerRepository,
   PlaythroughRepository,
 } from '@repos'
+import { DataService } from '@services'
 
+// register data service
+container.registerSingleton(DataService)
 
 // register repositories
 container.registerSingleton<PlaythroughRepository>('PlaythroughRepository', DbPlaythroughRepository)
