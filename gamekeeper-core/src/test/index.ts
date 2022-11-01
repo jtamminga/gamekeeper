@@ -8,56 +8,30 @@ async function run() {
 
   console.log('starting test...')
 
-  const gamekeeper = GameKeeperFactory.create('./data/gamekeeper.db')
+  const gamekeeper = GameKeeperFactory.create('/home/john/Git/gamekeeper/data/gamekeeper.db')
 
   console.log('created gamekeeper')
 
-  // const game = GameFactory.create({
-  //   name: 'The Crew',
-  //   type: GameType.COOP
-  // })
-  // await gamekeeper.games.add(game)
-
-  // const vsGame = GameFactory.create({
-  //   name: 'Chess',
-  //   type: GameType.VS
-  // })
-  // await gamekeeper.games.add(vsGame)
-
-  // const chess = await gamekeeper.games.get<VsGame>('2' as GameId)
-  // console.log('game found', chess)
-  
-
-  // const players = await gamekeeper.players.all()
-  // console.log('players', players)
-
-  console.log('getting games...')
   const games = await gamekeeper.games.all()
-  console.log('got games')
 
 
   for (const game of games) {
     console.log(`game ${game.name} last played ${game.getLastPlayed()}`)
   }
 
-  // const scores = new Map<PlayerId, number>()
-  // scores.set(players[0].id!, 8)
-  // scores.set(players[1].id!, 4)
+  const spice = await gamekeeper.games.get<VsGame>('2' as GameId)
 
-  // const playthrough = chess.record({
-  //   playerIds: players.map(p => p.id!),
-  //   playedOn: new Date(),
-  //   winnerId: players[0].id!,
-  //   scores
-  // })
+  const scores = new Map<PlayerId, number>()
+  scores.set('1' as PlayerId, 10)
+  const playthrough = spice.record({
+    playerIds: ['1' as PlayerId, '2' as PlayerId],
+    playedOn: new Date(),
+    winnerId: '1' as PlayerId,
+    scores
+  })
 
-  // gamekeeper.record(playthrough)
-
-  // await gamekeeper.record(playthrough)
-  // console.log(`record saved: ${playthrough.id}`)
-
-  // const date = game.getLastPlayed()
-  // console.log(`${game.name} was last played on ${game.getLastPlayed()}`)
+  await gamekeeper.record(playthrough)
+  console.log('added playthrough')
 }
 
 run()

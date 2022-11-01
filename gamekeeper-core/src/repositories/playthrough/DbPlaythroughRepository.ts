@@ -80,6 +80,7 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
         p.result
       FROM playthroughs p
       JOIN games g ON g.id = p.game_id
+      ORDER BY p.played_on DESC
     `
 
     const dtos = await this._dataService.all<PlaythroughWithGameDto>(query)
@@ -128,7 +129,9 @@ function toDto(playthrough: Playthrough): Omit<PlaythroughDto, 'id'> {
     return {
       ...base,
       result: Number(playthrough.winnerId),
-      scores: playthrough.scores && serializeScore(playthrough.scores)
+      scores: playthrough.scores && playthrough.scores.size > 0
+        ? serializeScore(playthrough.scores)
+        : undefined
     }
   }
   else if (playthrough instanceof CoopPlaythrough) {

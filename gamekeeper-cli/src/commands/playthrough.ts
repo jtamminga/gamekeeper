@@ -12,6 +12,9 @@ export default class PlaythroughCommand extends GameKeeperCommand {
   // description
   static description = 'record playthrough of game'
 
+  // aliases
+  static aliases = ['record']
+
   // initialize the auto complete plugin
   protected override async init(): Promise<void> {
     inquirer.registerPrompt('autocomplete', inquirerPrompt)

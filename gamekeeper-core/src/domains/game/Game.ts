@@ -21,6 +21,7 @@ export interface GameData {
   id?: GameId
   name: string
   scoring: ScoringType
+  type: GameType
   playthroughs?: readonly Playthrough[]
 }
 
@@ -32,7 +33,7 @@ export abstract class Game extends Model<GameId> {
   public readonly scoring: ScoringType
   public readonly playthroughs: Playthrough[]
 
-  public constructor(data: GameData) {
+  public constructor(data: Omit<GameData, 'type'>) {
     super(data.id)
     this.name = data.name
     this.scoring = data.scoring
