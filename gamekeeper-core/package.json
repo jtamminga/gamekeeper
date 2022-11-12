@@ -1,6 +1,6 @@
 {
   "name": "gamekeeper-core",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "core parts of game keeper",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "test": "mocha ./test/**/*.test.js",
-    "deploy": "yarn build && yarn version --patch && yarn pack",
+    "deploy": "yarn build && yarn version --patch && yarn pack && bash ./scripts/upgrade-cli.sh",
     "db:reset": "cd data && ./create_db.sh",
     "migrate": "yarn build && node ./dist/tools/importer.js"
   },
