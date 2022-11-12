@@ -1,6 +1,7 @@
 import { ArrayUtils, Opaque } from '@core'
 import { Playthrough } from '../playthrough'
 import { Model } from '../Model'
+import { GameStats } from './GameStats'
 
 
 // enum
@@ -27,32 +28,53 @@ export interface GameData {
 
 
 // class
-export abstract class Game extends Model<GameId> {
+export abstract class Game<T extends Playthrough = Playthrough> extends Model<GameId> {
 
   public readonly name: string
   public readonly scoring: ScoringType
-  public readonly playthroughs: Playthrough[]
+  private _playthroughs: T[] | undefined
 
   public constructor(data: Omit<GameData, 'type'>) {
     super(data.id)
     this.name = data.name
     this.scoring = data.scoring
-    this.playthroughs = [...data.playthroughs ?? []]
+    this._playthroughs = data.playthroughs as T[] | undefined
   }
 
   public abstract readonly type: GameType
+
+  public abstract getStats(): GameStats<T>
 
   public get hasScoring(): boolean {
     return this.scoring !== ScoringType.NO_SCORE
   }
 
   public get hasPlays(): boolean {
-    return this.playthroughs.length > 0
+    if (!this._playthroughs) {
+      throw new Error('playthroughs not loaded')
+    }
+
+    return this._playthroughs.length > 0
   }
 
-  public getLastPlayed(): Date | undefined {
-    if (!this.hasPlays) return
-    return ArrayUtils.last(this.playthroughs).playedOn
+  public get playthroughs(): ReadonlyArray<T> {
+    if (!this._playthroughs) {
+      throw new Error('playthroughs not loaded')
+    }
+
+    return this._playthroughs
+  }
+
+  public bindPlaythroughs(playthroughs: ReadonlyArray<T>) {
+    this._playthroughs = [...playthroughs]
+  }
+
+  protected addPlaythrough(playthrough: T) {
+    if (!this._playthroughs) {
+      this._playthroughs = []
+    }
+
+    this._playthroughs.push(playthrough)
   }
 
 }

@@ -1,9 +1,10 @@
 import { CoopPlaythrough, CoopPlaythroughData, CoopyPlaySession, CoopyPlaySessionData } from '../playthrough'
+import { CoopGameStats } from './CoopGameStats'
 import { Game, GameType } from './Game'
 
 
 // class
-export class CoopGame extends Game {
+export class CoopGame extends Game<CoopPlaythrough> {
 
   public readonly type = GameType.COOP
   
@@ -23,10 +24,18 @@ export class CoopGame extends Game {
       throw new Error('game is not saved yet')
     }
 
-    return new CoopPlaythrough({
+    const playthrough = new CoopPlaythrough({
       gameId: this.id,
       ...data
     })
+
+    this.addPlaythrough(playthrough)
+
+    return playthrough
+  }
+
+  public getStats(): CoopGameStats {
+    return new CoopGameStats(this.playthroughs)
   }
 
 }

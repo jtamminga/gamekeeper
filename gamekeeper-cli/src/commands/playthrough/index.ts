@@ -1,7 +1,7 @@
 import fuzzy from 'fuzzy'
 import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
-import { GameKeeperCommand } from './GameKeeperCommand'
+import { GameKeeperCommand } from '../../GameKeeperCommand'
 import { Game, Player, PlayerId, Playthrough, VsGame, PlaythroughFactory, CoopGame } from 'gamekeeper-core'
 import chalk from 'chalk'
 

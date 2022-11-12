@@ -19,4 +19,8 @@ export class Players {
     return this._repo.getPlayer(id)
   }
 
+  public async asMap(): Promise<ReadonlyMap<PlayerId, Player>> {
+    return this._repo.getPlayersMap()
+  }
+
 }

@@ -3,6 +3,12 @@ import { injectable } from 'tsyringe'
 import { Game, GameId } from './Game'
 
 
+// types
+type AllOptions = {
+  noPlaythroughs: boolean
+}
+
+
 // class
 @injectable()
 export class Games {
@@ -13,16 +19,22 @@ export class Games {
   ) { }
 
   public async all(): Promise<readonly Game[]> {
-    const games = await this._gameRepo.getGames()
-    const playthroughs = await this._playthroughRepo.getPlaythroughs()
+    const [games, playthroughs] = await Promise.all([
+      this._gameRepo.getGames(),
+      this._playthroughRepo.getPlaythroughs()
+    ])
 
     for (const game of games) {
-      game.playthroughs.push(
-        ...playthroughs.filter(p => p.gameId === game.id)
+      game.bindPlaythroughs(
+        playthroughs.filter(p => p.gameId === game.id)
       )
     }
 
     return games
+  }
+
+  public async asMap(): Promise<ReadonlyMap<GameId, Game>> {
+    return this._gameRepo.getGamesMap()
   }
 
   public async get<T extends Game>(id: GameId): Promise<T> {

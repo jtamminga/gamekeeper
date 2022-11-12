@@ -6,7 +6,7 @@ export class Model<IdType> {
     return this._id
   }
 
-  public setId(id: IdType) {
+  public bindId(id: IdType) {
     // throw if already set
     if (this._id !== undefined) {
       throw new Error('Id already set')

@@ -34,6 +34,10 @@ export class TestingPlayerRepository implements PlayerRepository {
     return this._players
   }
 
+  public async getPlayersMap(): Promise<ReadonlyMap<PlayerId, Player>> {
+    throw new Error('Method not implemented.')
+  }
+
   public async addPlayer(player: Player): Promise<void> {
     this._players.push(player)
   }

@@ -1,7 +1,7 @@
 import chalk from 'chalk'
-import { GameFactory, GameKeeper, GameType, ScoringType } from 'gamekeeper-core'
+import { GameData, GameFactory, GameType, ScoringType } from 'gamekeeper-core'
 import inquirer from 'inquirer'
-import { GameKeeperCommand } from '../GameKeeperCommand'
+import { GameKeeperCommand } from '../../GameKeeperCommand'
 
 
 // command
@@ -16,7 +16,7 @@ export default class AddGame extends GameKeeperCommand {
   public async run(): Promise<void> {
 
     // ask user questions
-    const gameData = await inquirer.prompt<GameFactory.CreateGameData>([
+    const gameData = await inquirer.prompt<GameData>([
       {
         type: 'input',
         name: 'name',

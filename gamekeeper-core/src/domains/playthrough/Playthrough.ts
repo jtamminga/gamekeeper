@@ -1,7 +1,7 @@
 import { Opaque } from '@core'
 import { Model } from '../Model'
-import { Game, GameId } from '../game'
-import { Player, PlayerId } from '../player'
+import { GameId } from '../game'
+import { PlayerId } from '../player'
 
 
 // types
@@ -26,14 +26,6 @@ export class Playthrough extends Model<PlaythroughId> {
     this.gameId = data.gameId
     this.playerIds = data.playerIds
     this.playedOn = data.playedOn
-  }
-
-  public get game(): Game {
-    throw new Error('not implemented')
-  }
-
-  public get players(): readonly Player[] {
-    throw new Error('not implmeneted')
   }
 
 }

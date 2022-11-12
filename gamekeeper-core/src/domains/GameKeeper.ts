@@ -1,7 +1,7 @@
 import { GameRepository, PlayerRepository, PlaythroughRepository } from '@repos'
 import { Games } from './game'
 import { Players } from './player'
-import { Playthrough } from './playthrough'
+import { Playthrough, Playthroughs } from './playthrough'
 
 
 // type
@@ -17,7 +17,7 @@ export class GameKeeper {
   
   public readonly games: Games
   public readonly players: Players
-  private _playthroughRepo: PlaythroughRepository
+  public readonly playthroughs: Playthroughs
 
   public constructor({
     gameRepo,
@@ -26,11 +26,11 @@ export class GameKeeper {
   }: GameKeeperProps) {
     this.games = new Games(gameRepo, playthroughRepo)
     this.players = new Players(playerRepo)
-    this._playthroughRepo = playthroughRepo
+    this.playthroughs = new Playthroughs(playthroughRepo)
   }
 
   public async record(playthrough: Playthrough): Promise<void> {
-    await this._playthroughRepo.addPlaythrough(playthrough)
+    await this.playthroughs.add(playthrough)
   }
 
 }

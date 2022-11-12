@@ -2,10 +2,11 @@ import { Game, GameType, ScoringType } from './Game'
 import { VsPlaySession, VsPlaySessionData, VsPlaythrough, VsPlaythroughData } from '../playthrough'
 import { Player } from '../player'
 import { Scores } from 'domains/playthrough/Scores'
+import { VsGameStats } from './VsGameStats'
 
 
 // vs game domain
-export class VsGame extends Game {
+export class VsGame extends Game<VsPlaythrough> {
 
   public readonly type = GameType.VS
   
@@ -25,10 +26,14 @@ export class VsGame extends Game {
       throw new Error('game is not saved yet')
     }
 
-    return new VsPlaythrough({
+    const playthrough = new VsPlaythrough({
       gameId: this.id,
       ...data
     })
+
+    this.addPlaythrough(playthrough)
+
+    return playthrough
   }
 
   public determineWinnerFrom(scores: Map<Player, number>): Player | undefined {
@@ -40,6 +45,10 @@ export class VsGame extends Game {
       case ScoringType.LOWEST_WINS:
         return s.lowest().player
     }
+  }
+
+  public getStats(): VsGameStats {
+    return new VsGameStats(this.playthroughs)
   }
 
 }

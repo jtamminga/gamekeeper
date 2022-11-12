@@ -1697,7 +1697,7 @@ dargs@^7.0.0:
   resolved "https://registry.yarnpkg.com/dargs/-/dargs-7.0.0.tgz#04015c41de0bcb69ec84050f3d9be0caf8d6d5cc"
   integrity sha512-2iy1EkLdlBzQGvbweYRFxmFath8+K7+AKB0TlhHWkNuH+TmovaMH/Wp7V7R4u7f4SnX3OgLsU9t1NI9ioDnUpg==
 
-date-fns@^2.29.1:
+date-fns@^2.29.1, date-fns@^2.29.3:
   version "2.29.3"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
   integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
@@ -1824,6 +1824,11 @@ doctrine@^3.0.0:
   integrity sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==
   dependencies:
     esutils "^2.0.2"
+
+dotenv@^16.0.3:
+  version "16.0.3"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.3.tgz#115aec42bac5053db3c456db30cc243a5a836a07"
+  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
 
 ejs@^3.1.6, ejs@^3.1.8:
   version "3.1.8"
@@ -2443,10 +2448,21 @@ fuzzy@^0.1.3:
   resolved "https://registry.yarnpkg.com/fuzzy/-/fuzzy-0.1.3.tgz#4c76ec2ff0ac1a36a9dccf9a00df8623078d4ed8"
   integrity sha512-/gZffu4ykarLrCiP3Ygsa86UAo1E5vEVlvTrpkKywXSbP9Xhln3oSp9QSV57gEq3JFFpGJ4GZ+5zdEp3FcUh4w==
 
-gamekeeper-core@./gamekeeper-core-v1.0.23.tgz:
-  version "1.0.23"
-  resolved "./gamekeeper-core-v1.0.23.tgz#915ff75ca82dae9e281c15671deef106ba49f356"
+gamekeeper-core@./gamekeeper-core-v1.0.35.tgz:
+  version "1.0.35"
+  resolved "./gamekeeper-core-v1.0.35.tgz#794b62067acb271086dd660045f1d694c0a2f6fa"
   dependencies:
+    date-fns "^2.29.3"
+    reflect-metadata "^0.1.13"
+    sqlite "^4.1.2"
+    sqlite3 "^5.1.2"
+    tsyringe "^4.7.0"
+
+gamekeeper-core@./gamekeeper-core-v1.0.36.tgz:
+  version "1.0.36"
+  resolved "./gamekeeper-core-v1.0.36.tgz#f3cb6480660255fbc0acd08503c957613b9e0b30"
+  dependencies:
+    date-fns "^2.29.3"
     reflect-metadata "^0.1.13"
     sqlite "^4.1.2"
     sqlite3 "^5.1.2"

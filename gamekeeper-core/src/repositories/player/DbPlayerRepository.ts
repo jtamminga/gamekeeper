@@ -1,4 +1,4 @@
-import { NotFoundError } from '@core'
+import { ArrayUtils, NotFoundError } from '@core'
 import { Player, PlayerId } from '@domains'
 import { DataService } from '@services'
 import { injectable } from 'tsyringe'
@@ -27,8 +27,12 @@ export class DbPlayerRepository implements PlayerRepository {
   }
 
   public async getPlayers(): Promise<readonly Player[]> {
-    const players = await this.getPlayerMap()
-    return Array.from(players, ([_id, player]) => player)
+    const players = await this.getMap()
+    return Array.from(players.values())
+  }
+
+  public async getPlayersMap(): Promise<ReadonlyMap<PlayerId, Player>> {
+    return this.getMap()
   }
 
   public async addPlayer(player: Player): Promise<void> {
@@ -38,15 +42,15 @@ export class DbPlayerRepository implements PlayerRepository {
     
     // update player
     const playerId = id.toString() as PlayerId
-    player.setId(playerId)
+    player.bindId(playerId)
     
     // save in collection
-    const players = await this.getPlayerMap()
+    const players = await this.getMap()
     players.set(playerId, player)
   }
 
   public async getPlayer(id: PlayerId): Promise<Player> {
-    const players = await this.getPlayerMap()
+    const players = await this.getMap()
     const player = players.get(id)
     if (!player) {
       throw new NotFoundError(`player with id "${id}" not found`)
@@ -55,17 +59,14 @@ export class DbPlayerRepository implements PlayerRepository {
   }
 
   public async findPlayers(ids: PlayerId[]): Promise<readonly Player[]> {
-    const players = await this.getPlayerMap()
-    const filtered: Player[] = []
-    for (const [id, player] of players) {
-      if (ids.includes(id)) {
-        filtered.push(player)
-      }
-    }
-    return filtered
+    const players = await this.getMap()
+    
+    return ids
+      .map(id => players.get(id))
+      .filter(ArrayUtils.notEmpty)
   }
 
-  private async getPlayerMap(): Promise<Map<PlayerId, Player>> {
+  private async getMap(): Promise<Map<PlayerId, Player>> {
     if (this._players) {
       return this._players
     }

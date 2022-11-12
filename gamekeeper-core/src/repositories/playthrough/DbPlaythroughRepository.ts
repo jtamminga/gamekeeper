@@ -34,6 +34,7 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
   public static create(dto: PlaythroughWithGameDto): Playthrough {
 
     // grab values
+    const id = dto.id.toString() as PlaythroughId
     const gameId = dto.gameId.toString() as GameId
     const playerIds = JSON.parse(dto.players) as PlayerId[]
     const playedOn = new Date(dto.playedOn)
@@ -43,6 +44,7 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
       let scores = dto.scores ? deserializeScore(dto.scores) : undefined
   
       return new VsPlaythrough({
+        id,
         gameId,
         playerIds,
         playedOn,
@@ -55,6 +57,7 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
       const score = dto.scores === undefined ? undefined : Number(dto.scores)
   
       return new CoopPlaythrough({
+        id,
         gameId,
         playerIds,
         playedOn,
@@ -111,7 +114,7 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
     ]
 
     const id = await this._dataService.insert(query, ...values)
-    playthrough.setId(id.toString() as PlaythroughId)
+    playthrough.bindId(id.toString() as PlaythroughId)
   }
   
 }

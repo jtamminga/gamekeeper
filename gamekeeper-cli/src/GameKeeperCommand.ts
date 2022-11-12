@@ -11,7 +11,8 @@ export abstract class GameKeeperCommand extends Command {
 
   constructor(argv: string[], config: Config) {
     super(argv, config)
-    const fullPath = path.normalize('/home/john/Git/gamekeeper/data/gamekeeper.db')
+    console.log('db path:', process.env.DB_PATH)
+    const fullPath = path.normalize(process.env.DB_PATH!)
     this.gamekeeper = GameKeeperFactory.create(fullPath)
   }
 

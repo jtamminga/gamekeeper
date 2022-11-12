@@ -1,5 +1,5 @@
 import { NotFoundError } from '@core'
-import { CoopGame, Game, GameId, VsGame } from '@domains'
+import { CoopGame, Game, GameId, Playthrough, VsGame } from '@domains'
 import { GameRepository } from './GameRepository'
 
 
@@ -18,6 +18,10 @@ export class TestingGameRepository implements GameRepository {
 
   public async getGames(): Promise<ReadonlyArray<Game>> {
     return this._games
+  }
+
+  public getGamesMap(): Promise<ReadonlyMap<GameId, Game<Playthrough>>> {
+    throw new Error('Method not implemented.')
   }
 
   public async addGame(game: Game): Promise<void> {
