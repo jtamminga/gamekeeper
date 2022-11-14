@@ -1,6 +1,6 @@
 {
   "name": "gamekeeper-core",
-  "version": "1.0.38",
+  "version": "1.0.39",
   "description": "core parts of game keeper",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
