@@ -2,8 +2,9 @@ import fuzzy from 'fuzzy'
 import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
-import { Game, Player, PlayerId, Playthrough, VsGame, PlaythroughFactory, CoopGame } from 'gamekeeper-core'
+import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData } from 'gamekeeper-core'
 import chalk from 'chalk'
+import { Utils } from '../../utils'
 
 
 // command
@@ -25,25 +26,42 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     // get all games
     const game = await this.selectGameFlow()
 
-    // get all games
-    const players = await this.gamekeeper.players.all()
+    // get all players
+    const players = await this.gamekeeper.players.asMap()
+    const playerIds = Array.from(players.keys())
+
+    // assumed played today
+    const playedOn = new Date()
     
+    // if there is a winner explicity inputted
+    let explicitWinner = false
+
+    // create a playthrough
     let playthrough: Playthrough
 
     // vs game
     if (game instanceof VsGame) {
-      const answers = await this.vsGameFlow(game)
-      playthrough = await PlaythroughFactory.createVs({
-        game, players, ...answers
+      const {
+        explicitWinner: winnerSet,
+        ...answers
+      } = await this.vsGameFlow(game)
+      playthrough = game.record({
+        playerIds,
+        playedOn,
+        ...answers
       })
+      explicitWinner = winnerSet
     }
 
     // coop game
     else if (game instanceof CoopGame) {
       const answers = await this.coopGameFlow(game)
-      playthrough = await PlaythroughFactory.createCoop({
-        game, players, ...answers
+      playthrough = game.record({
+        playerIds,
+        playedOn,
+        ...answers
       })
+      explicitWinner = true
     }
 
     // unsupported game type
@@ -51,10 +69,28 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       throw new Error('unsupported game')
     }
 
-    // save the playthrough
-    await this.gamekeeper.record(playthrough)
+    // show winner if not explicity inputed
+    if (!explicitWinner) {
+      this.log(
+        chalk.green('> ')
+        + chalk.bold('winner: ')
+        + chalk.cyanBright(Utils.winner(playthrough, players))
+      )
+    }
 
+    // save the playthrough
+    await this.gamekeeper.playthroughs.add(playthrough)
+
+    // show successfully saved
     this.success(`added playthough`)
+
+    // create stats data
+    const stats = game
+      .createStats()
+      .getData()
+
+    // show stats summary
+    this.showSummary(stats)
   }
 
   /**
@@ -94,7 +130,9 @@ export default class PlaythroughCommand extends GameKeeperCommand {
    */
   private async vsGameFlow(game: VsGame) {
     const players = await this.gamekeeper.players.all()
-    const scores = new Map<Player, number>()
+    const scores = new Map<PlayerId, number>()
+    // if winner is explicity inputted
+    let explicitWinner = false
 
     // only ask for scoring if game requires it
     if (game.hasScoring) {
@@ -110,33 +148,39 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       // convert to record to map
       for (const [id, score] of Object.entries(scoreInputs)) {
         if (score === undefined) continue
-        scores.set(players.find(p => p.id === id)!, Number(score))
+        scores.set(id as PlayerId, Number(score))
       }
     }
 
     // try to determine winner
-    let winner: Player | undefined
+    let winnerId: PlayerId | undefined
     if (scores.size === players.length) {
-      winner = game.determineWinnerFrom(scores)
+      winnerId = game.determineWinnerFrom(scores)
     }
 
     // if no winner than ask user for winner
-    if (!winner) {
+    if (!winnerId) {
       const winnerInput = await inquirer.prompt({
         type: 'list',
         name: 'winner',
-        choices: players.map(p => ({ value: p, name: p.name }))
+        choices: players.map(p => ({ value: p.id, name: p.name }))
       })
 
-      winner = winnerInput.winner as Player
+      winnerId = winnerInput.winner as PlayerId
+      explicitWinner = true
     }
 
     return {
-      winner,
-      scores: scores.size === 0 ? undefined : scores
+      winnerId,
+      scores: scores.size === 0 ? undefined : scores,
+      explicitWinner
     }
   }
 
+  /**
+   * coop game flow
+   * this will ask user who won, game or players
+   */
   private async coopGameFlow(game: CoopGame) {
 
     // ask if players won
@@ -159,6 +203,14 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       playersWon: win,
       score
     }
+  }
+
+  private showSummary(stats: StatsData) {
+    this.log()
+    this.log(chalk.bold('latest stats:'))
+    this.log(`plays:   ${stats.playCount}`)
+    // const {winner, winrate} = Utils.winrate(stats, players)
+    // this.log(`winrate: ${winner} ${winrate}`)
   }
 
 }

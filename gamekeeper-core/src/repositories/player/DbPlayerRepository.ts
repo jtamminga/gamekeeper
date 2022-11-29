@@ -2,7 +2,7 @@ import { ArrayUtils, NotFoundError } from '@core'
 import { Player, PlayerId } from '@domains'
 import { DataService } from '@services'
 import { injectable } from 'tsyringe'
-import { PlayerRepository } from './PlayerRespository'
+import { PlayerMap, PlayerRepository } from './PlayerRespository'
 
 
 // types
@@ -31,7 +31,7 @@ export class DbPlayerRepository implements PlayerRepository {
     return Array.from(players.values())
   }
 
-  public async getPlayersMap(): Promise<ReadonlyMap<PlayerId, Player>> {
+  public async getPlayersMap(): Promise<PlayerMap> {
     return this.getMap()
   }
 

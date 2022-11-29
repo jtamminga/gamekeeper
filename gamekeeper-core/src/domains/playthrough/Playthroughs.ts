@@ -1,4 +1,4 @@
-import { PlaythroughRepository } from '@repos'
+import { PlaythroughAllOptions, PlaythroughRepository } from '@repos'
 import { injectable } from 'tsyringe'
 import { Playthrough } from './Playthrough'
 
@@ -11,8 +11,8 @@ export class Playthroughs {
     private _playthroughRepo: PlaythroughRepository,
   ) { }
 
-  public async all(): Promise<readonly Playthrough[]> {
-    return this._playthroughRepo.getPlaythroughs()
+  public async all(options?: PlaythroughAllOptions): Promise<readonly Playthrough[]> {
+    return this._playthroughRepo.getPlaythroughs(options)
   }
 
   public async add(playthrough: Playthrough): Promise<void> {

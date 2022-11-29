@@ -1,7 +1,7 @@
 import { DataService } from '@services'
 import { CoopPlaythrough, Game, GameId, GameType, PlayerId, Playthrough, PlaythroughId, VsPlaythrough } from 'domains'
 import { injectable } from 'tsyringe'
-import { PlaythroughRepository } from './PlaythroughRepository'
+import { PlaythroughAllOptions, PlaythroughRepository } from './PlaythroughRepository'
 
 
 // type
@@ -70,8 +70,13 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
     }
   }
 
-  public async getPlaythroughs(): Promise<readonly Playthrough[]> {
-    const query = `
+  public async getPlaythroughs(
+    options?: PlaythroughAllOptions
+  ): Promise<readonly Playthrough[]> {
+
+    const limit = options?.limit
+
+    let query = `
       SELECT
         p.id,
         p.game_id as "gameId",
@@ -86,7 +91,11 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
       ORDER BY p.played_on DESC
     `
 
-    const dtos = await this._dataService.all<PlaythroughWithGameDto>(query)
+    if (limit) {
+      query += ' LIMIT ?'
+    }
+
+    const dtos = await this._dataService.all<PlaythroughWithGameDto>(query, limit)
 
     return dtos.map(dto =>
       DbPlaythroughRepository.create(dto))

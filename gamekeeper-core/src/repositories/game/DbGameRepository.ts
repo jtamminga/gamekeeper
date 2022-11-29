@@ -2,7 +2,7 @@ import { injectable } from 'tsyringe'
 import { NotFoundError } from '@core'
 import { Game, GameId, Playthrough } from '@domains'
 import { GameFactory } from '@factories'
-import { GameRepository } from './GameRepository'
+import { GameMap, GameRepository } from './GameRepository'
 import { DataService } from '@services'
 
 
@@ -34,7 +34,7 @@ export class DbGameRepository implements GameRepository {
     return Array.from(games.values())
   }
 
-  public getGamesMap(): Promise<ReadonlyMap<GameId, Game<Playthrough>>> {
+  public getGamesMap(): Promise<GameMap> {
     return this.getMap()
   }
 
@@ -54,7 +54,7 @@ export class DbGameRepository implements GameRepository {
     return game as T
   }
 
-  private async getMap(): Promise<ReadonlyMap<GameId, Game<Playthrough>>> {
+  private async getMap(): Promise<GameMap> {
     if (this._loadedAll) {
       return this._games
     }

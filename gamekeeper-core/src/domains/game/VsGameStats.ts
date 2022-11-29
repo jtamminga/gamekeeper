@@ -1,11 +1,12 @@
 import { GameStats, StatsData } from './GameStats'
 import { PlayerId } from 'domains/player'
 import { VsPlaythrough } from '../playthrough'
+import { GameType } from './Game'
 
 
 // interface
 type Winrate = { playerId: PlayerId, winrate: number }
-export interface VsStatData extends StatsData {
+export interface VsStatsData extends StatsData {
   bestWinrate?: Winrate
 }
 
@@ -17,7 +18,7 @@ export class VsGameStats extends GameStats<VsPlaythrough> {
     return playerId === playthough.winnerId
   }
 
-  public override getData(): VsStatData {
+  public override getData(): VsStatsData {
     // get data
     const data = super.getData()
 
@@ -36,4 +37,10 @@ export class VsGameStats extends GameStats<VsPlaythrough> {
     }
   }
 
+}
+
+
+// guards
+export function isVsStatsData(data: StatsData): data is VsStatsData {
+  return data.type === GameType.VS
 }

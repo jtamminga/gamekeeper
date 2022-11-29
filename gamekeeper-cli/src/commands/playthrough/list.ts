@@ -1,7 +1,7 @@
 import { CliUx } from '@oclif/core'
 import { format } from 'date-fns'
-import { CoopPlaythrough, Player, PlayerId, Playthrough, VsPlaythrough } from 'gamekeeper-core'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
+import { Utils } from '../../utils'
 
 
 // command
@@ -10,16 +10,16 @@ export default class ListPlaythroughs extends GameKeeperCommand {
 
   public async run(): Promise<void> {
     const [playthroughs, games, players] = await Promise.all([
-      this.gamekeeper.playthroughs.all(),
+      this.gamekeeper.playthroughs.all({ limit: 10 }),
       this.gamekeeper.games.asMap(),
       this.gamekeeper.players.asMap()
     ])
 
     if (playthroughs.length === 0) {
-      this.muted('(no games)')
+      this.muted('(no playthroughs)')
     }
 
-    const data = playthroughs.slice(0,10).map(playthrough => {
+    const data = playthroughs.map(playthrough => {
 
       return {
         game: games.get(playthrough.gameId)!,
@@ -35,24 +35,8 @@ export default class ListPlaythroughs extends GameKeeperCommand {
         get: row => format(row.playthrough.playedOn, 'MMM d, yyyy')
       },
       winner: {
-        get: row => winner(row.playthrough, players)
+        get: row => Utils.winner(row.playthrough, players)
       }
     })
-  }
-}
-
-
-// helpers
-function winner(playthrough: Playthrough, players: ReadonlyMap<PlayerId, Player>): string {
-  if (playthrough instanceof CoopPlaythrough) {
-    return playthrough.playersWon
-      ? 'players'
-      : 'game'
-  }
-  else if (playthrough instanceof VsPlaythrough) {
-    return players.get(playthrough.winnerId)!.name
-  }
-  else {
-    throw new Error('unsupported playthrough type')
   }
 }

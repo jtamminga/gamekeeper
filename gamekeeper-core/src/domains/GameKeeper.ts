@@ -29,8 +29,4 @@ export class GameKeeper {
     this.playthroughs = new Playthroughs(playthroughRepo)
   }
 
-  public async record(playthrough: Playthrough): Promise<void> {
-    await this.playthroughs.add(playthrough)
-  }
-
 }

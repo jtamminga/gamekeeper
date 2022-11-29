@@ -34,8 +34,8 @@ export class CoopGame extends Game<CoopPlaythrough> {
     return playthrough
   }
 
-  public getStats(): CoopGameStats {
-    return new CoopGameStats(this.playthroughs)
+  public createStats(): CoopGameStats {
+    return new CoopGameStats(this)
   }
 
 }

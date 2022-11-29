@@ -1,5 +1,6 @@
 import { PlayerId } from 'domains/player'
 import { CoopPlaythrough } from '../playthrough'
+import { GameType } from './Game'
 import { GameStats, StatsData } from './GameStats'
 
 
@@ -33,4 +34,10 @@ export class CoopGameStats extends GameStats<CoopPlaythrough> {
     }
   }
 
+}
+
+
+// guards
+export function isCoopStatsData(data: StatsData): data is CoopStatsData {
+  return data.type === GameType.COOP
 }

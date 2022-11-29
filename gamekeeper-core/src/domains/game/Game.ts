@@ -38,12 +38,15 @@ export abstract class Game<T extends Playthrough = Playthrough> extends Model<Ga
     super(data.id)
     this.name = data.name
     this.scoring = data.scoring
-    this._playthroughs = data.playthroughs as T[] | undefined
+
+    if (data.playthroughs) {
+      this.bindPlaythroughs(data.playthroughs as T[])
+    }
   }
 
   public abstract readonly type: GameType
 
-  public abstract getStats(): GameStats<T>
+  public abstract createStats(): GameStats<T>
 
   public get hasScoring(): boolean {
     return this.scoring !== ScoringType.NO_SCORE
@@ -66,15 +69,25 @@ export abstract class Game<T extends Playthrough = Playthrough> extends Model<Ga
   }
 
   public bindPlaythroughs(playthroughs: ReadonlyArray<T>) {
-    this._playthroughs = [...playthroughs]
+    this._playthroughs = [...playthroughs].sort(playthroughCompareFn)
   }
 
   protected addPlaythrough(playthrough: T) {
     if (!this._playthroughs) {
-      this._playthroughs = []
+      this._playthroughs = [playthrough]
+      return
     }
 
-    this._playthroughs.push(playthrough)
+    const index = ArrayUtils.sortedIndex(this._playthroughs,
+      playthrough, playthroughCompareFn)
+
+    this._playthroughs.splice(index, 0, playthrough)
   }
 
+}
+
+
+// helper
+function playthroughCompareFn(a: Playthrough, b: Playthrough): number {
+  return a.playedOn.getTime() - b.playedOn.getTime()
 }

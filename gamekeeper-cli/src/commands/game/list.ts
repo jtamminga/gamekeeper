@@ -1,8 +1,9 @@
 import chalk from 'chalk'
 import { format } from 'date-fns'
 import { CliUx } from '@oclif/core'
-import { CoopStatsData, Game, GameType, Player, PlayerId, StatsData, VsStatData } from 'gamekeeper-core'
+import { Game, StatsData } from 'gamekeeper-core'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
+import { Utils } from '../../utils'
 
 
 // types
@@ -32,7 +33,7 @@ export default class ListGames extends GameKeeperCommand {
 
     // convert to simple data
     const data: RowData[] = games.map(game => {
-      const stats = game.getStats().getData()
+      const stats = game.createStats().getData()
 
       return {
         game,
@@ -55,30 +56,15 @@ export default class ListGames extends GameKeeperCommand {
           : chalk.gray.italic('never')
       },
       winrate: {
-        get: row => higestWinrate(row, players)
+        get: row => {
+          if (row.stats.playCount === 0) {
+            return chalk.gray.italic('no plays')
+          }
+
+          const { winner, winrate } = Utils.winrate(row.stats, players)
+          return `${winner}: ${winrate}`
+        }
       }
     })
-  }
-}
-
-
-// helpers
-function higestWinrate({game, stats}: RowData, players: ReadonlyMap<PlayerId, Player>): string {
-  if (stats.playCount === 0) {
-    return chalk.gray.italic('no plays')
-  }
-
-  if (game.type === GameType.COOP) {
-    const {playersWinrate} = stats as CoopStatsData
-    return 'players: ' + chalk.bold(Math.round(playersWinrate * 100) + '%')
-  }
-  else if (game.type === GameType.VS) {
-    const vsStats = stats as VsStatData
-    const { playerId, winrate } = vsStats.bestWinrate!
-    const player = players.get(playerId)!
-    return player.name + ': ' + chalk.bold(Math.round(winrate * 100) + '%')
-  }
-  else {
-    throw new Error('unsupported game type')
   }
 }

@@ -1,6 +1,6 @@
 import { Game, GameType, ScoringType } from './Game'
 import { VsPlaySession, VsPlaySessionData, VsPlaythrough, VsPlaythroughData } from '../playthrough'
-import { Player } from '../player'
+import { Player, PlayerId } from '../player'
 import { Scores } from 'domains/playthrough/Scores'
 import { VsGameStats } from './VsGameStats'
 
@@ -36,7 +36,7 @@ export class VsGame extends Game<VsPlaythrough> {
     return playthrough
   }
 
-  public determineWinnerFrom(scores: Map<Player, number>): Player | undefined {
+  public determineWinnerFrom<T extends PlayerId | Player>(scores: Map<T, number>): T | undefined {
     const s = new Scores(scores)
 
     switch (this.scoring) {
@@ -47,8 +47,8 @@ export class VsGame extends Game<VsPlaythrough> {
     }
   }
 
-  public getStats(): VsGameStats {
-    return new VsGameStats(this.playthroughs)
+  public createStats(): VsGameStats {
+    return new VsGameStats(this)
   }
 
 }

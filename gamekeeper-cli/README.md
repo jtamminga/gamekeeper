@@ -20,7 +20,7 @@ $ npm install -g gamekeeper-cli
 $ gamekeeper-cli COMMAND
 running command...
 $ gamekeeper-cli (--version)
-gamekeeper-cli/0.0.0 linux-x64 node-v16.17.1
+gamekeeper-cli/0.0.0 linux-x64 node-v18.12.0
 $ gamekeeper-cli --help [COMMAND]
 USAGE
   $ gamekeeper-cli COMMAND
@@ -29,9 +29,11 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`gamekeeper-cli hello PERSON`](#gamekeeper-cli-hello-person)
-* [`gamekeeper-cli hello world`](#gamekeeper-cli-hello-world)
+* [`gamekeeper-cli game add`](#gamekeeper-cli-game-add)
+* [`gamekeeper-cli game list`](#gamekeeper-cli-game-list)
 * [`gamekeeper-cli help [COMMAND]`](#gamekeeper-cli-help-command)
+* [`gamekeeper-cli playthrough`](#gamekeeper-cli-playthrough)
+* [`gamekeeper-cli playthrough list`](#gamekeeper-cli-playthrough-list)
 * [`gamekeeper-cli plugins`](#gamekeeper-cli-plugins)
 * [`gamekeeper-cli plugins:install PLUGIN...`](#gamekeeper-cli-pluginsinstall-plugin)
 * [`gamekeeper-cli plugins:inspect PLUGIN...`](#gamekeeper-cli-pluginsinspect-plugin)
@@ -41,45 +43,33 @@ USAGE
 * [`gamekeeper-cli plugins:uninstall PLUGIN...`](#gamekeeper-cli-pluginsuninstall-plugin-1)
 * [`gamekeeper-cli plugins:uninstall PLUGIN...`](#gamekeeper-cli-pluginsuninstall-plugin-2)
 * [`gamekeeper-cli plugins update`](#gamekeeper-cli-plugins-update)
+* [`gamekeeper-cli record`](#gamekeeper-cli-record)
 
-## `gamekeeper-cli hello PERSON`
+## `gamekeeper-cli game add`
 
-Say hello
-
-```
-USAGE
-  $ gamekeeper-cli hello [PERSON] -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ oex hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
-
-_See code: [dist/commands/hello/index.ts](https://github.com/jtamminga/gamekeeper/blob/v0.0.0/dist/commands/hello/index.ts)_
-
-## `gamekeeper-cli hello world`
-
-Say hello world
+describe the command here
 
 ```
 USAGE
-  $ gamekeeper-cli hello world
+  $ gamekeeper-cli game add
 
 DESCRIPTION
-  Say hello world
+  describe the command here
 
 EXAMPLES
-  $ gamekeeper-cli hello world
-  hello world! (./src/commands/hello/world.ts)
+  $ gamekeeper-cli game add
+```
+
+## `gamekeeper-cli game list`
+
+list all the games
+
+```
+USAGE
+  $ gamekeeper-cli game list
+
+DESCRIPTION
+  list all the games
 ```
 
 ## `gamekeeper-cli help [COMMAND]`
@@ -101,6 +91,35 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.14/src/commands/help.ts)_
+
+## `gamekeeper-cli playthrough`
+
+record playthrough of game
+
+```
+USAGE
+  $ gamekeeper-cli playthrough
+
+DESCRIPTION
+  record playthrough of game
+
+ALIASES
+  $ gamekeeper-cli record
+```
+
+_See code: [dist/commands/playthrough/index.ts](https://github.com/jtamminga/gamekeeper/blob/v0.0.0/dist/commands/playthrough/index.ts)_
+
+## `gamekeeper-cli playthrough list`
+
+list latest playthroughs
+
+```
+USAGE
+  $ gamekeeper-cli playthrough list
+
+DESCRIPTION
+  list latest playthroughs
+```
 
 ## `gamekeeper-cli plugins`
 
@@ -140,7 +159,6 @@ FLAGS
 
 DESCRIPTION
   Installs a plugin into the CLI.
-
   Can be installed from npm or a git url.
 
   Installation of a user-installed plugin will override a core plugin.
@@ -148,6 +166,7 @@ DESCRIPTION
   e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
   will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
   the CLI without the need to patch and update the whole CLI.
+
 
 ALIASES
   $ gamekeeper-cli plugins add
@@ -200,7 +219,6 @@ FLAGS
 
 DESCRIPTION
   Installs a plugin into the CLI.
-
   Can be installed from npm or a git url.
 
   Installation of a user-installed plugin will override a core plugin.
@@ -208,6 +226,7 @@ DESCRIPTION
   e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
   will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
   the CLI without the need to patch and update the whole CLI.
+
 
 ALIASES
   $ gamekeeper-cli plugins add
@@ -237,11 +256,11 @@ FLAGS
 
 DESCRIPTION
   Links a plugin into the CLI for development.
-
   Installation of a linked plugin will override a user-installed or core plugin.
 
   e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
   command will override the user-installed or core plugin implementation. This is useful for development work.
+
 
 EXAMPLES
   $ gamekeeper-cli plugins:link myplugin
@@ -330,5 +349,20 @@ FLAGS
 
 DESCRIPTION
   Update installed plugins.
+```
+
+## `gamekeeper-cli record`
+
+record playthrough of game
+
+```
+USAGE
+  $ gamekeeper-cli record
+
+DESCRIPTION
+  record playthrough of game
+
+ALIASES
+  $ gamekeeper-cli record
 ```
 <!-- commandsstop -->
