@@ -47,7 +47,7 @@
     "typescript": "^4.8.4"
   },
   "oclif": {
-    "bin": "gamekeeper-cli",
+    "bin": "gamekeeper",
     "dirname": "gamekeeper-cli",
     "commands": "./dist/commands",
     "plugins": [
