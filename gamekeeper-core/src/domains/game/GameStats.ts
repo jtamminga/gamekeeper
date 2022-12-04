@@ -20,7 +20,7 @@ type PlayWinData = {
 // vs game stats
 export abstract class GameStats<T extends Playthrough> {
 
-  public constructor(private _game: Game<T>) { }
+  public constructor(protected _game: Game<T>) { }
 
   protected abstract isWin(playerId: PlayerId, playthough: T): boolean
 
@@ -52,10 +52,6 @@ export abstract class GameStats<T extends Playthrough> {
     }
 
     return winrateData
-  }
-
-  public getWinsteak() {
-    
   }
 
   public getData(): StatsData {

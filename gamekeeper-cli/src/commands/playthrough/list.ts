@@ -35,7 +35,7 @@ export default class ListPlaythroughs extends GameKeeperCommand {
         get: row => format(row.playthrough.playedOn, 'MMM d, yyyy')
       },
       winner: {
-        get: row => Utils.winner(row.playthrough, players)
+        get: row => Utils.winnerName(row.playthrough, players)
       }
     })
   }

@@ -1,5 +1,5 @@
 import { Game, GameType, ScoringType } from './Game'
-import { VsPlaySession, VsPlaySessionData, VsPlaythrough, VsPlaythroughData } from '../playthrough'
+import { VsPlaythrough, VsPlaythroughData } from '../playthrough'
 import { Player, PlayerId } from '../player'
 import { Scores } from 'domains/playthrough/Scores'
 import { VsGameStats } from './VsGameStats'
@@ -9,17 +9,6 @@ import { VsGameStats } from './VsGameStats'
 export class VsGame extends Game<VsPlaythrough> {
 
   public readonly type = GameType.VS
-  
-  public start(data: Omit<VsPlaySessionData, 'gameId'>): VsPlaySession {
-    if (!this.id) {
-      throw new Error('game is not saved yet')
-    }
-
-    return new VsPlaySession({
-      gameId: this.id,
-      ...data
-    })
-  }
 
   public record(data: Omit<VsPlaythroughData, 'gameId'>): VsPlaythrough {
     if (!this.id) {

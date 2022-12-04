@@ -6,8 +6,10 @@ import { GameType } from './Game'
 
 // interface
 type Winrate = { playerId: PlayerId, winrate: number }
+type VsWinstreak = { playerId: PlayerId, streak: number }
 export interface VsStatsData extends StatsData {
   bestWinrate?: Winrate
+  winstreaks: ReadonlyArray<VsWinstreak>
 }
 
 
@@ -30,11 +32,45 @@ export class VsGameStats extends GameStats<VsPlaythrough> {
       }
     }
 
+    // get current winstreak
+    const winstreaks = this.getWinstreaks()
+
     // return data
     return {
       ...data,
-      bestWinrate
+      bestWinrate,
+      winstreaks
     }
+  }
+
+  public getWinstreaks(): ReadonlyArray<VsWinstreak> {
+    const streaks: VsWinstreak[] = []
+    let curWinner: PlayerId | undefined
+    let streak = 0
+    for (const playthrough of this._game.playthroughs) {
+      if (playthrough.winnerId === curWinner) {
+        streak++
+      } else {
+        if (curWinner) {
+          streaks.push({
+            playerId: curWinner,
+            streak
+          })
+        }
+        
+        curWinner = playthrough.winnerId
+        streak = 1
+      }
+    }
+
+    if (curWinner) {
+      streaks.push({
+        playerId: curWinner,
+        streak
+      })
+    }
+
+    return streaks
   }
 
 }

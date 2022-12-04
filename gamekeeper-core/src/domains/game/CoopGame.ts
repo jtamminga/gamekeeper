@@ -1,4 +1,4 @@
-import { CoopPlaythrough, CoopPlaythroughData, CoopyPlaySession, CoopyPlaySessionData } from '../playthrough'
+import { CoopPlaythrough, CoopPlaythroughData } from '../playthrough'
 import { CoopGameStats } from './CoopGameStats'
 import { Game, GameType } from './Game'
 
@@ -7,17 +7,6 @@ import { Game, GameType } from './Game'
 export class CoopGame extends Game<CoopPlaythrough> {
 
   public readonly type = GameType.COOP
-  
-  public start(data: Omit<CoopyPlaySessionData, 'gameId'>): CoopyPlaySession {
-    if (!this.id) {
-      throw new Error('game is not saved yet')
-    }
-
-    return new CoopyPlaySession({
-      gameId: this.id,
-      ...data
-    })
-  }
 
   public record(data: Omit<CoopPlaythroughData, 'gameId'>): CoopPlaythrough {
     if (!this.id) {

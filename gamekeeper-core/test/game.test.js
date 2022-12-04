@@ -16,22 +16,27 @@ describe('game', function () {
       )
   
       game.record(playthrough)
+      const stats = game.createStats().getData()
   
       it('should have plays', function () {
         assert.ok(game.hasPlays)
       })
   
       it('last played should be same as playthrough', function () {
-        assert.equal(game.createStats().getLastPlayed(), playthrough.playedOn)
+        assert.equal(stats.lastPlayed, playthrough.playedOn)
       })
 
       it('should be one played', function () {
-        assert.equal(game.createStats().getPlayCount(), 1)
+        assert.equal(stats.playCount, 1)
       })
 
       it('winrates should make sense', function () {
-        assert.equal(game.createStats().getWinrates().get(1), 0)
-        assert.equal(game.createStats().getWinrates().get(2), 1)
+        assert.equal(stats.winrates.get(1), 0)
+        assert.equal(stats.winrates.get(2), 1)
+      })
+
+      it('should have a streak of 1', function () {
+        assert.equal(stats.winstreaks.length, 1)
       })
     })
 
@@ -83,6 +88,10 @@ describe('game', function () {
       it('winrates should make sense', function () {
         assert.equal(stats.winrates.get(1), 1/3)
         assert.equal(stats.winrates.get(2), 2/3)
+      })
+
+      it('should have multiple winstreaks', function () {
+        assert.equal(stats.winstreaks.length, 3)
       })
 
     })

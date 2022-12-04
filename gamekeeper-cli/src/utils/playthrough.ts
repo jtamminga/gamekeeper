@@ -1,3 +1,4 @@
+import chalk from 'chalk'
 import {
   CoopPlaythrough,
   Game,
@@ -14,7 +15,7 @@ import {
 // utils
 export namespace Utils {
 
-  export function winner(playthrough: Playthrough, players: PlayerMap): string {
+  export function winnerName(playthrough: Playthrough, players: PlayerMap): string {
     if (playthrough instanceof CoopPlaythrough) {
       return playthrough.playersWon
         ? 'players'
@@ -51,10 +52,6 @@ export namespace Utils {
     else {
       throw new Error('unsupported game type')
     }
-  }
-
-  export function playerStats(stats: StatsData, player: Player) {
-    
   }
 
 }

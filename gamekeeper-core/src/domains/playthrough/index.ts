@@ -1,7 +1,4 @@
 export * from './CoopPlaythrough'
 export * from './Playthrough'
 export * from './VsPlaythrough'
-export * from './PlaySession'
-export * from './CoopPlaySession'
-export * from './VsPlaySession'
 export * from './Playthroughs'

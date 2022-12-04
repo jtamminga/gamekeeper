@@ -2,7 +2,7 @@ import fuzzy from 'fuzzy'
 import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
-import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData } from 'gamekeeper-core'
+import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, PlayerMap, isVsStatsData, ArrayUtils } from 'gamekeeper-core'
 import chalk from 'chalk'
 import { Utils } from '../../utils'
 
@@ -74,7 +74,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       this.log(
         chalk.green('> ')
         + chalk.bold('winner: ')
-        + chalk.cyanBright(Utils.winner(playthrough, players))
+        + chalk.cyanBright(Utils.winnerName(playthrough, players))
       )
     }
 
@@ -90,7 +90,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       .getData()
 
     // show stats summary
-    this.showSummary(stats)
+    this.showStats(stats, players)
   }
 
   /**
@@ -205,12 +205,59 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     }
   }
 
-  private showSummary(stats: StatsData) {
+  private showStats(stats: StatsData, players: PlayerMap) {
     this.log()
-    this.log(chalk.bold('latest stats:'))
-    this.log(`plays:   ${stats.playCount}`)
-    // const {winner, winrate} = Utils.winrate(stats, players)
-    // this.log(`winrate: ${winner} ${winrate}`)
+    this.log(chalk.cyanBright('latest stats:'))
+
+    // play count
+    this.logItem('plays', stats.playCount)
+
+    // show best win rate
+    const {winner, winrate} = Utils.winrate(stats, players)
+    this.logItem('winrate', `${chalk.underline(winner)} ${winrate}`)
+
+    // winsteak info if any
+    const winstreak = this.winstreakDesc(stats, players)
+    if (winstreak) {
+      this.logItem('streak', winstreak)
+    }
+  }
+
+  private winstreakDesc(stats: StatsData, players: PlayerMap): string | undefined {
+    if (!isVsStatsData(stats)) {
+      return
+    }
+
+    const numStreaks = stats.winstreaks.length
+
+    const lastStreak = ArrayUtils.last(stats.winstreaks)
+    if (lastStreak) {
+      const {playerId, streak} = lastStreak
+      const playerName = players.get(playerId)!.name
+      if (streak > 1) {
+        return `${chalk.underline(playerName)} has a winstreak of ${chalk.yellow(streak)}!`
+      }
+    } 
+
+    if (numStreaks >= 2) {
+      const last = stats.winstreaks[numStreaks - 1]
+      const secondLast = stats.winstreaks[numStreaks - 2]
+      if (last.streak === 1 && secondLast.streak > 1) {
+        const lastPlayer = players.get(last.playerId)!.name
+        const secondLastPlayer = players.get(secondLast.playerId)!.name
+        return `${chalk.underline(lastPlayer)} stopped ${chalk.underline(secondLastPlayer)}'s winstreak of ${chalk.yellow(secondLast.streak)}!`
+      }
+    }
+  }
+
+  private logItem(label: string, value: string | number) {
+    const padding = 10 - label.length
+    this.log(
+      chalk.green('> ')
+      + chalk.bold(label) + ':'
+      + Array(padding).join(' ')
+      + value.toString()
+    )
   }
 
 }
