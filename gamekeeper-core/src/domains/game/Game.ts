@@ -1,4 +1,4 @@
-import { ArrayUtils, Opaque } from '@core'
+import { ArrayUtils, Opaque, Serializable } from '@core'
 import { Playthrough } from '../playthrough'
 import { Model } from '../Model'
 import { GameStats } from './GameStats'
@@ -28,7 +28,8 @@ export interface GameData {
 
 
 // class
-export abstract class Game<T extends Playthrough = Playthrough> extends Model<GameId> {
+export abstract class Game<T extends Playthrough = Playthrough>
+  extends Model<GameId> implements Serializable<GameData> {
 
   public readonly name: string
   public readonly scoring: ScoringType
@@ -82,6 +83,15 @@ export abstract class Game<T extends Playthrough = Playthrough> extends Model<Ga
       playthrough, playthroughCompareFn)
 
     this._playthroughs.splice(index, 0, playthrough)
+  }
+
+  public toData(): GameData {
+    return {
+      id: this.id!,
+      name: this.name,
+      type: this.type,
+      scoring: this.scoring
+    }
   }
 
 }
