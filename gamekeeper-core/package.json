@@ -1,11 +1,21 @@
 {
   "name": "gamekeeper-core",
-  "version": "1.0.52",
+  "version": "1.0.53",
   "description": "core parts of game keeper",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "author": "John Tamminga",
   "license": "MIT",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./web": {
+      "require": "./dist/web.js",
+      "types": "./dist/web.d.ts"
+    }
+  },
   "scripts": {
     "build": "tsc && tsc-alias",
     "test": "mocha ./test/**/*.test.js",
