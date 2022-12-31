@@ -1,7 +1,7 @@
 import { GameRepository, PlayerRepository, PlaythroughRepository } from '@repos'
 import { Games } from './game'
 import { Players } from './player'
-import { Playthrough, Playthroughs } from './playthrough'
+import { Playthroughs } from './playthrough'
 
 
 // type

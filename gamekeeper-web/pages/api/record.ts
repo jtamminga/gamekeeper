@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse<RecordApiResponse>
 ) {
 
-  if (req.method !== 'GET') {
+  if (req.method === 'GET') {
 
     const games = await gamekeeper.games.all()
     const players = await gamekeeper.players.all()

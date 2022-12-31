@@ -5,6 +5,11 @@ import { GameKeeperCommand } from '../../GameKeeperCommand'
 import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, PlayerMap, isVsStatsData, ArrayUtils } from 'gamekeeper-core'
 import chalk from 'chalk'
 import { Utils } from '../../utils'
+import { format, isMatch, parse } from 'date-fns'
+
+
+// constants
+const DATE_FORMAT = 'yyyy-MM-dd'
 
 
 // command
@@ -23,15 +28,15 @@ export default class PlaythroughCommand extends GameKeeperCommand {
 
   public async run(): Promise<void> {
 
+    // get the date played on
+    const playedOn = await this.selectDateFlow()
+
     // get all games
     const game = await this.selectGameFlow()
 
     // get all players
     const players = await this.gamekeeper.players.asMap()
     const playerIds = Array.from(players.keys())
-
-    // assumed played today
-    const playedOn = new Date()
     
     // if there is a winner explicity inputted
     let explicitWinner = false
@@ -91,6 +96,21 @@ export default class PlaythroughCommand extends GameKeeperCommand {
 
     // show stats summary
     this.showStats(stats, players)
+  }
+
+  private async selectDateFlow(): Promise<Date> {
+
+    // ask player to enter date, default to today
+    const {playedOn} = await inquirer.prompt<{playedOn: string}>({
+      type: 'input',
+      name: 'playedOn',
+      message: 'played on',
+      validate: validateDate,
+      default: format(new Date(), DATE_FORMAT)
+    })
+
+    // convert input to a date
+    return parse(playedOn, DATE_FORMAT, new Date())
   }
 
   /**
@@ -269,4 +289,9 @@ const numberOptions: QuestionCollection<any> = {
   transformer: (score: string) =>
     isNaN(Number(score)) ? chalk.gray('(not provided)') : score,
   filter: (score: number) => isNaN(score) ? undefined : score
+}
+
+// validate if date string is valid
+function validateDate(input: string): boolean | string {
+  return isMatch(input, DATE_FORMAT) || 'please enter a valid date'
 }

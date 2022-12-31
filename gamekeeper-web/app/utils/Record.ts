@@ -1,18 +1,27 @@
+import type {
+  CoopPlaythroughData,
+  GameId,
+  PlayerId,
+  VsPlaythroughData
+} from 'gamekeeper-core'
+
+
+// namespace
 export namespace Record {
-  
+
+
   //
   // types
   // =====
 
 
-  export type State = {
-    date: Date,
-    gameId: string | undefined
-  }
+  export type State = Partial<VsPlaythroughData | CoopPlaythroughData>
 
   type ActionType =
     | 'setDate' 
     | 'setGame'
+    | 'setPlayer'
+    | 'setScore'
 
   export interface Action {
     type: ActionType
@@ -28,13 +37,27 @@ export namespace Record {
   interface SetGameAction extends Action {
     type: 'setGame'
     payload: {
-      gameId: string
+      gameId: GameId
     }
   }
   interface SetDateAction extends Action {
     type: 'setDate',
     payload: {
-      date: Date
+      playedOn: Date
+    }
+  }
+  interface SetPlayerAction extends Action {
+    type: 'setPlayer',
+    payload: {
+      playerId: PlayerId,
+      included: boolean
+    }
+  }
+  interface SetScoreAction extends Action {
+    type: 'setScore',
+    payload: {
+      playerId: PlayerId
+      score: number | undefined
     }
   }
 
@@ -44,17 +67,31 @@ export namespace Record {
   // ===============
 
 
-  export function setGame(gameId: string): SetGameAction {
+  export function setGame(gameId: GameId): SetGameAction {
     return {
       type: 'setGame',
       payload: { gameId }
     }
   }
 
-  export function setDate(date: Date): SetDateAction {
+  export function setDate(playedOn: Date): SetDateAction {
     return {
       type: 'setDate',
-      payload: { date }
+      payload: { playedOn }
+    }
+  }
+
+  export function setPlayer(playerId: PlayerId, included: boolean): SetPlayerAction {
+    return {
+      type: 'setPlayer',
+      payload: { playerId, included }
+    }
+  }
+
+  export function setScore(playerId: PlayerId, score: number | undefined): SetScoreAction {
+    return {
+      type: 'setScore',
+      payload: { playerId, score }
     }
   }
 
@@ -66,8 +103,9 @@ export namespace Record {
 
   export function init(): State {
     return {
-      date: new Date(),
-      gameId: undefined
+      playedOn: new Date(),
+      gameId: undefined,
+      playerIds: []
     }
   }
 
@@ -84,7 +122,27 @@ export namespace Record {
         const { payload } = action as SetDateAction
         return {
           ...preState,
-          date: payload.date
+          playedOn: payload.playedOn
+        }
+      }
+      case 'setPlayer': {
+        const { payload: { playerId, included } } = action as SetPlayerAction
+        
+        // create updated player id array
+        let playerIds = included
+          ? [...preState.playerIds ?? [], playerId]
+          : preState.playerIds?.filter(id => id !== playerId)
+
+        return {
+          ...preState,
+          playerIds
+        }
+      }
+      case 'setScore': {
+        const { payload: { playerId, score } } = action as SetScoreAction
+
+        return {
+          ...preState,
         }
       }
     }
