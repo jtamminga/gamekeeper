@@ -100,17 +100,26 @@ export default class PlaythroughCommand extends GameKeeperCommand {
 
   private async selectDateFlow(): Promise<Date> {
 
+    // current date & time
+    const now = new Date()
+    const nowFormatted = format(now, DATE_FORMAT)
+
     // ask player to enter date, default to today
     const {playedOn} = await inquirer.prompt<{playedOn: string}>({
       type: 'input',
       name: 'playedOn',
       message: 'played on',
       validate: validateDate,
-      default: format(new Date(), DATE_FORMAT)
+      default: nowFormatted
     })
 
-    // convert input to a date
-    return parse(playedOn, DATE_FORMAT, new Date())
+    // if the default value is provided then use "now"
+    if (playedOn === nowFormatted) {
+      return now
+    }
+
+    // otherwise convert input to a date
+    return parse(playedOn, DATE_FORMAT, now)
   }
 
   /**
@@ -118,6 +127,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
    * this will ask user to select a game
    */
   private async selectGameFlow(): Promise<Game> {
+    
     const games = await this.gamekeeper.games.all()
 
     // transform into choices for the prompt
