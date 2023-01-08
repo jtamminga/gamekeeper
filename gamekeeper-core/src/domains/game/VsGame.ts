@@ -1,7 +1,6 @@
 import { Game, GameType, ScoringType } from './Game'
 import { VsPlaythrough, VsPlaythroughData } from '../playthrough'
-import { Player, PlayerId } from '../player'
-import { Scores } from 'domains/playthrough/Scores'
+import { ScoreData, Scores } from 'domains/playthrough/Scores'
 import { VsGameStats } from './VsGameStats'
 
 
@@ -25,14 +24,15 @@ export class VsGame extends Game<VsPlaythrough> {
     return playthrough
   }
 
-  public determineWinnerFrom<T extends PlayerId | Player>(scores: Map<T, number>): T | undefined {
-    const s = new Scores(scores)
+  public determineWinner(scores: Scores): ScoreData {
 
     switch (this.scoring) {
       case ScoringType.HIGHEST_WINS:
-        return s.highest().player
+        return scores.highest()
       case ScoringType.LOWEST_WINS:
-        return s.lowest().player
+        return scores.lowest()
+      default:
+        throw new Error(`winner cannot be determined with scoring type`)
     }
   }
 

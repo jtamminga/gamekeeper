@@ -1,5 +1,5 @@
 import { DataService } from '@services'
-import { CoopPlaythrough, Game, GameId, GameType, PlayerId, Playthrough, PlaythroughId, VsPlaythrough } from 'domains'
+import { CoopPlaythrough, Game, GameId, GameType, PlayerId, Playthrough, PlaythroughId, ScoreData, VsPlaythrough } from 'domains'
 import { injectable } from 'tsyringe'
 import { PlaythroughAllOptions, PlaythroughRepository } from './PlaythroughRepository'
 
@@ -13,9 +13,9 @@ export interface PlaythroughDto {
   players: string // json
   scores?: string // json
 }
-export type ScoreDto = {
-  playerId: number
-  score: number
+type SerializedScore = {
+  id: string
+  s: number
 }
 export interface PlaythroughWithGameDto extends PlaythroughDto {
   gameName: string
@@ -41,7 +41,7 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
   
     if (dto.gameType === GameType.VS) {
       const winner = dto.result.toString() as PlayerId
-      let scores = dto.scores ? deserializeScore(dto.scores) : undefined
+      let scores = dto.scores ? deserializeScores(dto.scores) : undefined
   
       return new VsPlaythrough({
         id,
@@ -129,7 +129,11 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
 }
 
 
-// helper
+//
+// helpers
+// =======
+
+
 function toDto(playthrough: Playthrough): Omit<PlaythroughDto, 'id'> {
   const base = {
     gameId: Number(playthrough.gameId),
@@ -141,8 +145,8 @@ function toDto(playthrough: Playthrough): Omit<PlaythroughDto, 'id'> {
     return {
       ...base,
       result: Number(playthrough.winnerId),
-      scores: playthrough.scores && playthrough.scores.size > 0
-        ? serializeScore(playthrough.scores)
+      scores: playthrough.scores && playthrough.scores.hasScore
+        ? serializeScores(playthrough.scores.toData())
         : undefined
     }
   }
@@ -157,20 +161,17 @@ function toDto(playthrough: Playthrough): Omit<PlaythroughDto, 'id'> {
   throw new Error('unsupported playthrough type')
 }
 
-function serializeScore(scores: ReadonlyMap<PlayerId, number>): string {
-  const vals = []
-  for (const [id, score] of scores) {
-    vals.push({ id, s: score })
-  }
-  return JSON.stringify(vals)
+function serializeScores(scores: readonly ScoreData[]): string {
+  return JSON.stringify(scores.map<SerializedScore>(score => ({
+    id: score.playerId,
+    s: score.score
+  })))
 }
 
-function deserializeScore(serializedScores: string): ReadonlyMap<PlayerId, number> {
-  const scores = JSON.parse(serializedScores) as { id: PlayerId, s: number }[]
-  const map = new Map<PlayerId, number>()
-  for (const { id, s: score } of scores) {
-    map.set(id, score)
-  }
-  return map
+function deserializeScores(scores: string): readonly ScoreData[] {
+  const parsed = JSON.parse(scores) as SerializedScore[]
+  return parsed.map<ScoreData>(score => ({
+    playerId: score.id as PlayerId,
+    score: score.s
+  }))
 }
-

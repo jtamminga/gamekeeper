@@ -2,7 +2,7 @@ import fuzzy from 'fuzzy'
 import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
-import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, PlayerMap, isVsStatsData, ArrayUtils } from 'gamekeeper-core'
+import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, PlayerMap, isVsStatsData, ArrayUtils, Scores, ScoreData } from 'gamekeeper-core'
 import chalk from 'chalk'
 import { Utils } from '../../utils'
 import { format, isMatch, parse } from 'date-fns'
@@ -50,6 +50,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
         explicitWinner: winnerSet,
         ...answers
       } = await this.vsGameFlow(game)
+
       playthrough = game.record({
         playerIds,
         playedOn,
@@ -159,8 +160,9 @@ export default class PlaythroughCommand extends GameKeeperCommand {
    * this will ask user to select winner and ask scores for each player
    */
   private async vsGameFlow(game: VsGame) {
+
     const players = await this.gamekeeper.players.all()
-    const scores = new Map<PlayerId, number>()
+    const scores: ScoreData[] = []
     // if winner is explicity inputted
     let explicitWinner = false
 
@@ -178,14 +180,14 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       // convert to record to map
       for (const [id, score] of Object.entries(scoreInputs)) {
         if (score === undefined) continue
-        scores.set(id as PlayerId, Number(score))
+        scores.push({ playerId: id as PlayerId, score: Number(score) })
       }
     }
 
     // try to determine winner
     let winnerId: PlayerId | undefined
-    if (scores.size === players.length) {
-      winnerId = game.determineWinnerFrom(scores)
+    if (scores.length === players.length) {
+      winnerId = game.determineWinner(new Scores(scores)).playerId
     }
 
     // if no winner than ask user for winner
@@ -202,7 +204,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
 
     return {
       winnerId,
-      scores: scores.size === 0 ? undefined : scores,
+      scores: scores.length === 0 ? undefined : scores,
       explicitWinner
     }
   }

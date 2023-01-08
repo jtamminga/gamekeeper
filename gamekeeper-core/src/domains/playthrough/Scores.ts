@@ -1,63 +1,73 @@
-import { Player, PlayerId } from '../player'
+import { Serializable } from '@core'
+import { PlayerId } from '../player'
 
 
 // type
-type ScoreResult<T extends PlayerId | Player> = {
-  player: T
+export type ScoreData = {
+  playerId: PlayerId
   score: number
 }
 
 
 // class
-export class Scores<T extends PlayerId | Player> {
+export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
+
 
   public constructor(
-    private _scores: ReadonlyMap<T, number>
+    private _scores: ReadonlyArray<ScoreData>
   ) { }
 
-  public get data(): ReadonlyMap<T, number> {
-    return this._scores
+  public get hasScore(): boolean {
+    return this._scores.length > 0
   }
 
-  public highest(): ScoreResult<T> {
-    if (this._scores.size === 0) {
+  public get size(): number {
+    return this._scores.length
+  }
+
+  public highest(): ScoreData {
+    if (this._scores.length === 0) {
       throw new Error('there are no scores')
     }
 
-    let highestPlayer: T
+    let highestPlayer: PlayerId
     let highestScore: number = Number.MIN_VALUE
 
-    for (const [player, score] of this._scores) {
+    for (const { playerId, score } of this._scores) {
       if (score > highestScore) {
         highestScore = score
-        highestPlayer = player
+        highestPlayer = playerId
       }
     }
 
     return {
-      player: highestPlayer!,
+      playerId: highestPlayer!,
       score: highestScore
     }
   }
 
-  public lowest(): ScoreResult<T> {
-    if (this._scores.size === 0) {
+  public lowest(): ScoreData {
+    if (this._scores.length === 0) {
       throw new Error('there are no scores')
     }
 
-    let lowestPlayer: T | undefined
+    let lowestPlayer: PlayerId | undefined
     let lowestScore: number = Number.MAX_VALUE
 
-    for (const [player, score] of this._scores) {
+    for (const { playerId, score } of this._scores) {
       if (score < lowestScore) {
         lowestScore = score
-        lowestPlayer = player
+        lowestPlayer = playerId
       }
     }
 
     return {
-      player: lowestPlayer!,
+      playerId: lowestPlayer!,
       score: lowestScore
     }
+  }
+
+  public toData(): ReadonlyArray<ScoreData> {
+    return this._scores
   }
 }

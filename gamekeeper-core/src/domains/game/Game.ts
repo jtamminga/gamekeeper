@@ -29,7 +29,8 @@ export interface GameData {
 
 // class
 export abstract class Game<T extends Playthrough = Playthrough>
-  extends Model<GameId> implements Serializable<GameData> {
+  extends Model<GameId>
+  implements Serializable<GameData> {
 
   public readonly name: string
   public readonly scoring: ScoringType
