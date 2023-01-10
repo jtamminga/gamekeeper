@@ -6,6 +6,8 @@ import { Utils } from '../../utils'
 
 // command
 export default class ListPlaythroughs extends GameKeeperCommand {
+
+  // description
   static description = 'list latest playthroughs'
 
   public async run(): Promise<void> {

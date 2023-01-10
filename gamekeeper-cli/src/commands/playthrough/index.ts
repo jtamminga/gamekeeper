@@ -34,9 +34,15 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     // get all games
     const game = await this.selectGameFlow()
 
-    // get all players
-    const players = await this.gamekeeper.players.asMap()
+    // get all players and playthroughs
+    const [players, playthroughs] = await Promise.all([
+      this.gamekeeper.players.asMap(),
+      this.gamekeeper.playthroughs.all({ gameId: game.id })
+    ])
     const playerIds = Array.from(players.keys())
+
+    // bind playthroughs to game
+    game.bindPlaythroughs(playthroughs)
     
     // if there is a winner explicity inputted
     let explicitWinner = false

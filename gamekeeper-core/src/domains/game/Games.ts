@@ -1,4 +1,5 @@
-import { GameRepository, PlaythroughRepository } from '@repos'
+import { GameMap, GameRepository } from '@repos'
+import { Playthrough } from 'domains/playthrough'
 import { injectable } from 'tsyringe'
 import { Game, GameId } from './Game'
 
@@ -14,26 +15,14 @@ type AllOptions = {
 export class Games {
 
   public constructor(
-    private _gameRepo: GameRepository,
-    private _playthroughRepo: PlaythroughRepository 
+    private _gameRepo: GameRepository
   ) { }
 
   public async all(): Promise<readonly Game[]> {
-    const [games, playthroughs] = await Promise.all([
-      this._gameRepo.getGames(),
-      this._playthroughRepo.getPlaythroughs()
-    ])
-
-    for (const game of games) {
-      game.bindPlaythroughs(
-        playthroughs.filter(p => p.gameId === game.id)
-      )
-    }
-
-    return games
+    return this._gameRepo.getGames()
   }
 
-  public async asMap(): Promise<ReadonlyMap<GameId, Game>> {
+  public async asMap(): Promise<GameMap> {
     return this._gameRepo.getGamesMap()
   }
 

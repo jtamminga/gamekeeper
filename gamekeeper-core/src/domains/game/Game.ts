@@ -71,7 +71,9 @@ export abstract class Game<T extends Playthrough = Playthrough>
   }
 
   public bindPlaythroughs(playthroughs: ReadonlyArray<T>) {
-    this._playthroughs = [...playthroughs].sort(playthroughCompareFn)
+    this._playthroughs = playthroughs
+      .filter(playthrough => playthrough.gameId === this.id)
+      .sort(playthroughCompareFn)
   }
 
   protected addPlaythrough(playthrough: T) {

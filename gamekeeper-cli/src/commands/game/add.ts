@@ -7,11 +7,8 @@ import { GameKeeperCommand } from '../../GameKeeperCommand'
 // command
 export default class AddGame extends GameKeeperCommand {
   
-  static description = 'describe the command here'
-
-  static examples = [
-    '<%= config.bin %> <%= command.id %>',
-  ]
+  // description
+  static description = 'add new game'
 
   public async run(): Promise<void> {
 

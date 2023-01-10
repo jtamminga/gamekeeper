@@ -15,16 +15,21 @@ type RowData = {
 
 // command
 export default class ListGames extends GameKeeperCommand {
+
+  // description
   static description = 'list all the games'
 
   public async run(): Promise<void> {
-    const {args, flags} = await this.parse(ListGames)
 
     // get data
-    const [games, players] = await Promise.all([
+    const [games, players, playthroughs] = await Promise.all([
       this.gamekeeper.games.all(),
-      this.gamekeeper.players.asMap()
+      this.gamekeeper.players.asMap(),
+      this.gamekeeper.playthroughs.all()
     ])
+
+    // bind playthroughs
+    games.forEach(game => game.bindPlaythroughs(playthroughs))
 
     if (games.length === 0) {
       this.muted('(no games)')

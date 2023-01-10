@@ -24,7 +24,7 @@ export class GameKeeper {
     playerRepo,
     playthroughRepo
   }: GameKeeperProps) {
-    this.games = new Games(gameRepo, playthroughRepo)
+    this.games = new Games(gameRepo)
     this.players = new Players(playerRepo)
     this.playthroughs = new Playthroughs(playthroughRepo)
   }

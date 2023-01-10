@@ -71,11 +71,12 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
   }
 
   public async getPlaythroughs(
-    options?: PlaythroughAllOptions
+    options: PlaythroughAllOptions = {}
   ): Promise<readonly Playthrough[]> {
 
-    const limit = options?.limit
+    const {limit, fromDate, gameId} = options
 
+    // build query
     let query = `
       SELECT
         p.id,
@@ -88,21 +89,34 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
         p.result
       FROM playthroughs p
       JOIN games g ON g.id = p.game_id
-      ORDER BY p.played_on DESC
     `
 
-    if (limit) {
-      query += ' LIMIT ?'
+    const conditions: string[] = []
+    if (fromDate) {
+      conditions.push('p.played_on >= :from_date')
+    }
+    if (gameId) {
+      conditions.push('p.game_id = :game_id')
+    }
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ')
     }
 
-    const dtos = await this._dataService.all<PlaythroughWithGameDto>(query, limit)
+    query += ' ORDER BY p.played_on DESC'
+    if (limit) {
+      query += ' LIMIT :limit'
+    }
 
+    // execute query
+    const dtos = await this._dataService.all<PlaythroughWithGameDto>(query, {
+      ':limit': limit,
+      ':from_date': fromDate?.toISOString(),
+      ':game_id': gameId
+    })
+
+    // create models
     return dtos.map(dto =>
       DbPlaythroughRepository.create(dto))
-  }
-
-  public async getPlaythroughsForGame(game: Game): Promise<readonly Playthrough[]> {
-    throw new Error('Method not implemented.')
   }
 
   public async addPlaythrough(playthrough: Playthrough): Promise<void> {

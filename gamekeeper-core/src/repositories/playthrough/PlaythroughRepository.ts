@@ -1,15 +1,16 @@
-import { Game, Playthrough } from 'domains'
+import { GameId, Playthrough } from 'domains'
 
 
 // types
 export type PlaythroughAllOptions = {
-  limit: number
+  limit?: number
+  fromDate?: Date
+  gameId?: GameId
 }
 
 
 // repo
 export interface PlaythroughRepository {
   getPlaythroughs(options?: PlaythroughAllOptions): Promise<readonly Playthrough[]>
-  getPlaythroughsForGame(game: Game): Promise<readonly Playthrough[]>
   addPlaythrough(playthrough: Playthrough): Promise<void>
 }
