@@ -8,7 +8,7 @@ import { Playthrough } from './Playthrough'
 export class Playthroughs {
 
   constructor(
-    private _playthroughRepo: PlaythroughRepository,
+    private _playthroughRepo: PlaythroughRepository
   ) { }
 
   public async all(options?: PlaythroughAllOptions): Promise<readonly Playthrough[]> {

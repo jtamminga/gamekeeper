@@ -29,8 +29,11 @@ export default class ListGames extends GameKeeperCommand {
     ])
 
     // bind playthroughs
-    games.forEach(game => game.bindPlaythroughs(playthroughs))
+    games.forEach(game =>
+      game.bindPlaythroughs(playthroughs.filter(playthrough =>
+        playthrough.gameId === game.id)))
 
+    // return if no games
     if (games.length === 0) {
       this.muted('(no games)')
       return
