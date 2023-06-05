@@ -1,18 +1,31 @@
-import { apiClient } from 'app/utils'
+import { GameId } from 'gamekeeper-core'
+import { gamekeeper } from 'utils'
 
 
 type GamePageProps = {
-  params: { id: string }
+  params: { id: GameId }
 }
 
+
+// page
 export default async function GamePage({ params }: GamePageProps) {
-  const gameData = await apiClient.getGame(params.id)
+  const game = await gamekeeper.games.get(params.id)
 
   return (
     <div>
-      <h1>{gameData.name}</h1>
+      <h1>{game.name}</h1>
 
       {/* <Record gameData={gameData} /> */}
     </div>
   )
+}
+
+
+// static params
+export async function generateStaticParams() {
+  const games = await gamekeeper.games.all()
+
+  return games.map(game => ({
+    id: game.id
+  }))
 }

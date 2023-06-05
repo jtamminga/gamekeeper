@@ -74,7 +74,7 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
     options: PlaythroughAllOptions = {}
   ): Promise<readonly Playthrough[]> {
 
-    const {limit, fromDate, gameId} = options
+    const {limit, fromDate, toDate, gameId} = options
 
     // build query
     let query = `
@@ -95,6 +95,9 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
     if (fromDate) {
       conditions.push('p.played_on >= :from_date')
     }
+    if (toDate) {
+      conditions.push('p.played_on <= :to_date')
+    }
     if (gameId) {
       conditions.push('p.game_id = :game_id')
     }
@@ -111,6 +114,7 @@ export class DbPlaythroughRepository implements PlaythroughRepository {
     const dtos = await this._dataService.all<PlaythroughWithGameDto>(query, {
       ':limit': limit,
       ':from_date': fromDate?.toISOString(),
+      ':to_date': toDate?.toISOString(),
       ':game_id': gameId
     })
 

@@ -1,14 +1,17 @@
-import { apiClient } from 'app/utils'
+import Link from 'next/link'
+import { gamekeeper } from 'utils'
 
 
 // page 
 export default async function GamesPage() {
-  const games = await apiClient.getGames()
+  const games = await gamekeeper.games.all()
 
   return (
     <div>
       {games.map(game =>
-        <div key={game.id}>{game.name}</div>
+        <Link href={`/games/${game.id}`}>
+          <div key={game.id}>{game.name}</div>
+        </Link>
       )}
     </div>
   )

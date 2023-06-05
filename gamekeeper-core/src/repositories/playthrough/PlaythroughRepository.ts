@@ -5,6 +5,7 @@ import { GameId, Playthrough } from 'domains'
 export type PlaythroughAllOptions = {
   limit?: number
   fromDate?: Date
+  toDate?: Date
   gameId?: GameId
 }
 
