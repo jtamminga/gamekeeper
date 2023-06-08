@@ -345,9 +345,19 @@ fs.realpath@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
 
-gamekeeper-core@./gamekeeper-core-v1.0.70.tgz:
-  version "1.0.70"
-  resolved "./gamekeeper-core-v1.0.70.tgz#0c41e7cb9625da09803219290bb45f7081e4f377"
+gamekeeper-core@./gamekeeper-core-v1.0.71.tgz:
+  version "1.0.71"
+  resolved "./gamekeeper-core-v1.0.71.tgz#33e34161aa091dabda9cbde136b6da7727e48611"
+  dependencies:
+    date-fns "^2.29.3"
+    reflect-metadata "^0.1.13"
+    sqlite "^4.1.2"
+    sqlite3 "^5.1.2"
+    tsyringe "^4.7.0"
+
+gamekeeper-core@./gamekeeper-core-v1.0.72.tgz:
+  version "1.0.72"
+  resolved "./gamekeeper-core-v1.0.72.tgz#4cbb6528c3612fc7ff0e0457a0d1260a1ff1d101"
   dependencies:
     date-fns "^2.29.3"
     reflect-metadata "^0.1.13"

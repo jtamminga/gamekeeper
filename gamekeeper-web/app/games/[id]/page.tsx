@@ -10,6 +10,7 @@ type GamePageProps = {
 // page
 export default async function GamePage({ params }: GamePageProps) {
   const game = await gamekeeper.games.get(params.id)
+  const playthroughs = await gamekeeper.playthroughs.all({ gameId: game.id })
 
   return (
     <div>
