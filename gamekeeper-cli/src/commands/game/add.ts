@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { GameData, GameFactory, GameType, ScoringType } from 'gamekeeper-core'
+import { GameData, GameType, ScoringType } from 'gamekeeper-core'
 import inquirer from 'inquirer'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
 
@@ -40,11 +40,8 @@ export default class AddGame extends GameKeeperCommand {
       }
     ])
 
-    // create game
-    const game = GameFactory.create(gameData)
-
     // add game
-    this.gamekeeper.games.add(game)
+    const game = await this.gamekeeper.games.create(gameData)
 
     // feedback
     this.success('added ' + chalk.bold.blue(game.name))

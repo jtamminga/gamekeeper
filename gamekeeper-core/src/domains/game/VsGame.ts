@@ -1,5 +1,5 @@
 import { Game, GameType, ScoringType } from './Game'
-import { VsPlaythrough, VsPlaythroughData } from '../playthrough'
+import { PlaythroughId, VsPlaythrough, VsPlaythroughData } from '../playthrough'
 import { ScoreData, Scores } from 'domains/playthrough/Scores'
 import { VsGameStats } from './VsGameStats'
 
@@ -9,19 +9,10 @@ export class VsGame extends Game<VsPlaythrough> {
 
   public readonly type = GameType.VS
 
-  public record(data: Omit<VsPlaythroughData, 'gameId'>): VsPlaythrough {
-    if (!this.id) {
-      throw new Error('game is not saved yet')
-    }
-
-    const playthrough = new VsPlaythrough({
-      gameId: this.id,
-      ...data
-    })
-
-    this.addPlaythrough(playthrough)
-
-    return playthrough
+  public async record(data: Omit<VsPlaythroughData, 'gameId'>): Promise<VsPlaythrough> {
+    const dto = await this._deps.service.playthroughService.addPlaythrough({ ...data, gameId: this.id! })
+    this._deps.builder.bindPlaythrough(dto)
+    return this._deps.builder.data.playthroughs[dto.id.toString() as PlaythroughId] as VsPlaythrough
   }
 
   public determineWinner(scores: Scores): ScoreData {

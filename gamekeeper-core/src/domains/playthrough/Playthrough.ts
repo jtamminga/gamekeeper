@@ -1,6 +1,6 @@
-import { Opaque } from '@core'
+import { GameKeeperDeps, Opaque } from '@core'
 import { Model } from '../Model'
-import { GameId } from '../game'
+import { Game, GameId } from '../game'
 import { PlayerId } from '../player'
 
 
@@ -15,17 +15,23 @@ export interface PlaythroughData {
 
 
 // class
-export class Playthrough extends Model<PlaythroughId> {
+export abstract class Playthrough extends Model<PlaythroughId> {
 
   public readonly playerIds: ReadonlyArray<PlayerId>
   public readonly gameId: GameId
   public readonly playedOn: Date
 
-  public constructor(data: PlaythroughData) {
+  public constructor(protected _deps: GameKeeperDeps, data: PlaythroughData) {
     super(data.id)
     this.gameId = data.gameId
     this.playerIds = data.playerIds
     this.playedOn = data.playedOn
   }
+
+  public get game(): Game {
+    return this._deps.builder.data.games[this.gameId]
+  }
+
+  public abstract get winnerName(): string
 
 }

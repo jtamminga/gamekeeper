@@ -1,9 +1,7 @@
 import { open, Database } from 'sqlite'
-import { injectable } from 'tsyringe'
 import sqlite3 from 'sqlite3'
 
 
-@injectable()
 export class DataService {
 
   private _db?: Database

@@ -1,4 +1,4 @@
-import { ArrayUtils, Opaque, Serializable } from '@core'
+import { ArrayUtils, GameKeeperDeps, Opaque, Serializable } from '@core'
 import { Playthrough } from '../playthrough'
 import { Model } from '../Model'
 import { GameStats } from './GameStats'
@@ -23,7 +23,6 @@ export interface GameData {
   name: string
   scoring: ScoringType
   type: GameType
-  playthroughs?: readonly Playthrough[]
 }
 
 
@@ -34,16 +33,11 @@ export abstract class Game<T extends Playthrough = Playthrough>
 
   public readonly name: string
   public readonly scoring: ScoringType
-  private _playthroughs: T[] | undefined
 
-  public constructor(data: Omit<GameData, 'type'>) {
+  public constructor(protected _deps: GameKeeperDeps, data: Omit<GameData, 'type'>) {
     super(data.id)
     this.name = data.name
     this.scoring = data.scoring
-
-    if (data.playthroughs) {
-      this.bindPlaythroughs(data.playthroughs as T[])
-    }
   }
 
   public abstract readonly type: GameType
@@ -55,35 +49,12 @@ export abstract class Game<T extends Playthrough = Playthrough>
   }
 
   public get hasPlays(): boolean {
-    if (!this._playthroughs) {
-      throw new Error('playthroughs not loaded')
-    }
-
-    return this._playthroughs.length > 0
+    return this.playthroughs.length > 0
   }
 
   public get playthroughs(): ReadonlyArray<T> {
-    if (!this._playthroughs) {
-      throw new Error('playthroughs not loaded')
-    }
-
-    return this._playthroughs
-  }
-
-  public bindPlaythroughs(playthroughs: ReadonlyArray<T>) {
-    this._playthroughs = [...playthroughs].sort(playthroughCompareFn)
-  }
-
-  protected addPlaythrough(playthrough: T) {
-    if (!this._playthroughs) {
-      this._playthroughs = [playthrough]
-      return
-    }
-
-    const index = ArrayUtils.sortedIndex(this._playthroughs,
-      playthrough, playthroughCompareFn)
-
-    this._playthroughs.splice(index, 0, playthrough)
+    return Object.values(this._deps.builder.data.playthroughs)
+      .filter(playthrough => playthrough.gameId === this.id) as T[]
   }
 
   public toData(): GameData {

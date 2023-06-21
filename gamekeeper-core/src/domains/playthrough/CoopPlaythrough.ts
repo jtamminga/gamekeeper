@@ -1,3 +1,4 @@
+import { GameKeeperDeps } from '@core'
 import { CoopGame } from '../game'
 import { Playthrough, PlaythroughData } from './Playthrough'
 
@@ -15,10 +16,20 @@ export class CoopPlaythrough extends Playthrough {
   public readonly playersWon: boolean
   public readonly score?: number
 
-  public constructor(data: CoopPlaythroughData) {
-    super(data)
+  public constructor(deps: GameKeeperDeps, data: CoopPlaythroughData) {
+    super(deps, data)
     this.playersWon = data.playersWon
     this.score = data.score
+  }
+
+  public get game(): CoopGame {
+    return super.game as CoopGame
+  }
+
+  public get winnerName(): string {
+    return this.playersWon
+      ? 'players'
+      : 'game'
   }
 
 }

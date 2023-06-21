@@ -1,7 +1,7 @@
-import { GameMap } from '@repos'
 import { Playthrough } from 'domains/playthrough'
+import { Game } from '@domains'
 
 export type InputData = {
-  games: GameMap,
+  games: ReadonlyArray<Game>,
   playthroughs: ReadonlyArray<Playthrough>
 }

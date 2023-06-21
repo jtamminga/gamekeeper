@@ -1,7 +1,6 @@
-import { GameMap, GameRepository } from '@repos'
-import { Playthrough } from 'domains/playthrough'
-import { injectable } from 'tsyringe'
-import { Game, GameId } from './Game'
+import { GameKeeperDeps } from '@core'
+import { GameFactory } from '@factories'
+import { Game, GameData, GameId } from './Game'
 
 
 // types
@@ -11,26 +10,30 @@ type AllOptions = {
 
 
 // class
-@injectable()
 export class Games {
 
   public constructor(
-    private _gameRepo: GameRepository
+    private _deps: GameKeeperDeps
   ) { }
 
-  public async all(): Promise<readonly Game[]> {
-    return this._gameRepo.getGames()
+  public async hydrate(): Promise<void> {
+    const dtos = await this._deps.service.gameService.getGames()
+    this._deps.builder.bindGames(dtos)
   }
 
-  public async asMap(): Promise<GameMap> {
-    return this._gameRepo.getGamesMap()
+  public all(): ReadonlyArray<Game> {
+    return Object.values(this._deps.builder.data.games)
   }
 
-  public async get<T extends Game>(id: GameId): Promise<T> {
-    return this._gameRepo.getGame<T>(id)
+  public get<T extends Game>(id: GameId): T {
+    const data = this._deps.builder.data
+    return data.games[id] as T
   }
 
-  public async add(game: Game): Promise<void> {
-    await this._gameRepo.addGame(game)
+  public async create(data: GameData): Promise<Game> {
+    const dto = await this._deps.service.gameService.addGame(data)
+    this._deps.builder.bindGame(dto)
+    return this._deps.builder.data.games[dto.id.toString() as GameId]
   }
+
 }

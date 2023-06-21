@@ -1,40 +1,20 @@
-import chalk from 'chalk'
 import {
-  CoopPlaythrough,
-  Game,
+  GameKeeper,
   isCoopStatsData,
   isVsStatsData,
-  Player,
-  PlayerMap,
-  Playthrough,
-  StatsData,
-  VsPlaythrough
+  StatsData
 } from 'gamekeeper-core'
 
 
 // utils
 export namespace Utils {
 
-  export function winnerName(playthrough: Playthrough, players: PlayerMap): string {
-    if (playthrough instanceof CoopPlaythrough) {
-      return playthrough.playersWon
-        ? 'players'
-        : 'game'
-    }
-    else if (playthrough instanceof VsPlaythrough) {
-      return players.get(playthrough.winnerId)!.name
-    }
-    else {
-      throw new Error('unsupported playthrough type')
-    }
-  }
-
   export type WinrateData = {
     winner: string
     winrate: string
   }
 
-  export function winrate(stats: StatsData, players: PlayerMap): WinrateData {
+  export function winrate(stats: StatsData, gamekeeper: GameKeeper): WinrateData {
     if (isCoopStatsData(stats)) {
       return {
         winner: 'players',
@@ -43,7 +23,7 @@ export namespace Utils {
     }
     else if (isVsStatsData(stats)) {
       const { playerId, winrate } = stats.bestWinrate!
-      const player = players.get(playerId)!
+      const player = gamekeeper.players.get(playerId)
       return {
         winner: player.name,
         winrate: Math.round(winrate * 100) + '%'

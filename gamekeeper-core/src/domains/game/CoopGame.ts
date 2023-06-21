@@ -1,4 +1,4 @@
-import { CoopPlaythrough, CoopPlaythroughData } from '../playthrough'
+import { CoopPlaythrough, CoopPlaythroughData, PlaythroughId } from '../playthrough'
 import { CoopGameStats } from './CoopGameStats'
 import { Game, GameType } from './Game'
 
@@ -8,19 +8,10 @@ export class CoopGame extends Game<CoopPlaythrough> {
 
   public readonly type = GameType.COOP
 
-  public record(data: Omit<CoopPlaythroughData, 'gameId'>): CoopPlaythrough {
-    if (!this.id) {
-      throw new Error('game is not saved yet')
-    }
-
-    const playthrough = new CoopPlaythrough({
-      gameId: this.id,
-      ...data
-    })
-
-    this.addPlaythrough(playthrough)
-
-    return playthrough
+  public async record(data: Omit<CoopPlaythroughData, 'gameId'>): Promise<CoopPlaythrough> {
+    const dto = await this._deps.service.playthroughService.addPlaythrough({ ...data, gameId: this.id! })
+    this._deps.builder.bindPlaythrough(dto)
+    return this._deps.builder.data.playthroughs[dto.id.toString() as PlaythroughId] as CoopPlaythrough
   }
 
   public createStats(): CoopGameStats {

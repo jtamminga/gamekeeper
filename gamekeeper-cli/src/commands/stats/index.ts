@@ -9,10 +9,10 @@ export default class StatsCommand extends GameKeeperCommand {
 
   public async run(): Promise<void> {
     
-    const data = await this.gamekeeper.reports.forYear()
+    // const data = await this.gamekeeper.reports.forYear()
 
-    this.log('num played', data.numPlays)
-    this.log('num games played', data.numGamesPlayed)
+    // this.log('num played', data.numPlays)
+    // this.log('num games played', data.numGamesPlayed)
   }
 
 }

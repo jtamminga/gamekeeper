@@ -1,22 +1,30 @@
-import { PlaythroughAllOptions, PlaythroughRepository } from '@repos'
-import { injectable } from 'tsyringe'
-import { Playthrough } from './Playthrough'
+import { GameKeeperDeps } from '@core'
+import { PlaythroughQueryOptions } from '@services'
+import { CoopPlaythroughData } from './CoopPlaythrough'
+import { Playthrough, PlaythroughId } from './Playthrough'
+import { VsPlaythroughData } from './VsPlaythrough'
 
 
 // class
-@injectable()
 export class Playthroughs {
 
   constructor(
-    private _playthroughRepo: PlaythroughRepository
+    private _deps: GameKeeperDeps
   ) { }
 
-  public async all(options?: PlaythroughAllOptions): Promise<readonly Playthrough[]> {
-    return this._playthroughRepo.getPlaythroughs(options)
+  public async hydrate(options?: PlaythroughQueryOptions): Promise<void> {
+    const dtos = await this._deps.service.playthroughService.getPlaythroughs(options)
+    this._deps.builder.bindPlaythroughs(dtos)
   }
 
-  public async add(playthrough: Playthrough): Promise<void> {
-    await this._playthroughRepo.addPlaythrough(playthrough)
+  public all(): ReadonlyArray<Playthrough> {
+    return Object.values(this._deps.builder.data.playthroughs)
+  }
+
+  public async create(data: VsPlaythroughData | CoopPlaythroughData): Promise<Playthrough> {
+    const dto = await this._deps.service.playthroughService.addPlaythrough(data)
+    this._deps.builder.bindPlaythrough(dto)
+    return this._deps.builder.data.playthroughs[dto.id.toString() as PlaythroughId]
   }
 
 }

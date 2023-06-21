@@ -1,18 +1,15 @@
 import { GameKeeper } from '@domains'
-import { DbGameRepository, DbPlayerRepository, DbPlaythroughRepository } from '@repos'
-import { DataService } from '@services'
+import { DataBuilder, DataService, GameKeeperService } from '@services'
 
 
 // factory
 export namespace GameKeeperFactory {
-  export function create(path: string): GameKeeper {
+  export function create(path: string) {
 
     const dataService = new DataService(path)
+    const service = new GameKeeperService(dataService)
+    const builder = new DataBuilder(service)
 
-    return new GameKeeper({
-      gameRepo: new DbGameRepository(dataService),
-      playerRepo: new DbPlayerRepository(dataService),
-      playthroughRepo: new DbPlaythroughRepository(dataService)
-    })
+    return new GameKeeper({ service, builder })
   }
 }

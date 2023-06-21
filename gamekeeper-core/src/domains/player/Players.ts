@@ -1,26 +1,26 @@
-import { PlayerRepository } from '@repos'
-import { injectable } from 'tsyringe'
+import { GameKeeperDeps } from '@core'
 import { Player, PlayerId } from './Player'
 
 
 // class
-@injectable()
 export class Players {
 
   public constructor(
-    private _repo: PlayerRepository
+    private _deps: GameKeeperDeps
   ) { }
 
-  public async all(): Promise<readonly Player[]> {
-    return this._repo.getPlayers()
+  public async hydrate(): Promise<void> {
+    const dtos = await this._deps.service.playerService.getPlayers()
+    this._deps.builder.bindPlayers(dtos)
   }
 
-  public async get(id: PlayerId): Promise<Player> {
-    return this._repo.getPlayer(id)
+  public all(): ReadonlyArray<Player> {
+    return Object.values(this._deps.builder.data.players)
   }
 
-  public async asMap(): Promise<ReadonlyMap<PlayerId, Player>> {
-    return this._repo.getPlayersMap()
+  public get(id: PlayerId): Player {
+    const data = this._deps.builder.data
+    return data.players[id]
   }
 
 }

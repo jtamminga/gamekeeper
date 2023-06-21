@@ -1,17 +1,20 @@
-import { CoopGame, Game, GameData, GameType, VsGame } from '@domains'
+import { GameKeeperDeps } from '@core'
+import { CoopGame, Game, GameId, GameType, VsGame } from '@domains'
+import { GameDto } from '@services'
 
 
 // factory
 export namespace GameFactory {
 
-  export function create({ type, ...data }: GameData): Game {
+  export function create(deps: GameKeeperDeps, { id: gameId, type, ...data }: GameDto): Game {
+    const id = gameId.toString() as GameId
 
     if (type === GameType.VS) {
-      return new VsGame(data)
+      return new VsGame(deps, {id, ...data})
     }
 
     else if (type === GameType.COOP) {
-      return new CoopGame(data)
+      return new CoopGame(deps, {id, ...data})
     }
 
     else {

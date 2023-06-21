@@ -21,17 +21,11 @@ export default class ListGames extends GameKeeperCommand {
 
   public async run(): Promise<void> {
 
-    // get data
-    const [games, players, playthroughs] = await Promise.all([
-      this.gamekeeper.games.all(),
-      this.gamekeeper.players.asMap(),
-      this.gamekeeper.playthroughs.all()
-    ])
+    // hydrate
+    await this.gamekeeper.hydrate()
 
-    // bind playthroughs
-    games.forEach(game =>
-      game.bindPlaythroughs(playthroughs.filter(playthrough =>
-        playthrough.gameId === game.id)))
+    // get games
+    const games = this.gamekeeper.games.all()
 
     // return if no games
     if (games.length === 0) {
@@ -69,8 +63,10 @@ export default class ListGames extends GameKeeperCommand {
             return chalk.gray.italic('no plays')
           }
 
-          const { winner, winrate } = Utils.winrate(row.stats, players)
-          return `${winner}: ${winrate}`
+          return 'not imp'
+
+          // const { winner, winrate } = Utils.winrate(row.stats, players)
+          // return `${winner}: ${winrate}`
         }
       }
     })

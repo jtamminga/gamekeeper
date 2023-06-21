@@ -2,7 +2,7 @@ import fuzzy from 'fuzzy'
 import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
-import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, PlayerMap, isVsStatsData, ArrayUtils, Scores, ScoreData } from 'gamekeeper-core'
+import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, isVsStatsData, ArrayUtils, Scores, ScoreData, GameKeeper } from 'gamekeeper-core'
 import chalk from 'chalk'
 import { Utils } from '../../utils'
 import { format, isMatch, parse } from 'date-fns'
@@ -28,22 +28,25 @@ export default class PlaythroughCommand extends GameKeeperCommand {
 
   public async run(): Promise<void> {
 
+    // hydrate players and games
+    await Promise.all([
+      this.gamekeeper.players.hydrate(),
+      this.gamekeeper.games.hydrate()
+    ])
+
     // get the date played on
     const playedOn = await this.selectDateFlow()
 
     // get all games
     const game = await this.selectGameFlow()
 
-    // get all players and playthroughs
-    const [players, playthroughs] = await Promise.all([
-      this.gamekeeper.players.asMap(),
-      this.gamekeeper.playthroughs.all({ gameId: game.id })
-    ])
-    const playerIds = Array.from(players.keys())
+    // hydrate playthroughs for selected game
+    await this.gamekeeper.playthroughs.hydrate({ gameId: game.id })
 
-    // bind playthroughs to game
-    game.bindPlaythroughs(playthroughs)
-    
+    // get player ids
+    const playerIds = this.gamekeeper.players.all()
+      .map(player => player.id!)
+
     // if there is a winner explicity inputted
     let explicitWinner = false
 
@@ -57,7 +60,8 @@ export default class PlaythroughCommand extends GameKeeperCommand {
         ...answers
       } = await this.vsGameFlow(game)
 
-      playthrough = game.record({
+
+      playthrough = await game.record({
         playerIds,
         playedOn,
         ...answers
@@ -68,7 +72,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     // coop game
     else if (game instanceof CoopGame) {
       const answers = await this.coopGameFlow(game)
-      playthrough = game.record({
+      playthrough = await game.record({
         playerIds,
         playedOn,
         ...answers
@@ -86,12 +90,9 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       this.log(
         chalk.green('> ')
         + chalk.bold('winner: ')
-        + chalk.cyanBright(Utils.winnerName(playthrough, players))
+        + chalk.cyanBright(playthrough.winnerName)
       )
     }
-
-    // save the playthrough
-    await this.gamekeeper.playthroughs.add(playthrough)
 
     // show successfully saved
     this.success(`added playthough`)
@@ -102,7 +103,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       .getData()
 
     // show stats summary
-    this.showStats(stats, players)
+    this.showStats(stats)
   }
 
   private async selectDateFlow(): Promise<Date> {
@@ -243,7 +244,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     }
   }
 
-  private showStats(stats: StatsData, players: PlayerMap) {
+  private showStats(stats: StatsData) {
     this.log()
     this.log(chalk.cyanBright('latest stats:'))
 
@@ -251,17 +252,17 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     this.logItem('plays', stats.playCount)
 
     // show best win rate
-    const {winner, winrate} = Utils.winrate(stats, players)
+    const {winner, winrate} = Utils.winrate(stats, this.gamekeeper)
     this.logItem('winrate', `${chalk.underline(winner)} ${winrate}`)
 
     // winsteak info if any
-    const winstreak = this.winstreakDesc(stats, players)
+    const winstreak = this.winstreakDesc(stats)
     if (winstreak) {
       this.logItem('streak', winstreak)
     }
   }
 
-  private winstreakDesc(stats: StatsData, players: PlayerMap): string | undefined {
+  private winstreakDesc(stats: StatsData): string | undefined {
     if (!isVsStatsData(stats)) {
       return
     }
@@ -271,7 +272,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     const lastStreak = ArrayUtils.last(stats.winstreaks)
     if (lastStreak) {
       const {playerId, streak} = lastStreak
-      const playerName = players.get(playerId)!.name
+      const playerName = this.gamekeeper.players.get(playerId).name
       if (streak > 1) {
         return `${chalk.underline(playerName)} has a winstreak of ${chalk.yellow(streak)}!`
       }
@@ -281,8 +282,8 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       const last = stats.winstreaks[numStreaks - 1]
       const secondLast = stats.winstreaks[numStreaks - 2]
       if (last.streak === 1 && secondLast.streak > 1) {
-        const lastPlayer = players.get(last.playerId)!.name
-        const secondLastPlayer = players.get(secondLast.playerId)!.name
+        const lastPlayer = this.gamekeeper.players.get(last.playerId).name
+        const secondLastPlayer = this.gamekeeper.players.get(secondLast.playerId).name
         return `${chalk.underline(lastPlayer)} stopped ${chalk.underline(secondLastPlayer)}'s winstreak of ${chalk.yellow(secondLast.streak)}!`
       }
     }

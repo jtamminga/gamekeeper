@@ -1,5 +1,4 @@
 import { Range } from '@core'
-import { GameMap, PlayerMap } from '@repos'
 import { GameKeeper } from '../GameKeeper'
 import { Playthrough } from '../playthrough'
 import {
@@ -10,8 +9,8 @@ import {
 
 // type
 export type SummaryReportData = {
-  players: PlayerMap
-  games: GameMap
+  players: any[]
+  games: any[]
   playthroughs: ReadonlyArray<Playthrough>
   numPlays: number
   numGamesPlayed: number
@@ -29,23 +28,23 @@ export class SummaryReport {
   public async getData(): Promise<SummaryReportData> {
 
     // get all needed data
-    const [players, games, playthroughs] = await Promise.all([
-      this.gameKeeper.players.asMap(),
-      this.gameKeeper.games.asMap(),
-      this.gameKeeper.playthroughs.all({
-        fromDate: this.dateRange.from,
-        toDate: this.dateRange.to
-      })
-    ])
+    // const [players, games, playthroughs] = await Promise.all([
+    //   this.gameKeeper.players.asMap(),
+    //   this.gameKeeper.games.asMap(),
+    //   this.gameKeeper.playthroughs.all({
+    //     fromDate: this.dateRange.from,
+    //     toDate: this.dateRange.to
+    //   })
+    // ])
 
-    // data for calculations
-    const data = { games, playthroughs }
+    // // data for calculations
+    const data = { games: [], playthroughs: [] }
 
     // return
     return {
-      players,
-      games,
-      playthroughs,
+      players: [],
+      games: [],
+      playthroughs: [],
       numPlays: totalPlays(data),
       numGamesPlayed: totalGamesPlayed(data)
     }

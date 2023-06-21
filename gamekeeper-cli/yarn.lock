@@ -2448,25 +2448,21 @@ fuzzy@^0.1.3:
   resolved "https://registry.yarnpkg.com/fuzzy/-/fuzzy-0.1.3.tgz#4c76ec2ff0ac1a36a9dccf9a00df8623078d4ed8"
   integrity sha512-/gZffu4ykarLrCiP3Ygsa86UAo1E5vEVlvTrpkKywXSbP9Xhln3oSp9QSV57gEq3JFFpGJ4GZ+5zdEp3FcUh4w==
 
-gamekeeper-core@./gamekeeper-core-v1.0.71.tgz:
-  version "1.0.71"
-  resolved "./gamekeeper-core-v1.0.71.tgz#33e34161aa091dabda9cbde136b6da7727e48611"
+gamekeeper-core@./gamekeeper-core-v1.0.80.tgz:
+  version "1.0.80"
+  resolved "./gamekeeper-core-v1.0.80.tgz#1f1794abea83e0df467ebaefd709ff277be45558"
   dependencies:
     date-fns "^2.29.3"
-    reflect-metadata "^0.1.13"
     sqlite "^4.1.2"
     sqlite3 "^5.1.2"
-    tsyringe "^4.7.0"
 
-gamekeeper-core@./gamekeeper-core-v1.0.72.tgz:
-  version "1.0.72"
-  resolved "./gamekeeper-core-v1.0.72.tgz#4cbb6528c3612fc7ff0e0457a0d1260a1ff1d101"
+gamekeeper-core@./gamekeeper-core-v1.0.81.tgz:
+  version "1.0.81"
+  resolved "./gamekeeper-core-v1.0.81.tgz#2e33ae9ee0d95d41eb28093a32379cb952c34480"
   dependencies:
     date-fns "^2.29.3"
-    reflect-metadata "^0.1.13"
     sqlite "^4.1.2"
     sqlite3 "^5.1.2"
-    tsyringe "^4.7.0"
 
 gauge@^3.0.0:
   version "3.0.2"
@@ -4399,11 +4395,6 @@ redeyed@~2.1.0:
   dependencies:
     esprima "~4.0.0"
 
-reflect-metadata@^0.1.13:
-  version "0.1.13"
-  resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.13.tgz#67ae3ca57c972a2aa1642b10fe363fe32d49dc08"
-  integrity sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==
-
 regexp-tree@^0.1.23, regexp-tree@~0.1.1:
   version "0.1.24"
   resolved "https://registry.npmjs.org/regexp-tree/-/regexp-tree-0.1.24.tgz"
@@ -5083,7 +5074,7 @@ ts-node@^10.9.1:
     v8-compile-cache-lib "^3.0.1"
     yn "3.1.1"
 
-tslib@^1.8.1, tslib@^1.9.3:
+tslib@^1.8.1:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
@@ -5099,13 +5090,6 @@ tsutils@^3.21.0:
   integrity sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==
   dependencies:
     tslib "^1.8.1"
-
-tsyringe@^4.7.0:
-  version "4.7.0"
-  resolved "https://registry.yarnpkg.com/tsyringe/-/tsyringe-4.7.0.tgz#aea0a9d565385deebb6def60cda342b15016f283"
-  integrity sha512-ncFDM1jTLsok4ejMvSW5jN1VGPQD48y2tfAR0pdptWRKYX4bkbqPt92k7KJ5RFJ1KV36JEs/+TMh7I6OUgj74g==
-  dependencies:
-    tslib "^1.9.3"
 
 tunnel-agent@^0.6.0:
   version "0.6.0"
