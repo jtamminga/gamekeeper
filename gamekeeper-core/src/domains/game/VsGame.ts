@@ -27,8 +27,8 @@ export class VsGame extends Game<VsPlaythrough> {
     }
   }
 
-  public createStats(): VsGameStats {
-    return new VsGameStats(this)
+  public getStats(): VsGameStats {
+    return new VsGameStats(this._deps, this)
   }
 
 }

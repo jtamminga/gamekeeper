@@ -14,8 +14,8 @@ export class CoopGame extends Game<CoopPlaythrough> {
     return this._deps.builder.data.playthroughs[dto.id.toString() as PlaythroughId] as CoopPlaythrough
   }
 
-  public createStats(): CoopGameStats {
-    return new CoopGameStats(this)
+  public getStats(): CoopGameStats {
+    return new CoopGameStats(this._deps, this)
   }
 
 }

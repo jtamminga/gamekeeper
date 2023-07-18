@@ -30,6 +30,10 @@ export class VsPlaythrough extends Playthrough {
     return super.game as VsGame
   }
 
+  public didWinBy(playerId: PlayerId): boolean {
+    return this.winnerId === playerId
+  }
+
   public get winnerName(): string {
     return this._deps.builder.data.players[this.winnerId].name
   }

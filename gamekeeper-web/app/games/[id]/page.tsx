@@ -9,8 +9,8 @@ type GamePageProps = {
 
 // page
 export default async function GamePage({ params }: GamePageProps) {
-  const game = await gamekeeper.games.get(params.id)
-  const playthroughs = await gamekeeper.playthroughs.all({ gameId: game.id })
+  await gamekeeper.hydrate()
+  const game = gamekeeper.games.get(params.id)
 
   return (
     <div>
@@ -19,14 +19,4 @@ export default async function GamePage({ params }: GamePageProps) {
       {/* <Record gameData={gameData} /> */}
     </div>
   )
-}
-
-
-// static params
-export async function generateStaticParams() {
-  const games = await gamekeeper.games.all()
-
-  return games.map(game => ({
-    id: game.id
-  }))
 }

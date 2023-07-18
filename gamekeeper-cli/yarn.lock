@@ -2448,17 +2448,17 @@ fuzzy@^0.1.3:
   resolved "https://registry.yarnpkg.com/fuzzy/-/fuzzy-0.1.3.tgz#4c76ec2ff0ac1a36a9dccf9a00df8623078d4ed8"
   integrity sha512-/gZffu4ykarLrCiP3Ygsa86UAo1E5vEVlvTrpkKywXSbP9Xhln3oSp9QSV57gEq3JFFpGJ4GZ+5zdEp3FcUh4w==
 
-gamekeeper-core@./gamekeeper-core-v1.0.80.tgz:
-  version "1.0.80"
-  resolved "./gamekeeper-core-v1.0.80.tgz#1f1794abea83e0df467ebaefd709ff277be45558"
+gamekeeper-core@./gamekeeper-core-v1.0.81.tgz:
+  version "1.0.81"
+  resolved "./gamekeeper-core-v1.0.81.tgz#2e33ae9ee0d95d41eb28093a32379cb952c34480"
   dependencies:
     date-fns "^2.29.3"
     sqlite "^4.1.2"
     sqlite3 "^5.1.2"
 
-gamekeeper-core@./gamekeeper-core-v1.0.81.tgz:
-  version "1.0.81"
-  resolved "./gamekeeper-core-v1.0.81.tgz#2e33ae9ee0d95d41eb28093a32379cb952c34480"
+gamekeeper-core@./gamekeeper-core-v1.0.82.tgz:
+  version "1.0.82"
+  resolved "./gamekeeper-core-v1.0.82.tgz#13266fbf5460c9786e891bd414dd0cde8489eba5"
   dependencies:
     date-fns "^2.29.3"
     sqlite "^4.1.2"

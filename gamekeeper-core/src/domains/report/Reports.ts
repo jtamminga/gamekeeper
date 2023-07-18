@@ -1,6 +1,6 @@
 import { endOfYear, setYear, startOfYear } from 'date-fns'
 import { GameKeeper } from '../GameKeeper'
-import { SummaryReport, SummaryReportData } from './SummaryReport'
+import { SummaryReport, SummaryReportData } from './Summary'
 
 
 // class

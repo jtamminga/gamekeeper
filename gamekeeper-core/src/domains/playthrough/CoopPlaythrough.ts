@@ -1,6 +1,7 @@
 import { GameKeeperDeps } from '@core'
 import { CoopGame } from '../game'
 import { Playthrough, PlaythroughData } from './Playthrough'
+import { PlayerId } from 'web'
 
 
 // types
@@ -30,6 +31,10 @@ export class CoopPlaythrough extends Playthrough {
     return this.playersWon
       ? 'players'
       : 'game'
+  }
+
+  public didWinBy(playerId: PlayerId): boolean {
+    return this.playersWon && this.playerIds.includes(playerId)
   }
 
 }

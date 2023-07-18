@@ -29,4 +29,8 @@ export class GameKeeper {
     ])
   }
 
+  public getSummary() {
+    
+  }
+
 }

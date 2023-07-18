@@ -1,7 +1,8 @@
 import { PlayerId } from 'domains/player'
 import { CoopPlaythrough } from '../playthrough'
-import { GameType } from './Game'
+import { Game, GameType } from './Game'
 import { GameStats, StatsData } from './GameStats'
+import { GameKeeperDeps } from '@core'
 
 
 // interface
@@ -13,25 +14,18 @@ export interface CoopStatsData extends StatsData {
 // coop game stats
 export class CoopGameStats extends GameStats<CoopPlaythrough> {
 
-  protected isWin(playerId: PlayerId, playthough: CoopPlaythrough): boolean {
-    return playthough.playerIds.includes(playerId) && playthough.playersWon
-  }
+  public readonly playersWinrate: number
 
-  public override getData(): CoopStatsData {
-    // get data
-    const data = super.getData()
-    
+  public constructor(_deps: GameKeeperDeps, _game: Game<CoopPlaythrough>) {
+    super(_deps, _game)
+
     // calculate players average winrate vs game
     let total = 0
-    for (const [_, winrate] of data.winrates) {
+    for (const [_, winrate] of this.winrates.map) {
       total += winrate
     }
 
-    // return data
-    return {
-      ...data,
-      playersWinrate: total / data.winrates.size
-    }
+    this.playersWinrate = total / this.winrates.map.size
   }
 
 }

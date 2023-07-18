@@ -1,5 +1,5 @@
 import { ArrayUtils, GameKeeperDeps, Opaque, Serializable } from '@core'
-import { Playthrough } from '../playthrough'
+import { Playthrough, playthroughCompareFn } from '../playthrough'
 import { Model } from '../Model'
 import { GameStats } from './GameStats'
 
@@ -42,7 +42,7 @@ export abstract class Game<T extends Playthrough = Playthrough>
 
   public abstract readonly type: GameType
 
-  public abstract createStats(): GameStats<T>
+  public abstract getStats(): GameStats<T>
 
   public get hasScoring(): boolean {
     return this.scoring !== ScoringType.NO_SCORE
@@ -54,7 +54,8 @@ export abstract class Game<T extends Playthrough = Playthrough>
 
   public get playthroughs(): ReadonlyArray<T> {
     return Object.values(this._deps.builder.data.playthroughs)
-      .filter(playthrough => playthrough.gameId === this.id) as T[]
+      .filter(playthrough => playthrough.gameId === this.id)
+      .sort(playthroughCompareFn) as T[]
   }
 
   public toData(): GameData {
@@ -66,10 +67,4 @@ export abstract class Game<T extends Playthrough = Playthrough>
     }
   }
 
-}
-
-
-// helper
-function playthroughCompareFn(a: Playthrough, b: Playthrough): number {
-  return a.playedOn.getTime() - b.playedOn.getTime()
 }

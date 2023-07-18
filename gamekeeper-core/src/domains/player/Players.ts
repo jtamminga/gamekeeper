@@ -1,5 +1,5 @@
 import { GameKeeperDeps } from '@core'
-import { Player, PlayerId } from './Player'
+import { Player, PlayerData, PlayerId } from './Player'
 
 
 // class
@@ -9,9 +9,10 @@ export class Players {
     private _deps: GameKeeperDeps
   ) { }
 
-  public async hydrate(): Promise<void> {
+  public async hydrate(): Promise<Players> {
     const dtos = await this._deps.service.playerService.getPlayers()
     this._deps.builder.bindPlayers(dtos)
+    return this
   }
 
   public all(): ReadonlyArray<Player> {
@@ -21,6 +22,18 @@ export class Players {
   public get(id: PlayerId): Player {
     const data = this._deps.builder.data
     return data.players[id]
+  }
+
+  public toData(): ReadonlyArray<PlayerData> {
+    return this.all().map(player => player.toData())
+  }
+
+  public toMapData(): Readonly<Record<PlayerId, PlayerData>> {
+    const data: Record<PlayerId, PlayerData> = { }
+    for (const playerData of this.toData()) {
+      data[playerData.id!] = playerData
+    }
+    return data
   }
 
 }

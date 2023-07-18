@@ -1,16 +1,25 @@
-import { apiClient } from 'app/utils'
-import { RecordForm } from './form'
+import { gamekeeper } from 'utils'
+import { RecordForm } from './_components/RecordForm'
 
 
 export default async function RecordPage() {
-  const data = await apiClient.getRecord()
+
+  const { games, players } = gamekeeper
+
+  await Promise.all([
+    games.hydrate(),
+    players.hydrate()
+  ])
 
   return (
     <div>
       record:
       
-      <RecordForm {...data} />
+      <RecordForm
+        games={games.toMapData()}
+        players={players.toMapData()}
+      />
 
     </div>
   )
-}
+} 

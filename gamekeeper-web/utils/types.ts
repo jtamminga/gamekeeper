@@ -1,4 +1,4 @@
-import { GameData, PlayerData } from 'gamekeeper-core'
+import { GameData, GameId, PlayerData, PlayerId } from 'gamekeeper-core'
 
 
 // types
@@ -12,6 +12,6 @@ export type RecordApiResponse = {
 }
 
 export type RecordData = {
-  games: ReadonlyArray<GameData>
-  players: ReadonlyArray<PlayerData>
+  games: Readonly<Record<GameId, GameData>>
+  players: Readonly<Record<PlayerId, PlayerData>>
 }

@@ -4,13 +4,15 @@ import { gamekeeper } from 'utils'
 
 // page 
 export default async function GamesPage() {
-  const games = await gamekeeper.games.all()
+  await gamekeeper.games.hydrate()
+
+  const games = gamekeeper.games.all()
 
   return (
     <div>
       {games.map(game =>
-        <Link href={`/games/${game.id}`}>
-          <div key={game.id}>{game.name}</div>
+        <Link key={game.id} href={`/games/${game.id}`}>
+          {game.name}
         </Link>
       )}
     </div>
