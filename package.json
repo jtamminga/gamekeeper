@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "description": "Gamekeeper mono repo",
+  "workspaces": ["packages/*", "apps/*"],
+  "packageManager": "yarn@1.22.19"
+}

@@ -4,3 +4,4 @@ gamekeeper*.tgz
 *.db
 .vscode
 dist
+.turbo
