@@ -1,8 +1,8 @@
 import { GameKeeperDeps } from '@core'
 import { VsGame } from '../game'
-import { PlayerId } from '../player'
 import { Playthrough, PlaythroughData } from './Playthrough'
 import { ScoreData, Scores } from './Scores'
+import { PlayerId } from '@services'
 
 
 // types

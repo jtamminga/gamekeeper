@@ -1,47 +1,29 @@
 import { GameKeeperDeps } from '@core'
-import { CoopPlaythrough, GameId, GameType, PlayerId, Playthrough, PlaythroughId, ScoreData, VsPlaythrough } from '@domains'
-import { PlaythroughDto } from '@services'
+import { CoopPlaythrough, Playthrough, VsPlaythrough } from '@domains'
+import { GameType, PlayerId, PlaythroughDto, ScoreDto } from '@services'
 
-
-type SerializedScore = {
-  id: string
-  s: number
-}
 
 export namespace PlaythroughFactory {
-
   export function create(deps: GameKeeperDeps, dto: PlaythroughDto): Playthrough {
 
-    // grab values
-    const id = dto.id.toString() as PlaythroughId
-    const gameId = dto.gameId.toString() as GameId
-    const playerIds = JSON.parse(dto.players) as PlayerId[]
-    const playedOn = new Date(dto.playedOn)
-  
-    if (dto.gameType === GameType.VS) {
-      const winner = dto.result.toString() as PlayerId
-      let scores = dto.scores ? deserializeScores(dto.scores) : undefined
-  
+    if (dto.gameType === GameType.VS) {  
       return new VsPlaythrough(deps, {
-        id,
-        gameId,
-        playerIds,
-        playedOn,
-        winnerId: winner,
-        scores
+        id: dto.id,
+        gameId: dto.gameId,
+        playerIds: dto.players,
+        playedOn: dto.playedOn,
+        winnerId: dto.result as PlayerId,
+        scores: dto.scores as ScoreDto[]
       })
     }
-    else if (dto.gameType === GameType.COOP) {
-      const playersWon = dto.result === 1
-      const score = dto.scores === undefined ? undefined : Number(dto.scores)
-  
+    else if (dto.gameType === GameType.COOP) {  
       return new CoopPlaythrough(deps, {
-        id,
-        gameId,
-        playerIds,
-        playedOn,
-        playersWon,
-        score
+        id: dto.id,
+        gameId: dto.gameId,
+        playerIds: dto.players,
+        playedOn: dto.playedOn,
+        playersWon: dto.result as boolean,
+        score: dto.scores as number
       })
     }
     else {
@@ -49,11 +31,4 @@ export namespace PlaythroughFactory {
     }
   }
 
-  function deserializeScores(scores: string): readonly ScoreData[] {
-    const parsed = JSON.parse(scores) as SerializedScore[]
-    return parsed.map<ScoreData>(score => ({
-      playerId: score.id as PlayerId,
-      score: score.s
-    }))
-  }
 }

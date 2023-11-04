@@ -1,8 +1,8 @@
 import { ArrayUtils, GameKeeperDeps } from '@core'
-import { PlayerId } from '../player'
 import { Playthrough } from '../playthrough'
-import { Game, GameType } from './Game'
+import { Game } from './Game'
 import { Winrates } from 'domains/stats'
+import { GameType, PlayerId } from '@services'
 
 
 // types

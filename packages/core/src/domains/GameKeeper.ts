@@ -1,5 +1,5 @@
-import { GameKeeperDeps } from '@core'
-import { PlaythroughQueryOptions } from '@services'
+import type { GameKeeperDeps } from '@core'
+import type { PlaythroughQueryOptions } from '@services'
 import { Games } from './game'
 import { Players } from './player'
 import { Playthroughs } from './playthrough'
@@ -27,10 +27,6 @@ export class GameKeeper {
       this.games.hydrate(),
       this.playthroughs.hydrate(options)
     ])
-  }
-
-  public getSummary() {
-    
   }
 
 }

@@ -1,8 +1,8 @@
-import { GameKeeperDeps } from '@core'
-import { PlaythroughQueryOptions } from '@services'
-import { CoopPlaythroughData } from './CoopPlaythrough'
-import { Playthrough, PlaythroughData, PlaythroughId } from './Playthrough'
-import { VsPlaythroughData } from './VsPlaythrough'
+import type { GameKeeperDeps } from '@core'
+import type { PlaythroughQueryOptions } from '@services'
+import type { CoopPlaythroughData } from './CoopPlaythrough'
+import type { Playthrough } from './Playthrough'
+import type { VsPlaythroughData } from './VsPlaythrough'
 
 
 // class
@@ -13,25 +13,24 @@ export class Playthroughs {
   ) { }
 
   public async hydrate(options?: PlaythroughQueryOptions): Promise<Playthroughs> {
-    const dtos = await this._deps.service.playthroughService.getPlaythroughs(options)
-    this._deps.builder.bindPlaythroughs(dtos)
+    const dtos = await this._deps.services.playthroughService.getPlaythroughs(options)
+    this._deps.store.bindPlaythroughs(dtos)
     return this
   }
 
   public all(): ReadonlyArray<Playthrough> {
-    return Object.values(this._deps.builder.data.playthroughs)
-      .sort(playthroughCompareFn)
+    return [...this._deps.store.playthroughs].sort(playthroughCompareFn)
   }
 
   public async create(data: VsPlaythroughData | CoopPlaythroughData): Promise<Playthrough> {
-    const dto = await this._deps.service.playthroughService.addPlaythrough(data)
-    this._deps.builder.bindPlaythrough(dto)
-    return this._deps.builder.data.playthroughs[dto.id.toString() as PlaythroughId]
+    const dto = await this._deps.services.playthroughService.addPlaythrough(data)
+    return this._deps.store.bindPlaythrough(dto)
   }
 
 }
 
 
+// helpers
 export function playthroughCompareFn(a: Playthrough, b: Playthrough): number {
   return a.playedOn.getTime() - b.playedOn.getTime()
 }

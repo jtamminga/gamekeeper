@@ -1,7 +1,7 @@
-import { PlayerId } from 'domains/player'
 import { Playthrough } from 'domains/playthrough'
 import { Winrate } from './Winrate'
 import { GameKeeperDeps } from '@core'
+import { PlayerId } from '@services'
 
 
 type PlayWinData = {

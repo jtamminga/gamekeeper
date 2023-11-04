@@ -1,9 +1,9 @@
-import { Opaque, Serializable } from  '@core'
+import { Serializable } from  '@core'
+import { PlayerId } from '@services'
 import { Model } from 'domains/Model'
 
 
 // type
-export type PlayerId = Opaque<string, 'PlayerId'>
 export interface PlayerData {
   id?: PlayerId
   name: string

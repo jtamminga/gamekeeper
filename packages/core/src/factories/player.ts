@@ -1,9 +1,8 @@
-import { Player, PlayerId } from '@domains'
+import { Player } from '@domains'
 import { PlayerDto } from '@services'
 
 export namespace PlayerFactory {
-  export function create({ id: playerId, ...data }: PlayerDto): Player {
-    const id = playerId.toString() as PlayerId
-    return new Player({id, ...data})
+  export function create(dto: PlayerDto): Player {
+    return new Player(dto)
   }
 }

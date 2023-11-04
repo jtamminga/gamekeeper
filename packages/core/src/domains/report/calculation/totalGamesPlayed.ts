@@ -1,4 +1,4 @@
-import { GameId } from 'domains/game'
+import { GameId } from '@services'
 import { InputData } from './InputData'
 
 export function totalGamesPlayed({playthroughs}: InputData): number {

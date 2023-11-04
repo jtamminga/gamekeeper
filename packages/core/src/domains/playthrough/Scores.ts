@@ -1,5 +1,5 @@
 import { Serializable } from '@core'
-import { PlayerId } from '../player'
+import { PlayerId } from '@services'
 
 
 // type

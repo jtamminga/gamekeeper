@@ -1,15 +1,14 @@
-import { GameKeeperDeps, Opaque } from '@core'
+import { GameKeeperDeps } from '@core'
 import { Model } from '../Model'
-import { Game, GameId } from '../game'
-import { PlayerId } from '../player'
+import { Game } from '../game'
+import { GameId, PlayerId, PlaythroughId } from '@services'
 
 
 // types
-export type PlaythroughId = Opaque<string, 'PlaythroughId'>
 export interface PlaythroughData {
   id?: PlaythroughId
   gameId: GameId
-  playerIds: readonly PlayerId[]
+  playerIds: ReadonlyArray<PlayerId>
   playedOn: Date
 }
 

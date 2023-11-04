@@ -1,5 +1,6 @@
-import { GameKeeperDeps } from '@core'
-import { Game, GameData, GameId } from './Game'
+import type { GameKeeperDeps } from '@core'
+import type { Game, GameData } from './Game'
+import type { GameId } from '@services'
 
 
 // class
@@ -10,24 +11,22 @@ export class Games {
   ) { }
 
   public async hydrate(): Promise<Games> {
-    const dtos = await this._deps.service.gameService.getGames()
-    this._deps.builder.bindGames(dtos)
+    const dtos = await this._deps.services.gameService.getGames()
+    this._deps.store.bindGames(dtos)
     return this
   }
 
   public all(): ReadonlyArray<Game> {
-    return Object.values(this._deps.builder.data.games)
+    return this._deps.store.games
   }
 
   public get<T extends Game>(id: GameId): T {
-    const data = this._deps.builder.data
-    return data.games[id] as T
+    return this._deps.store.getGame(id) as T
   }
 
   public async create(data: GameData): Promise<Game> {
-    const dto = await this._deps.service.gameService.addGame(data)
-    this._deps.builder.bindGame(dto)
-    return this._deps.builder.data.games[dto.id.toString() as GameId]
+    const dto = await this._deps.services.gameService.addGame(data)
+    return this._deps.store.bindGame(dto)
   }
 
   public toData(): ReadonlyArray<GameData> {

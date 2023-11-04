@@ -1,6 +1,6 @@
-import { PlayerId } from 'domains/player'
+import { GameType } from '@services'
 import { CoopPlaythrough } from '../playthrough'
-import { Game, GameType } from './Game'
+import { Game } from './Game'
 import { GameStats, StatsData } from './GameStats'
 import { GameKeeperDeps } from '@core'
 

@@ -1,7 +1,6 @@
 import { GameStats, StatsData } from './GameStats'
-import { PlayerId } from 'domains/player'
 import { VsPlaythrough } from '../playthrough'
-import { GameType } from './Game'
+import { GameType, PlayerId } from '@services'
 
 
 // interface
@@ -18,29 +17,6 @@ export class VsGameStats extends GameStats<VsPlaythrough> {
 
   protected isWin(playerId: PlayerId, playthough: VsPlaythrough): boolean {
     return playerId === playthough.winnerId
-  }
-
-  public override getData(): VsStatsData {
-    // get data
-    const data = super.getData()
-
-    // find best winrate
-    let bestWinrate: Winrate | undefined
-    for (const [playerId, winrate] of data.winrates) {
-      if (bestWinrate === undefined || winrate > bestWinrate.winrate) {
-        bestWinrate = { playerId, winrate }
-      }
-    }
-
-    // get current winstreak
-    const winstreaks = this.getWinstreaks()
-
-    // return data
-    return {
-      ...data,
-      bestWinrate,
-      winstreaks
-    }
   }
 
   public getWinstreaks(): ReadonlyArray<VsWinstreak> {

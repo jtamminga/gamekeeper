@@ -1,23 +1,11 @@
-import { ArrayUtils, GameKeeperDeps, Opaque, Serializable } from '@core'
+import { GameKeeperDeps, Serializable } from '@core'
 import { Playthrough, playthroughCompareFn } from '../playthrough'
 import { Model } from '../Model'
 import { GameStats } from './GameStats'
-
-
-// enum
-export enum GameType {
-  VS = 1,
-  COOP = 2
-}
-export enum ScoringType {
-  HIGHEST_WINS = 1,
-  LOWEST_WINS = 2,
-  NO_SCORE = 3
-}
+import { GameId, GameType, ScoringType } from '@services'
 
 
 // types
-export type GameId = Opaque<string, 'GameId'>
 export interface GameData {
   id?: GameId
   name: string

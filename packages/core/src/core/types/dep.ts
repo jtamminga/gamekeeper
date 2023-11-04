@@ -1,7 +1,8 @@
-import { DataBuilder, GameKeeperService } from '@services'
+import { Store } from '@domains'
+import { Services } from '@services'
 
 // type
 export type GameKeeperDeps = {
-  service: GameKeeperService
-  builder: DataBuilder
+  services: Services
+  store: Store
 }
