@@ -11,7 +11,7 @@ export class DataService {
   ) { }
 
   public async open(): Promise<void> {
-    this._db =  await open({
+    this._db = await open({
       filename: this._path,
       driver: sqlite3.Database
     })

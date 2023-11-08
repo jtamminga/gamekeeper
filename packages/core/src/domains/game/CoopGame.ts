@@ -11,8 +11,7 @@ export class CoopGame extends Game<CoopPlaythrough> {
 
   public async record(data: Omit<CoopPlaythroughData, 'gameId'>): Promise<CoopPlaythrough> {
     const dto = await this._deps.services.playthroughService.addPlaythrough({ ...data, gameId: this.id! })
-    this._deps.builder.bindPlaythrough(dto)
-    return this._deps.builder.data.playthroughs[dto.id.toString() as PlaythroughId] as CoopPlaythrough
+    return this._deps.store.bindPlaythrough(dto) as CoopPlaythrough
   }
 
   public getStats(): CoopGameStats {

@@ -1,5 +1,5 @@
-import type { GameDto } from './GameDto'
-import type { GameData, GameId } from '@domains'
+import type { GameDto, GameId } from './GameDto'
+import type { GameData } from '@domains'
 
 
 // repository

@@ -41,7 +41,7 @@ export abstract class Game<T extends Playthrough = Playthrough>
   }
 
   public get playthroughs(): ReadonlyArray<T> {
-    return Object.values(this._deps.builder.data.playthroughs)
+    return this._deps.store.playthroughs
       .filter(playthrough => playthrough.gameId === this.id)
       .sort(playthroughCompareFn) as T[]
   }

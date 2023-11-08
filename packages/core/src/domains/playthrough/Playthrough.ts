@@ -28,7 +28,7 @@ export abstract class Playthrough extends Model<PlaythroughId> {
   }
 
   public get game(): Game {
-    return this._deps.builder.data.games[this.gameId]
+    return this._deps.store.getGame(this.gameId)
   }
 
   public abstract didWinBy(playerId: PlayerId): boolean

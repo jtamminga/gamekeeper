@@ -1,0 +1,10 @@
+{
+  "name": "test",
+  "version": "0.0.1",
+  "dependencies": {
+    "core": "1.0.85"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

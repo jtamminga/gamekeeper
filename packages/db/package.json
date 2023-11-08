@@ -1,0 +1,8 @@
+{
+  "name": "db-service",
+  "version": "0.0.1",
+  "dependencies": {
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.6"
+  }
+}

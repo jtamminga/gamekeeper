@@ -2,7 +2,7 @@ import { Game, } from './Game'
 import { VsPlaythrough, VsPlaythroughData } from '../playthrough'
 import { ScoreData, Scores } from 'domains/playthrough/Scores'
 import { VsGameStats } from './VsGameStats'
-import { GameType, PlaythroughId, ScoringType } from '@services'
+import { GameType, ScoringType } from '@services'
 
 
 // vs game domain
@@ -12,8 +12,7 @@ export class VsGame extends Game<VsPlaythrough> {
 
   public async record(data: Omit<VsPlaythroughData, 'gameId'>): Promise<VsPlaythrough> {
     const dto = await this._deps.services.playthroughService.addPlaythrough({ ...data, gameId: this.id! })
-    this._deps.builder.bindPlaythrough(dto)
-    return this._deps.builder.data.playthroughs[dto.id.toString() as PlaythroughId] as VsPlaythrough
+    return this._deps.store.bindPlaythrough(dto) as VsPlaythrough
   }
 
   public determineWinner(scores: Scores): ScoreData {

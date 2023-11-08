@@ -20,7 +20,7 @@ export class Winrates {
     this._winrates = winrates
 
     if (best) {
-      this.best = new Winrate(_deps.builder.data.players[best.playerId], best.winrate)
+      this.best = new Winrate(_deps.store.getPlayer(best.playerId), best.winrate)
     }
   }
 

@@ -35,7 +35,7 @@ export class VsPlaythrough extends Playthrough {
   }
 
   public get winnerName(): string {
-    return this._deps.builder.data.players[this.winnerId].name
+    return this._deps.store.getPlayer(this.winnerId).name
   }
 
 }
