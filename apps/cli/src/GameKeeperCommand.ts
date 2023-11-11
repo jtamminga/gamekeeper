@@ -1,8 +1,7 @@
 import { Command, Config } from '@oclif/core'
 import chalk from 'chalk'
-import { GameKeeper, GameKeeperFactory } from 'gamekeeper-core'
-import { DataBuilder, GameKeeperService } from 'gamekeeper-core/dist/services'
-import path from 'path'
+import { DbServices } from 'db-service'
+import { GameKeeper, GameKeeperFactory } from 'core'
 
 
 // base command
@@ -13,8 +12,9 @@ export abstract class GameKeeperCommand extends Command {
 
   constructor(argv: string[], config: Config) {
     super(argv, config)
-    const fullPath = path.normalize(process.env.DB_PATH!)
-    this.gamekeeper = GameKeeperFactory.create(fullPath)
+
+    const services = new DbServices('gamekeeper.db')
+    this.gamekeeper = GameKeeperFactory.create(services)
   }
 
   public success(message: string) {

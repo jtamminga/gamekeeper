@@ -1,2 +1,1 @@
-export {DataService} from './DataService'
-export {DbGameService} from './GameService'
+export { DbServices } from './DbServices'

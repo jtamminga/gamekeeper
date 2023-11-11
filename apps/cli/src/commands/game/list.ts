@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import { format } from 'date-fns'
 import { CliUx } from '@oclif/core'
-import { Game, StatsData } from 'gamekeeper-core'
+import { Game, GameStats, Playthrough, StatsData } from 'core'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
 import { Utils } from '../../utils'
 
@@ -9,7 +9,7 @@ import { Utils } from '../../utils'
 // types
 type RowData = {
   game: Game,
-  stats: StatsData
+  stats: GameStats<Playthrough>
 }
 
 
@@ -35,8 +35,8 @@ export default class ListGames extends GameKeeperCommand {
 
     // convert to simple data
     const data: RowData[] = games.map(game => {
-      const stats = game.createStats().getData()
-
+      const stats = game.getStats()
+      
       return {
         game,
         stats

@@ -6,7 +6,7 @@
   "workspaces": [
     "packages/core",
     "packages/db",
-    "apps/test"
+    "apps/cli"
   ],
   "packageManager": "yarn@1.22.19"
 }

@@ -3,7 +3,7 @@ import {
   isCoopStatsData,
   isVsStatsData,
   StatsData
-} from 'gamekeeper-core'
+} from 'core'
 
 
 // utils

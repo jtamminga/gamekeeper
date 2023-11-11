@@ -2,7 +2,7 @@ import fuzzy from 'fuzzy'
 import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
-import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, isVsStatsData, ArrayUtils, Scores, ScoreData, GameKeeper } from 'gamekeeper-core'
+import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, isVsStatsData, ArrayUtils, Scores, ScoreData, GameStats } from 'core'
 import chalk from 'chalk'
 import { Utils } from '../../utils'
 import { format, isMatch, parse } from 'date-fns'
@@ -99,8 +99,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
 
     // create stats data
     const stats = game
-      .createStats()
-      .getData()
+      .getStats()
 
     // show stats summary
     this.showStats(stats)
@@ -244,7 +243,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     }
   }
 
-  private showStats(stats: StatsData) {
+  private showStats(stats: GameStats<Playthrough>) {
     this.log()
     this.log(chalk.cyanBright('latest stats:'))
 
@@ -252,14 +251,14 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     this.logItem('plays', stats.playCount)
 
     // show best win rate
-    const {winner, winrate} = Utils.winrate(stats, this.gamekeeper)
-    this.logItem('winrate', `${chalk.underline(winner)} ${winrate}`)
+    // const {winner, winrate} = Utils.winrate(stats, this.gamekeeper)
+    // this.logItem('winrate', `${chalk.underline(winner)} ${winrate}`)
 
     // winsteak info if any
-    const winstreak = this.winstreakDesc(stats)
-    if (winstreak) {
-      this.logItem('streak', winstreak)
-    }
+    // const winstreak = this.winstreakDesc(stats)
+    // if (winstreak) {
+    //   this.logItem('streak', winstreak)
+    // }
   }
 
   private winstreakDesc(stats: StatsData): string | undefined {
