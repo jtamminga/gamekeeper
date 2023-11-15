@@ -1,8 +1,6 @@
-import { Game, } from './Game'
-import { VsPlaythrough, VsPlaythroughData } from '../playthrough'
-import { ScoreData, Scores } from 'domains/playthrough/Scores'
-import { VsGameStats } from './VsGameStats'
+import { Game } from './Game'
 import { GameType, ScoringType } from '@services'
+import type { VsPlaythrough, VsPlaythroughData, ScoreData, Scores } from '../playthrough'
 
 
 // vs game domain
@@ -25,10 +23,6 @@ export class VsGame extends Game<VsPlaythrough> {
       default:
         throw new Error(`winner cannot be determined with scoring type`)
     }
-  }
-
-  public getStats(): VsGameStats {
-    return new VsGameStats(this._deps, this)
   }
 
 }

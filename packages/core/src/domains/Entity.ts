@@ -1,4 +1,4 @@
-export class Model<IdType> {
+export abstract class Entity<IdType> {
 
   public constructor(private _id?: IdType) { }
 

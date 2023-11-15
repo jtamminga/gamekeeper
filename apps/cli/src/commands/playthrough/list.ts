@@ -21,7 +21,7 @@ export default class ListPlaythroughs extends GameKeeperCommand {
 
     const data = playthroughs.map(playthrough => ({
       playthrough
-    }))
+    })).reverse()
 
     CliUx.ux.table(data, {
       game: {

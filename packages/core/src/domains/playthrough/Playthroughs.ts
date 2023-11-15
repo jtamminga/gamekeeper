@@ -14,6 +14,7 @@ export class Playthroughs {
 
   public async hydrate(options?: PlaythroughQueryOptions): Promise<Playthroughs> {
     const dtos = await this._deps.services.playthroughService.getPlaythroughs(options)
+    this._deps.logger.info(`playthroughs hydrated: ${dtos.length} records`)
     this._deps.store.bindPlaythroughs(dtos)
     return this
   }

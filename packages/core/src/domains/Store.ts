@@ -1,7 +1,7 @@
 import { GameKeeperDeps, NotFoundError } from '@core'
 import { Game, Player, Playthrough } from '@domains'
 import { GameFactory, PlayerFactory, PlaythroughFactory } from '@factories'
-import { GameDto, GameId, PlayerDto, PlayerId, PlaythroughDto, PlaythroughId, Services } from '@services'
+import { GameDto, GameId, Logger, PlayerDto, PlayerId, PlaythroughDto, PlaythroughId, Services } from '@services'
 
 
 // type
@@ -17,7 +17,10 @@ export class Store {
 
   private _data: Records
 
-  public constructor(private _services: Services) {
+  public constructor(
+    private _services: Services,
+    private _logger: Logger
+  ) {
     this._data = {
       games: new Map(),
       playthroughs: new Map(),
@@ -40,7 +43,8 @@ export class Store {
   private get deps(): GameKeeperDeps {
     return {
       services: this._services,
-      store: this
+      store: this,
+      logger: this._logger
     }
   }
 

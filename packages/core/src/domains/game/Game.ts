@@ -1,7 +1,6 @@
 import { GameKeeperDeps, Serializable } from '@core'
 import { Playthrough, playthroughCompareFn } from '../playthrough'
-import { Model } from '../Model'
-import { GameStats } from './GameStats'
+import { Entity } from '../Entity'
 import { GameId, GameType, ScoringType } from '@services'
 
 
@@ -16,7 +15,7 @@ export interface GameData {
 
 // class
 export abstract class Game<T extends Playthrough = Playthrough>
-  extends Model<GameId>
+  extends Entity<GameId>
   implements Serializable<GameData> {
 
   public readonly name: string
@@ -29,8 +28,6 @@ export abstract class Game<T extends Playthrough = Playthrough>
   }
 
   public abstract readonly type: GameType
-
-  public abstract getStats(): GameStats<T>
 
   public get hasScoring(): boolean {
     return this.scoring !== ScoringType.NO_SCORE

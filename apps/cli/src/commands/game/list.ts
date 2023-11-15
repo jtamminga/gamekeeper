@@ -1,15 +1,16 @@
 import chalk from 'chalk'
 import { format } from 'date-fns'
 import { CliUx } from '@oclif/core'
-import { Game, GameStats, Playthrough, StatsData } from 'core'
+import { Game, GameStats } from 'core'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
-import { Utils } from '../../utils'
 
 
 // types
 type RowData = {
-  game: Game,
-  stats: GameStats<Playthrough>
+  game: Game
+  numPlaythroughs: number
+  lastPlayed: string
+  winrate: string
 }
 
 
@@ -33,15 +34,21 @@ export default class ListGames extends GameKeeperCommand {
       return
     }
 
-    // convert to simple data
-    const data: RowData[] = games.map(game => {
-      const stats = game.getStats()
-      
-      return {
+    const data: RowData[] = []
+    for (const game of games) {
+      const stats = this.gamekeeper.stats.forGame(game)
+      const numPlaythroughs = await stats.getNumPlaythroughs()
+      const lastPlayed = await stats.getLastPlaythrough()
+
+      data.push({
         game,
-        stats
-      }
-    })
+        numPlaythroughs,
+        lastPlayed: lastPlayed
+          ? format(lastPlayed, 'MMM d, yyyy')
+          : chalk.gray.italic('never'),
+        winrate: 'not implemented'
+      })
+    }
 
     // put data into table
     CliUx.ux.table(data, {
@@ -49,26 +56,12 @@ export default class ListGames extends GameKeeperCommand {
         get: row => row.game.name
       },
       plays: {
-        get: row => row.stats.playCount
+        get: row => row.numPlaythroughs
       },
       lastPlayed: {
-        header: 'Last Played',
-        get: row => row.stats.lastPlayed
-          ? format(row.stats.lastPlayed, 'MMM d, yyyy')
-          : chalk.gray.italic('never')
+        header: 'Last Played'
       },
-      winrate: {
-        get: row => {
-          if (row.stats.playCount === 0) {
-            return chalk.gray.italic('no plays')
-          }
-
-          return 'not imp'
-
-          // const { winner, winrate } = Utils.winrate(row.stats, players)
-          // return `${winner}: ${winrate}`
-        }
-      }
+      winrate: {}
     })
   }
 }

@@ -1,6 +1,6 @@
 import { Serializable } from  '@core'
 import { PlayerId } from '@services'
-import { Model } from 'domains/Model'
+import { Entity } from 'domains/Entity'
 
 
 // type
@@ -11,7 +11,7 @@ export interface PlayerData {
 
 
 // class
-export class Player extends Model<PlayerId> implements Serializable<PlayerData> {
+export class Player extends Entity<PlayerId> implements Serializable<PlayerData> {
 
   public readonly name: string
 

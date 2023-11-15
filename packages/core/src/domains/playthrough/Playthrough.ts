@@ -1,5 +1,5 @@
 import { GameKeeperDeps } from '@core'
-import { Model } from '../Model'
+import { Entity } from '../Entity'
 import { Game } from '../game'
 import { GameId, PlayerId, PlaythroughId } from '@services'
 
@@ -14,7 +14,7 @@ export interface PlaythroughData {
 
 
 // class
-export abstract class Playthrough extends Model<PlaythroughId> {
+export abstract class Playthrough extends Entity<PlaythroughId> {
 
   public readonly playerIds: ReadonlyArray<PlayerId>
   public readonly gameId: GameId

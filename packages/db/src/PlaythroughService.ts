@@ -5,7 +5,7 @@ import { DataService } from './DataService'
 // type
 export interface DbPlaythroughDto {
   id: number
-  gameId: string
+  gameId: number
   gameType: number
   playedOn: string
   result: number // player id or 1 for win 
@@ -110,7 +110,7 @@ function toPlaythroughDto(playthrough: DbPlaythroughDto): PlaythroughDto {
   const isVsPlaythrough = playthrough.gameType === GameType.VS
   return {
     id: playthrough.id.toString() as PlaythroughId,
-    gameId: playthrough.gameId as GameId,
+    gameId: playthrough.gameId.toString() as GameId,
     gameType: playthrough.gameType as GameType,
     playedOn: new Date(playthrough.playedOn),
     result: isVsPlaythrough
@@ -132,7 +132,7 @@ function parseScores(scores: string): readonly ScoreDto[] {
 
 function toDto(playthrough: VsPlaythroughData | CoopPlaythroughData): Omit<DbPlaythroughDto, 'id'> {
   const base = {
-    gameId: playthrough.gameId,
+    gameId: Number(playthrough.gameId),
     playedOn: playthrough.playedOn.toISOString(),
     players: JSON.stringify(playthrough.playerIds)
   }

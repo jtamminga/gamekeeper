@@ -2,9 +2,8 @@ import fuzzy from 'fuzzy'
 import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
-import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, isVsStatsData, ArrayUtils, Scores, ScoreData, GameStats } from 'core'
+import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, isVsStatsData, ArrayUtils, Scores, ScoreData } from 'core'
 import chalk from 'chalk'
-import { Utils } from '../../utils'
 import { format, isMatch, parse } from 'date-fns'
 
 
@@ -97,12 +96,8 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     // show successfully saved
     this.success(`added playthough`)
 
-    // create stats data
-    const stats = game
-      .getStats()
-
     // show stats summary
-    this.showStats(stats)
+    this.showStats(game)
   }
 
   private async selectDateFlow(): Promise<Date> {
@@ -243,12 +238,12 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     }
   }
 
-  private showStats(stats: GameStats<Playthrough>) {
+  private showStats(game: Game) {
     this.log()
     this.log(chalk.cyanBright('latest stats:'))
 
     // play count
-    this.logItem('plays', stats.playCount)
+    this.logItem('plays', game.playCount)
 
     // show best win rate
     // const {winner, winrate} = Utils.winrate(stats, this.gamekeeper)

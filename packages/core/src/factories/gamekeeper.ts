@@ -1,13 +1,15 @@
 import { GameKeeper, Store } from '@domains'
-import { Services } from '@services'
+import { ConsoleLogger, type Services } from '@services'
 
 
 // factory
 export namespace GameKeeperFactory {
   export function create(services: Services) {
 
-    const store = new Store(services)
+    const logger = new ConsoleLogger()
 
-    return new GameKeeper({ services, store })
+    const store = new Store(services, logger)
+
+    return new GameKeeper({ services, store, logger })
   }
 }

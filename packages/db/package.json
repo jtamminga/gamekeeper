@@ -1,5 +1,5 @@
 {
-  "name": "db-service",
+  "name": "db-services",
   "version": "0.0.2",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "core": "1.0.85"
   },
   "devDependencies": {
     "tsc-alias": "^1.7.0",

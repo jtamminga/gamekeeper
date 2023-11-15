@@ -1,7 +1,9 @@
-import { Player } from 'domains/player'
+import { PlayerId } from '@services'
+
 
 export class Winrate {
-  public constructor(public readonly player: Player, public readonly winrate: number) {
-    
-  }
+  public constructor(
+    public readonly playerId: PlayerId,
+    public readonly winrate: number
+  ) { }
 }

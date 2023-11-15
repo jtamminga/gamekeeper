@@ -12,6 +12,7 @@ export class Players {
 
   public async hydrate(): Promise<Players> {
     const dtos = await this._deps.services.playerService.getPlayers()
+    this._deps.logger.info(`players hydrated: ${dtos.length} records`)
     this._deps.store.bindPlayers(dtos)
     return this
   }

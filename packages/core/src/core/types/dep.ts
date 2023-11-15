@@ -1,8 +1,10 @@
 import { Store } from '@domains'
-import { Services } from '@services'
+import { Logger, Services } from '@services'
+
 
 // type
 export type GameKeeperDeps = {
   services: Services
   store: Store
+  logger: Logger
 }
