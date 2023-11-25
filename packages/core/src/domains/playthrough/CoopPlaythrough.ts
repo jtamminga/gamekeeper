@@ -9,6 +9,11 @@ export interface CoopPlaythroughData extends PlaythroughData {
   playersWon: boolean
   score?: number
 }
+export namespace CoopPlaythroughData {
+  export function guard(data: PlaythroughData): data is CoopPlaythroughData {
+    return Object.hasOwn(data, 'playersWon')
+  }
+}
 
 
 // class
@@ -35,6 +40,17 @@ export class CoopPlaythrough extends Playthrough {
 
   public didWinBy(playerId: PlayerId): boolean {
     return this.playersWon && this.playerIds.includes(playerId)
+  }
+
+  public override toData(): CoopPlaythroughData {
+    const data: CoopPlaythroughData = {
+      ...super.toData(),
+      playersWon: this.playersWon
+    }
+    if (this.score) {
+      data.score = this.score
+    }
+    return data
   }
 
 }

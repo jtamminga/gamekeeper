@@ -5,3 +5,4 @@ gamekeeper*.tgz
 .vscode
 dist
 .turbo
+.env.*

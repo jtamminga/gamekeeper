@@ -1,4 +1,4 @@
-import { GameKeeperDeps } from '@core'
+import { GameKeeperDeps, Serializable } from '@core'
 import { Entity } from '../Entity'
 import { Game } from '../game'
 import { GameId, PlayerId, PlaythroughId } from '@services'
@@ -14,7 +14,9 @@ export interface PlaythroughData {
 
 
 // class
-export abstract class Playthrough extends Entity<PlaythroughId> {
+export abstract class Playthrough
+  extends Entity<PlaythroughId>
+  implements Serializable<PlaythroughData> {
 
   public readonly playerIds: ReadonlyArray<PlayerId>
   public readonly gameId: GameId
@@ -34,5 +36,14 @@ export abstract class Playthrough extends Entity<PlaythroughId> {
   public abstract didWinBy(playerId: PlayerId): boolean
 
   public abstract get winnerName(): string
+
+  public toData(): PlaythroughData {
+    return {
+      id: this.id,
+      gameId: this.gameId,
+      playedOn: this.playedOn,
+      playerIds: this.playerIds
+    }
+  }
 
 }

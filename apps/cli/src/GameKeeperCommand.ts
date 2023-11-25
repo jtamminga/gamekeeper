@@ -1,6 +1,6 @@
 import { Command, Config } from '@oclif/core'
 import chalk from 'chalk'
-import { DbServices } from 'db-service'
+import { DbServices } from 'db-services'
 import { GameKeeper, GameKeeperFactory } from 'core'
 
 

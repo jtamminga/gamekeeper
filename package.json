@@ -4,9 +4,8 @@
   "private": true,
   "description": "Gamekeeper mono repo",
   "workspaces": [
-    "packages/core",
-    "packages/db",
-    "apps/cli"
+    "packages/*",
+    "apps/*"
   ],
   "packageManager": "yarn@1.22.19"
 }

@@ -137,7 +137,7 @@ function toDto(playthrough: VsPlaythroughData | CoopPlaythroughData): Omit<DbPla
     players: JSON.stringify(playthrough.playerIds)
   }
 
-  if (isVsPlaythroughData(playthrough)) {
+  if (VsPlaythroughData.guard(playthrough)) {
     return {
       ...base,
       gameType: GameType.VS,
@@ -162,8 +162,4 @@ function serializeScores(scores: readonly ScoreDto[]): string {
     id: score.playerId,
     s: score.score
   })))
-}
-
-function isVsPlaythroughData(data: VsPlaythroughData | CoopPlaythroughData): data is VsPlaythroughData {
-  return Object.hasOwn(data, 'winnerId')
 }

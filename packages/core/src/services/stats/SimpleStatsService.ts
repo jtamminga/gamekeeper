@@ -1,19 +1,12 @@
-import {
-  ArrayUtils,
-  GameId,
-  PlayerId,
-  PlaythroughDto,
-  PlaythroughId,
-  PlaythroughService,
-  StatsQuery,
-  StatsService,
-  WinrateDto,
-  WinstreakDto
-} from 'core'
+import type { PlayerId } from '../player'
+import type { GameId } from '../game'
+import type { PlaythroughDto, PlaythroughService } from '../playthrough'
+import type { StatsQuery, StatsService, WinrateDto, WinstreakDto } from './StatsService'
+import { endOfYear } from 'date-fns'
 
 
 // stats service
-export class DbStatsService implements StatsService {
+export class SimpleStatsService implements StatsService {
 
   private _playthroughsByYear: Map<number, readonly PlaythroughDto[]>
 
@@ -49,7 +42,10 @@ export class DbStatsService implements StatsService {
       return playthroughs
     }
 
-    playthroughs = await this._playthroughService.getPlaythroughs({})
+    const fromDate = new Date(year, 0, 0)
+    const toDate = endOfYear(fromDate)
+
+    playthroughs = await this._playthroughService.getPlaythroughs({ fromDate, toDate })
     this._playthroughsByYear.set(year, playthroughs)
     return playthroughs
   }

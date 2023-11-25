@@ -10,6 +10,11 @@ export interface VsPlaythroughData extends PlaythroughData {
   winnerId: PlayerId
   scores?: ReadonlyArray<ScoreData>
 }
+export namespace VsPlaythroughData {
+  export function guard(data: PlaythroughData): data is VsPlaythroughData {
+    return Object.hasOwn(data, 'winnerId')
+  }
+}
 
 
 // class
@@ -36,6 +41,17 @@ export class VsPlaythrough extends Playthrough {
 
   public get winnerName(): string {
     return this._deps.store.getPlayer(this.winnerId).name
+  }
+
+  public override toData(): VsPlaythroughData {
+    const data: VsPlaythroughData = {
+      ...super.toData(),
+      winnerId: this.winnerId
+    }
+    if (this.scores) {
+      data.scores = this.scores.toData()
+    }
+    return data
   }
 
 }
