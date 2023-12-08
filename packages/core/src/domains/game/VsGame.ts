@@ -13,16 +13,4 @@ export class VsGame extends Game<VsPlaythrough> {
     return this._deps.store.bindPlaythrough(dto) as VsPlaythrough
   }
 
-  public determineWinner(scores: Scores): ScoreData {
-
-    switch (this.scoring) {
-      case ScoringType.HIGHEST_WINS:
-        return scores.highest()
-      case ScoringType.LOWEST_WINS:
-        return scores.lowest()
-      default:
-        throw new Error(`winner cannot be determined with scoring type`)
-    }
-  }
-
 }
