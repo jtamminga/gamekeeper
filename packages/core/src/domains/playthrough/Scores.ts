@@ -12,10 +12,11 @@ export type ScoreData = {
 // class
 export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
 
+  private _scores: ScoreData[]
 
-  public constructor(
-    private _scores: ReadonlyArray<ScoreData>
-  ) { }
+  public constructor(scores: ReadonlyArray<ScoreData> = []) {
+    this._scores = [...scores]
+  }
 
   public get hasScore(): boolean {
     return this._scores.length > 0
@@ -23,6 +24,10 @@ export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
 
   public get size(): number {
     return this._scores.length
+  }
+
+  public add(playerId: PlayerId, score: number) {
+    this._scores.push({ playerId, score })
   }
 
   public highest(): ScoreData {

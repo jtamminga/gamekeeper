@@ -1,5 +1,5 @@
 import { DataService } from './DataService'
-import { NotFoundError, GameService, GameDto, GameId, GameData, GameType, ScoringType } from 'core'
+import { NotFoundError, GameService, GameDto, GameId, GameData, GameType, ScoringType } from '@gamekeeper/core'
 
 
 // types

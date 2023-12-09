@@ -1,8 +1,10 @@
 import type { GameKeeperDeps } from '@core'
 import type { PlaythroughQueryOptions } from '@services'
 import type { CoopPlaythroughData } from './CoopPlaythrough'
-import type { Playthrough } from './Playthrough'
+import type { Playthrough, PlaythroughData } from './Playthrough'
 import type { VsPlaythroughData } from './VsPlaythrough'
+import type { CoopFlow, VsFlow } from '@flows'
+import { PlaythroughFlowFactory } from '@factories'
 
 
 // class
@@ -26,6 +28,10 @@ export class Playthroughs {
   public async create(data: VsPlaythroughData | CoopPlaythroughData): Promise<Playthrough> {
     const dto = await this._deps.services.playthroughService.addPlaythrough(data)
     return this._deps.store.bindPlaythrough(dto)
+  }
+
+  public startFlow(data: Omit<PlaythroughData, 'id'>): VsFlow | CoopFlow {
+    return PlaythroughFlowFactory.create(this._deps, data)
   }
 
 }

@@ -1,4 +1,4 @@
-import { CoopPlaythroughData, GameId, PlayerId, PlaythroughData, ScoreData, VsPlaythroughData } from 'core'
+import { CoopPlaythroughData, GameId, PlayerId, PlaythroughData, ScoreData, VsPlaythroughData } from '@gamekeeper/core'
 
 
 export type ApiPlaythroughDto = {

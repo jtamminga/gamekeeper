@@ -1,6 +1,6 @@
 import { config } from './config'
-import { type GameId, GameKeeperFactory } from 'core'
-import { DbServices } from 'db-services'
+import { type GameId, GameKeeperFactory } from '@gamekeeper/core'
+import { DbServices } from '@gamekeeper/db-services'
 import express from 'express'
 import { ApiPlaythroughDto, toPlaythroughData } from './playthrough'
 

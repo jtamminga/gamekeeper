@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { GameKeeperFactory, GameType, ScoringType } from 'core'
+import { GameKeeperFactory, GameType, ScoringType } from '@gamekeeper/core'
 import { createTestServices } from './TestServices'
 
 describe('stats', async function () {

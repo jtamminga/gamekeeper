@@ -2,7 +2,7 @@ import fuzzy from 'fuzzy'
 import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
-import { Game, PlayerId, Playthrough, VsGame, CoopGame, StatsData, isVsStatsData, ArrayUtils, Scores, ScoreData } from 'core'
+import { Game, PlayerId, StatsData, ArrayUtils, Scores, GameId, VsFlow, CoopFlow } from '@gamekeeper/core'
 import chalk from 'chalk'
 import { format, isMatch, parse } from 'date-fns'
 
@@ -37,46 +37,29 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     const playedOn = await this.selectDateFlow()
 
     // get all games
-    const game = await this.selectGameFlow()
+    const gameId = await this.selectGameFlow()
 
     // hydrate playthroughs for selected game
-    await this.gamekeeper.playthroughs.hydrate({ gameId: game.id })
+    await this.gamekeeper.playthroughs.hydrate({ gameId })
 
     // get player ids
     const playerIds = this.gamekeeper.players.all()
       .map(player => player.id!)
 
-    // if there is a winner explicity inputted
-    let explicitWinner = false
-
-    // create a playthrough
-    let playthrough: Playthrough
+    const flow = this.gamekeeper.playthroughs.startFlow({
+      gameId,
+      playedOn,
+      playerIds
+    })
 
     // vs game
-    if (game instanceof VsGame) {
-      const {
-        explicitWinner: winnerSet,
-        ...answers
-      } = await this.vsGameFlow(game)
-
-
-      playthrough = await game.record({
-        playerIds,
-        playedOn,
-        ...answers
-      })
-      explicitWinner = winnerSet
+    if (flow instanceof VsFlow) {
+      await this.vsGameFlow(flow)
     }
 
     // coop game
-    else if (game instanceof CoopGame) {
-      const answers = await this.coopGameFlow(game)
-      playthrough = await game.record({
-        playerIds,
-        playedOn,
-        ...answers
-      })
-      explicitWinner = true
+    else if (flow instanceof CoopFlow) {
+      await this.coopGameFlow(flow)
     }
 
     // unsupported game type
@@ -85,19 +68,22 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     }
 
     // show winner if not explicity inputed
-    if (!explicitWinner) {
-      this.log(
-        chalk.green('> ')
-        + chalk.bold('winner: ')
-        + chalk.cyanBright(playthrough.winnerName)
-      )
-    }
+    // if (!explicitWinner) {
+    //   this.log(
+    //     chalk.green('> ')
+    //     + chalk.bold('winner: ')
+    //     + chalk.cyanBright(playthrough.winnerName)
+    //   )
+    // }
+
+    // add playthrough
+    this.gamekeeper.playthroughs.create(flow.build())
 
     // show successfully saved
     this.success(`added playthough`)
 
     // show stats summary
-    this.showStats(game)
+    // this.showStats(game)
   }
 
   private async selectDateFlow(): Promise<Date> {
@@ -128,7 +114,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
    * select game flow
    * this will ask user to select a game
    */
-  private async selectGameFlow(): Promise<Game> {
+  private async selectGameFlow(): Promise<GameId> {
     
     const games = await this.gamekeeper.games.all()
 
@@ -153,22 +139,20 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     })
 
     // get game
-    return games.find(game => game.id === gameId)!
+    return gameId
   }
 
   /**
    * vs game flow
    * this will ask user to select winner and ask scores for each player
    */
-  private async vsGameFlow(game: VsGame) {
+  private async vsGameFlow(flow: VsFlow) {
 
+    const scores = new Scores()
     const players = await this.gamekeeper.players.all()
-    const scores: ScoreData[] = []
-    // if winner is explicity inputted
-    let explicitWinner = false
 
     // only ask for scoring if game requires it
-    if (game.hasScoring) {
+    if (flow.game.hasScoring) {
       // get scores for each player
       const scoreInputs: Record<PlayerId, number | undefined> = await inquirer.prompt(
         players.map(player => ({
@@ -181,32 +165,21 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       // convert to record to map
       for (const [id, score] of Object.entries(scoreInputs)) {
         if (score === undefined) continue
-        scores.push({ playerId: id as PlayerId, score: Number(score) })
+        scores.add(id as PlayerId, Number(score))
       }
-    }
 
-    // try to determine winner
-    let winnerId: PlayerId | undefined
-    if (scores.length === players.length) {
-      winnerId = game.determineWinner(new Scores(scores)).playerId
+      flow.addScores(scores)
     }
-
+    
     // if no winner than ask user for winner
-    if (!winnerId) {
+    if (flow.hasWinner) {
       const winnerInput = await inquirer.prompt({
         type: 'list',
         name: 'winner',
         choices: players.map(p => ({ value: p.id, name: p.name }))
       })
 
-      winnerId = winnerInput.winner as PlayerId
-      explicitWinner = true
-    }
-
-    return {
-      winnerId,
-      scores: scores.length === 0 ? undefined : scores,
-      explicitWinner
+      flow.addWinner(winnerInput)
     }
   }
 
@@ -214,27 +187,22 @@ export default class PlaythroughCommand extends GameKeeperCommand {
    * coop game flow
    * this will ask user who won, game or players
    */
-  private async coopGameFlow(game: CoopGame) {
+  private async coopGameFlow(flow: CoopFlow) {
 
     // ask if players won
     const {win} = await inquirer.prompt<{ win: boolean }>({
       type: 'confirm',
       name: 'win'
     })
+    flow.addPlayersWon(win)
 
     // ask for scoring if applicable
-    let score: number | undefined
-    if (game.hasScoring) {
+    if (flow.game.hasScoring) {
       const scoreInput = await inquirer.prompt({
         name: 'score',
         ...numberOptions
       })
-      score = scoreInput.score
-    }
-
-    return {
-      playersWon: win,
-      score
+      flow.addScore(scoreInput.score)
     }
   }
 
@@ -254,33 +222,6 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     // if (winstreak) {
     //   this.logItem('streak', winstreak)
     // }
-  }
-
-  private winstreakDesc(stats: StatsData): string | undefined {
-    if (!isVsStatsData(stats)) {
-      return
-    }
-
-    const numStreaks = stats.winstreaks.length
-
-    const lastStreak = ArrayUtils.last(stats.winstreaks)
-    if (lastStreak) {
-      const {playerId, streak} = lastStreak
-      const playerName = this.gamekeeper.players.get(playerId).name
-      if (streak > 1) {
-        return `${chalk.underline(playerName)} has a winstreak of ${chalk.yellow(streak)}!`
-      }
-    } 
-
-    if (numStreaks >= 2) {
-      const last = stats.winstreaks[numStreaks - 1]
-      const secondLast = stats.winstreaks[numStreaks - 2]
-      if (last.streak === 1 && secondLast.streak > 1) {
-        const lastPlayer = this.gamekeeper.players.get(last.playerId).name
-        const secondLastPlayer = this.gamekeeper.players.get(secondLast.playerId).name
-        return `${chalk.underline(lastPlayer)} stopped ${chalk.underline(secondLastPlayer)}'s winstreak of ${chalk.yellow(secondLast.streak)}!`
-      }
-    }
   }
 
   private logItem(label: string, value: string | number) {

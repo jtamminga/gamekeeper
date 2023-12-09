@@ -15,7 +15,7 @@ import { CoopPlaythroughData,
   PlaythroughQueryOptions,
   PlaythroughService,
   VsPlaythroughData
-} from 'core'
+} from '@gamekeeper/core'
 
 
 type MemoryDatabase = {

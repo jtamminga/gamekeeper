@@ -1,5 +1,6 @@
 {
-  "name": "core",
+  "name": "@gamekeeper/core",
+  "private": true,
   "version": "1.0.85",
   "description": "core parts of game keeper",
   "main": "dist/index.js",

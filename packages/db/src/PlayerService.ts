@@ -1,5 +1,5 @@
 import type { DataService } from 'DataService'
-import { PlayerData, PlayerDto, PlayerId, PlayerService } from 'core'
+import { PlayerData, PlayerDto, PlayerId, PlayerService } from '@gamekeeper/core'
 
 
 

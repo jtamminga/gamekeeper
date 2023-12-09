@@ -1,11 +1,6 @@
-import { CoopPlaythrough } from '@domains'
-import { PlaythroughFlowData } from './PlaythroughFlow'
+import { CoopGame, CoopPlaythrough, CoopPlaythroughData, PlaythroughData } from '@domains'
 import { ScoringType } from '@services'
-
-
-type CoopFlowData = PlaythroughFlowData & {
-  scoring: ScoringType
-}
+import { GameKeeperDeps } from '@core'
 
 
 export class CoopFlow {
@@ -13,10 +8,14 @@ export class CoopFlow {
   private playersWon?: boolean
   private score?: number
 
-  public constructor(private data: CoopFlowData) { }
+  public constructor(
+    private deps: GameKeeperDeps,
+    private data: PlaythroughData,
+    public readonly game: CoopGame
+  ) { }
 
   public addScore(score: number): CoopFlow {
-    if (this.data.scoring === ScoringType.NO_SCORE) {
+    if (this.game.scoring === ScoringType.NO_SCORE) {
       throw new Error('cannot add scoring to this game')
     }
 
@@ -29,19 +28,15 @@ export class CoopFlow {
     return this
   }
 
-  public build(): CoopPlaythrough {
+  public build(): CoopPlaythroughData {
     if (this.playersWon === undefined) {
       throw new Error('winner must be specified')
     }
 
-    const { gameId, playedOn, playerIds } = this.data
-
-    return new CoopPlaythrough(this.data.deps, {
-      gameId,
-      playedOn,
-      playerIds,
+    return {
+      ...this.data,
       playersWon: this.playersWon,
       score: this.score
-    })
+    }
   }
 }

@@ -9,7 +9,7 @@ import {
   StatsService,
   WinrateDto,
   WinstreakDto
-} from 'core'
+} from '@gamekeeper/core'
 
 
 // stats service

@@ -3,7 +3,7 @@ import { DbGameService } from 'GameService'
 import { DbPlayerService } from 'PlayerService'
 import { DbPlaythroughService } from 'PlaythroughService'
 import { DbStatsService } from 'StatsService'
-import { GameService, PlayerService, PlaythroughService, Services, StatsService } from 'core'
+import { GameService, PlayerService, PlaythroughService, Services, StatsService } from '@gamekeeper/core'
 
 
 export class DbServices implements Services {
