@@ -1,6 +1,6 @@
 import { PlayerId, ScoringType } from '@services'
 import { PlaythroughFlowData } from './PlaythroughFlow'
-import { ScoreData } from '@domains'
+import { ScoreData, Scores, VsPlaythrough } from '@domains'
 
 
 type VsFlowData = PlaythroughFlowData & {
@@ -10,79 +10,56 @@ type VsFlowData = PlaythroughFlowData & {
 
 export class VsFlow {
 
-  private scores: Map<PlayerId, number>
+  private scores?: Scores
+  private winner?: PlayerId
 
-  public constructor(private data: VsFlowData) {
-    this.scores = new Map<PlayerId, number>()
-  }
+  public constructor(private data: VsFlowData) { }
 
-  private get allScoresRecorded(): boolean {
-    return this.data.playerIds.every(id => this.scores.has(id))
-  }
-
-  public addScore(playerId: PlayerId, score: number) {
-    this.scores.set(playerId, score)
-  }
-
-  private determinWinner(): PlayerId {
-    let winnerId: PlayerId
-
-    switch (this.data.scoring) {
-      case ScoringType.HIGHEST_WINS: {
-        this.data.playerIds.reduce((winner, current) => )
-      }
+  public addScores(scores: Scores): VsFlow {
+    if (this.data.scoring === ScoringType.NO_SCORE) {
+      throw new Error('cannot add scoring to this game')
     }
 
-    this.data.playerIds
+    this.scores = scores
+    
+    if (scores.size === this.data.playerIds.length) {
+      this.winner = determineWinner(this.data.scoring, scores)
+    }
+    
+    return this
   }
 
-  private highest(): PlayerId {
-    let highestPlayer: PlayerId
-    let highestScore: number = Number.MIN_VALUE
-
-    for (const playerId of this.data.playerIds) {
-      const score = this.scores.get(playerId)
-      if (score === undefined) {
-        throw new Error(`there is no score for player ${playerId}`)
-      }
-      if (score > highestScore) {
-        highestScore = score
-        highestPlayer = playerId
-      }
-    }
-
-    return highestPlayer!
+  public addWinner(winner: PlayerId): VsFlow {
+    this.winner = winner
+    return this
   }
 
-  private lowest(): ScoreData {
-    if (this._scores.length === 0) {
-      throw new Error('there are no scores')
+  public build(): VsPlaythrough {
+    if (!this.winner) {
+      throw new Error('winner must be specified')
     }
 
-    let lowestPlayer: PlayerId | undefined
-    let lowestScore: number = Number.MAX_VALUE
+    const { gameId, playedOn, playerIds } = this.data
 
-    for (const { playerId, score } of this._scores) {
-      if (score < lowestScore) {
-        lowestScore = score
-        lowestPlayer = playerId
-      }
-    }
-
-    return {
-      playerId: lowestPlayer!,
-      score: lowestScore
-    }
-  } 
+    return new VsPlaythrough(this.data.deps, {
+      gameId,
+      playedOn,
+      playerIds,
+      winnerId: this.winner,
+      scores: this.scores?.toData()
+    })
+  }
 }
 
-// public determineWinner(scores: Scores): ScoreData {
-//   switch (this.scoring) {
-//     case ScoringType.HIGHEST_WINS:
-//       return scores.highest()
-//     case ScoringType.LOWEST_WINS:
-//       return scores.lowest()
-//     default:
-//       throw new Error(`winner cannot be determined with scoring type`)
-//   }
-// }
+
+// helper
+function determineWinner(type: ScoringType, scores: Scores): PlayerId | undefined {
+  switch (type) {
+    case ScoringType.HIGHEST_WINS:
+      return scores.highest().playerId
+    case ScoringType.LOWEST_WINS:
+      return scores.lowest().playerId
+    default:
+      throw new Error(`winner cannot be determined with no scoring type`)
+  }
+}
