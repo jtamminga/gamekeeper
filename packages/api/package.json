@@ -1,0 +1,16 @@
+{
+  "name": "@gamekeeper/api-services",
+  "private": true,
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && tsc-alias"
+  },
+  "dependencies": {
+    "@gamekeeper/core": "1.0.85"
+  },
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  }
+}
