@@ -1,6 +1,6 @@
 import { Game } from './Game'
-import { GameType, ScoringType } from '@services'
-import type { VsPlaythrough, VsPlaythroughData, ScoreData, Scores } from '../playthrough'
+import { GameType } from '@services'
+import type { VsPlaythrough, VsPlaythroughData } from '../playthrough'
 
 
 // vs game domain

@@ -10,7 +10,7 @@ export default class ListPlaythroughs extends GameKeeperCommand {
   static description = 'list latest playthroughs'
 
   public async run(): Promise<void> {
-    
+
     await this.gamekeeper.hydrate({ limit: 10 })
 
     const playthroughs = this.gamekeeper.playthroughs.all()

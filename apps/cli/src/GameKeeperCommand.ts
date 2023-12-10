@@ -13,7 +13,7 @@ export abstract class GameKeeperCommand extends Command {
   constructor(argv: string[], config: Config) {
     super(argv, config)
 
-    const services = new DbServices('gamekeeper.db')
+    const services = new DbServices(process.env.DB_PATH!)
     this.gamekeeper = GameKeeperFactory.create(services)
   }
 

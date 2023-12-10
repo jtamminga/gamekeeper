@@ -1,12 +1,13 @@
 import { PlayerId, ScoringType } from '@services'
-import { PlaythroughData, Scores, VsGame, VsPlaythrough, VsPlaythroughData } from '@domains'
+import { Player, PlaythroughData, Scores, VsGame, VsPlaythroughData } from '@domains'
 import { GameKeeperDeps } from '@core'
 
 
 export class VsFlow {
 
   private scores?: Scores
-  private winner?: PlayerId
+  private winnerId?: PlayerId
+  private implicitWinner?: boolean
 
   public constructor(
     private deps: GameKeeperDeps,
@@ -14,8 +15,21 @@ export class VsFlow {
     public readonly game: VsGame
   ) { }
 
+  public get winner(): Player | undefined {
+    return this.winnerId
+      ? this.deps.store.getPlayer(this.winnerId)
+      : undefined
+  }
+
   public get hasWinner(): boolean {
-    return !!this.winner
+    return this.winnerId !== undefined
+  }
+
+  public get isImplicitWinner(): boolean {
+    if (this.implicitWinner === undefined) {
+      throw new Error('invalid state')
+    }
+    return this.implicitWinner
   }
 
   public addScores(scores: Scores): VsFlow {
@@ -25,20 +39,23 @@ export class VsFlow {
 
     this.scores = scores
     
+    // make sure all players have scores
     if (scores.size === this.data.playerIds.length) {
-      this.winner = determineWinner(this.game.scoring, scores)
+      this.winnerId = determineWinner(this.game.scoring, scores)
+      this.implicitWinner = true
     }
     
     return this
   }
 
   public addWinner(winner: PlayerId): VsFlow {
-    this.winner = winner
+    this.winnerId = winner
+    this.implicitWinner = false
     return this
   }
 
   public build(): VsPlaythroughData {
-    if (!this.winner) {
+    if (this.winnerId === undefined) {
       throw new Error('winner must be specified')
     }
 
@@ -48,7 +65,7 @@ export class VsFlow {
       gameId,
       playedOn,
       playerIds,
-      winnerId: this.winner,
+      winnerId: this.winnerId,
       scores: this.scores?.toData()
     }
   }

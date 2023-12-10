@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import { format } from 'date-fns'
 import { CliUx } from '@oclif/core'
-import { Game, GameStats } from 'core'
+import { Game } from '@gamekeeper/core'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
 
 

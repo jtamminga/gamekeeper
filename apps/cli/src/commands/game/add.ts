@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { GameData, GameType, ScoringType } from 'core'
+import { GameData, GameType, ScoringType } from '@gamekeeper/core'
 import inquirer from 'inquirer'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
 

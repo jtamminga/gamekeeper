@@ -39,8 +39,8 @@ export default class PlaythroughCommand extends GameKeeperCommand {
     // get all games
     const gameId = await this.selectGameFlow()
 
-    // hydrate playthroughs for selected game
-    await this.gamekeeper.playthroughs.hydrate({ gameId })
+    // // hydrate playthroughs for selected game
+    // await this.gamekeeper.playthroughs.hydrate({ gameId })
 
     // get player ids
     const playerIds = this.gamekeeper.players.all()
@@ -67,23 +67,11 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       throw new Error('unsupported game')
     }
 
-    // show winner if not explicity inputed
-    // if (!explicitWinner) {
-    //   this.log(
-    //     chalk.green('> ')
-    //     + chalk.bold('winner: ')
-    //     + chalk.cyanBright(playthrough.winnerName)
-    //   )
-    // }
-
     // add playthrough
     this.gamekeeper.playthroughs.create(flow.build())
 
     // show successfully saved
     this.success(`added playthough`)
-
-    // show stats summary
-    // this.showStats(game)
   }
 
   private async selectDateFlow(): Promise<Date> {
@@ -171,15 +159,24 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       flow.addScores(scores)
     }
     
+    // show winner if not explicity inputed
+    if (flow.winner) {
+      this.log(
+        chalk.green('> ')
+        + chalk.bold('winner: ')
+        + chalk.cyanBright(flow.winner.name)
+      )
+    }
+
     // if no winner than ask user for winner
-    if (flow.hasWinner) {
+    else {
       const winnerInput = await inquirer.prompt({
         type: 'list',
         name: 'winner',
         choices: players.map(p => ({ value: p.id, name: p.name }))
       })
 
-      flow.addWinner(winnerInput)
+      flow.addWinner(winnerInput.winner)
     }
   }
 
@@ -205,35 +202,6 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       flow.addScore(scoreInput.score)
     }
   }
-
-  private showStats(game: Game) {
-    this.log()
-    this.log(chalk.cyanBright('latest stats:'))
-
-    // play count
-    this.logItem('plays', game.playCount)
-
-    // show best win rate
-    // const {winner, winrate} = Utils.winrate(stats, this.gamekeeper)
-    // this.logItem('winrate', `${chalk.underline(winner)} ${winrate}`)
-
-    // winsteak info if any
-    // const winstreak = this.winstreakDesc(stats)
-    // if (winstreak) {
-    //   this.logItem('streak', winstreak)
-    // }
-  }
-
-  private logItem(label: string, value: string | number) {
-    const padding = 10 - label.length
-    this.log(
-      chalk.green('> ')
-      + chalk.bold(label) + ':'
-      + Array(padding).join(' ')
-      + value.toString()
-    )
-  }
-
 }
 
 

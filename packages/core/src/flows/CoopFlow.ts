@@ -1,6 +1,6 @@
-import { CoopGame, CoopPlaythrough, CoopPlaythroughData, PlaythroughData } from '@domains'
-import { ScoringType } from '@services'
 import { GameKeeperDeps } from '@core'
+import { CoopGame, CoopPlaythroughData, PlaythroughData } from '@domains'
+import { ScoringType } from '@services'
 
 
 export class CoopFlow {
