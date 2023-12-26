@@ -1,4 +1,4 @@
-import type { DataService } from './DataService'
+import { DbService } from 'DbService'
 import { PlayerData, PlayerDto, PlayerId, PlayerService } from '@gamekeeper/core'
 
 
@@ -11,11 +11,7 @@ export interface DbPlayerDto {
 
 
 // service
-export class DbPlayerService implements PlayerService {
-
-  public constructor(
-    private _dataService: DataService
-  ) { }
+export class DbPlayerService extends DbService implements PlayerService {
 
   public async addPlayer(player: PlayerData): Promise<PlayerDto> {
     // save to database

@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.css'
+import { AddPlaythrough } from './screens'
+import { gamekeeper } from './bootstrap'
+import { Loading } from './components'
+import { useEffect, useState } from 'react'
 
-function App() {
+
+// base app
+export default function App() {
+
+  // keep track of whether the app is hydrated
+  const [hydrated, setHydrated] = useState(false)
+
+  // hydrate the app
+  useEffect(() => {
+    async function hydrateApp() {
+      await gamekeeper.hydrate()
+      setHydrated(true)
+    }
+
+    hydrateApp()
+  }, [])
+
+  // render
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {hydrated
+        ? <AddPlaythrough />
+        : <Loading />
+      }
     </div>
-  );
+  )
 }
-
-export default App;

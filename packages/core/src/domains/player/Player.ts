@@ -22,7 +22,7 @@ export class Player extends Entity<PlayerId> implements Serializable<PlayerData>
 
   public toData(): PlayerData {
     return {
-      id: this.id!,
+      id: this.id,
       name: this.name
     }
   }

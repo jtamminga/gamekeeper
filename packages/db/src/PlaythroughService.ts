@@ -1,5 +1,5 @@
+import { DbService } from 'DbService'
 import { CoopPlaythroughData, GameId, GameType, PlayerId, PlaythroughDto, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData } from '@gamekeeper/core'
-import { DataService } from './DataService'
 
 
 // type
@@ -21,11 +21,7 @@ type SerializedScore = {
 
 
 // repository
-export class DbPlaythroughService implements PlaythroughService {
-
-  public constructor(
-    private _dataService: DataService
-  ) { }
+export class DbPlaythroughService extends DbService implements PlaythroughService {
 
   public async getPlaythroughs(
     options: PlaythroughQueryOptions = {}

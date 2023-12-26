@@ -1,4 +1,4 @@
-import { DataService } from './DataService'
+import { DbService } from 'DbService'
 import { NotFoundError, GameService, GameDto, GameId, GameData, GameType, ScoringType } from '@gamekeeper/core'
 
 
@@ -12,11 +12,7 @@ export interface DbGameDto {
 
 
 // game service
-export class DbGameService implements GameService {
-
-  public constructor(
-    private _dataService: DataService
-  ) { }
+export class DbGameService extends DbService implements GameService {
 
   public async getGames(): Promise<readonly GameDto[]> {
     const query = 'SELECT * FROM games'

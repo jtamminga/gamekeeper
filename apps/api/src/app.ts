@@ -1,46 +1,60 @@
-import { config } from './config'
-import { type GameId, GameKeeperFactory } from '@gamekeeper/core'
-import { DbServices } from '@gamekeeper/db-services'
-import express from 'express'
 import { ApiPlaythroughDto, toPlaythroughData } from './playthrough'
+import { config } from './config'
+import { DbServices } from '@gamekeeper/db-services'
+import { type GameId } from '@gamekeeper/core'
+import express from 'express'
+import { Route } from '@gamekeeper/api-services'
+import cors from 'cors'
 
 
+// setup express app
 const app = express()
 app.use(express.json())
+app.use(cors())
 
-const dbServices = new DbServices(config.dbPath)
-const gamekeeper = GameKeeperFactory.create(dbServices)
 
-gamekeeper.hydrate()
+// create and extract services
+const {
+  gameService,
+  playerService,
+  playthroughService
+} = new DbServices(config.dbPath)
+
 
 // get all games
-app.get('/games', function (_, res) {
-  const games = gamekeeper.games.toData()
-  res.json({ games })
+app.get(Route.GAMES, async function (_, res) {
+  const games = await gameService.getGames()
+  res.json({ data: games })
 })
 
 // get game by id
-app.get('/games/:id', function (req, res) {
-  const game = gamekeeper.games
-    .get(req.params.id as GameId)
-    .toData()
-
-  res.json({ game })
+app.get(`${Route.GAMES}/:id`, async function (req, res) {
+  const game = await gameService.getGame(req.params.id as GameId)
+  res.json({ data: game })
 })
 
 // get all players
-app.get('/players', function (_, res) {
-  const players = gamekeeper.players.toData()
-  res.json({ players })
+app.get(Route.PLAYERS, async function (_, res) {
+  const players = await playerService.getPlayers()
+  res.json({ data: players })
 })
 
-app.post('/playthrough', async function (req, res) {
+// get playthroughs
+app.get(Route.PLAYTHROUGHS, async function (_, res) {
+  const playthroughs = await playthroughService.getPlaythroughs()
+  res.json({ data: playthroughs })
+})
+
+// create playthrough
+app.post(Route.PLAYTHROUGHS, async function (req, res) {
   const dto = req.body as ApiPlaythroughDto
   const data = toPlaythroughData(dto)
-  
-  const playthrough = await gamekeeper.playthroughs.create(data)
-  res.json({ playthrough: playthrough.toData() })
+
+  const playthrough = await playthroughService.addPlaythrough(data)
+  res.json({ data: playthrough })
 })
 
+
+// start listening
 app.listen(config.port)
 console.info(`listening on ${config.port}`)
