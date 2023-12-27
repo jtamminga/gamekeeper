@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "main": "dist/app.js",
+  "type": "module",
   "typings": "dist/app.d.ts",
   "dependencies": {
     "@gamekeeper/api-services": "0.0.1",
@@ -15,10 +16,11 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "tsc-alias": "^1.8.8",
     "typescript": "^5.2.2"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start": "node ./dist/app.js"
   }
 }

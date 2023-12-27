@@ -12,7 +12,8 @@ export class VsFlow {
   public constructor(
     private deps: GameKeeperDeps,
     private data: PlaythroughData,
-    public readonly game: VsGame
+    public readonly game: VsGame,
+    public readonly players: ReadonlyArray<Player>
   ) { }
 
   public get winner(): Player | undefined {
@@ -25,6 +26,10 @@ export class VsFlow {
     return this.winnerId !== undefined
   }
 
+  public get needsExplicitWinner(): boolean {
+    return this.scores !== undefined && this.winnerId === undefined
+  }
+
   public get isImplicitWinner(): boolean {
     if (this.implicitWinner === undefined) {
       throw new Error('invalid state')
@@ -32,7 +37,7 @@ export class VsFlow {
     return this.implicitWinner
   }
 
-  public addScores(scores: Scores): VsFlow {
+  public setScores(scores: Scores): VsFlow {
     if (this.game.scoring === ScoringType.NO_SCORE) {
       throw new Error('cannot add scoring to this game')
     }
@@ -48,7 +53,7 @@ export class VsFlow {
     return this
   }
 
-  public addWinner(winner: PlayerId): VsFlow {
+  public setWinner(winner: PlayerId): VsFlow {
     this.winnerId = winner
     this.implicitWinner = false
     return this

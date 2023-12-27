@@ -12,33 +12,38 @@ export type ScoreData = {
 // class
 export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
 
-  private _scores: ScoreData[]
+  private _scores: Map<PlayerId, number>
 
   public constructor(scores: ReadonlyArray<ScoreData> = []) {
-    this._scores = [...scores]
+    this._scores = new Map<PlayerId, number>()
+    scores.forEach(score => this._scores.set(score.playerId, score.score))
   }
 
   public get hasScore(): boolean {
-    return this._scores.length > 0
+    return this._scores.size > 0
   }
 
   public get size(): number {
-    return this._scores.length
+    return this._scores.size
   }
 
-  public add(playerId: PlayerId, score: number) {
-    this._scores.push({ playerId, score })
+  public set(playerId: PlayerId, score: number) {
+    this._scores.set(playerId, score)
+  }
+
+  public for(playerId: PlayerId): number | undefined {
+    return this._scores.get(playerId)
   }
 
   public highest(): ScoreData {
-    if (this._scores.length === 0) {
+    if (this._scores.size === 0) {
       throw new Error('there are no scores')
     }
 
     let highestPlayer: PlayerId
     let highestScore: number = Number.MIN_VALUE
 
-    for (const { playerId, score } of this._scores) {
+    for (const [playerId, score] of this._scores) {
       if (score > highestScore) {
         highestScore = score
         highestPlayer = playerId
@@ -52,14 +57,14 @@ export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
   }
 
   public lowest(): ScoreData {
-    if (this._scores.length === 0) {
+    if (this._scores.size === 0) {
       throw new Error('there are no scores')
     }
 
     let lowestPlayer: PlayerId | undefined
     let lowestScore: number = Number.MAX_VALUE
 
-    for (const { playerId, score } of this._scores) {
+    for (const [ playerId, score ] of this._scores) {
       if (score < lowestScore) {
         lowestScore = score
         lowestPlayer = playerId
@@ -73,6 +78,6 @@ export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
   }
 
   public toData(): ReadonlyArray<ScoreData> {
-    return this._scores
+    return Array.from(this._scores, ([playerId, score]) => ({playerId, score}))
   }
 }

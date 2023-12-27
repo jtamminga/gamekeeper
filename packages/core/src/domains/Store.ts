@@ -115,4 +115,8 @@ export class Store {
     return player
   }
 
+  public getPlayers(ids: ReadonlyArray<PlayerId>): ReadonlyArray<Player> {
+    return ids.map(id => this.getPlayer(id))
+  }
+
 }

@@ -1,5 +1,6 @@
 {
   "name": "@gamekeeper/api-services",
+  "type": "module",
   "private": true,
   "version": "0.0.1",
   "main": "dist/index.js",

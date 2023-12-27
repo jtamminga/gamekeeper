@@ -1,53 +1,40 @@
-import { useMemo, useState } from 'react'
-import { GameId, PlayerId, VsFlow } from '@gamekeeper/core'
-import { DateSelect, GameSelect, PlayerSelect } from '@app/components'
-import { useGamekeeper } from '@app/hooks'
+import { ReactNode, useState } from 'react'
+import { CoopFlow, VsFlow } from '@gamekeeper/core'
 import { VsFlowPartial } from './VsFlow'
+import { BaseFlow } from './BaseFlow'
 
 
+type Props = {
+  onComplete: (flow: VsFlow | CoopFlow) => void
+}
 
-export function PlaythroughFlow() {
 
-  const gamekeeper = useGamekeeper()
+export function PlaythroughFlow({ onComplete }: Props) {
 
-  const [playerIds, setPlayerIds] = useState<PlayerId[]>([])
-  const [gameId, setGameId] = useState<GameId>()
-  const [playedOn, setPlayedOn] = useState(new Date())
+  const [flow, setFlow] = useState<VsFlow | CoopFlow>()
 
-  const flow = useMemo(() => {
-    if (!gameId) {
-      return
-    }
+  let contents: ReactNode = null
 
-    return gamekeeper.playthroughs.startFlow({
-      playerIds,
-      gameId,
-      playedOn
-    })
-  }, [playerIds, gameId, playedOn])
+  if (flow === undefined) {
+    contents = (
+      <BaseFlow
+        onComplete={flow => setFlow(flow)}
+      />
+    )
+  }
+
+  else if (flow instanceof VsFlow) {
+    contents = (
+      <VsFlowPartial
+        flow={flow}
+        onComplete={() => onComplete(flow)}
+      />
+    )
+  }
 
   return (
-    <form>
-
-      <PlayerSelect
-        playerIds={playerIds}
-        onChange={playerIds => setPlayerIds(playerIds)}
-      />
-      
-      <DateSelect
-        date={playedOn}
-        onChange={date => setPlayedOn(date)}
-      />
-
-      <GameSelect
-        gameId={gameId}
-        onChange={gameId => setGameId(gameId)}
-      />
-
-      {flow instanceof VsFlow &&
-        <VsFlowPartial flow={flow} />
-      }
-
-    </form>
+    <div>
+      {contents}
+    </div>
   )
 }

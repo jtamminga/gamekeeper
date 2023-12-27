@@ -1,5 +1,5 @@
 import { GameKeeperDeps } from '@core'
-import { CoopGame, CoopPlaythroughData, PlaythroughData } from '@domains'
+import { CoopGame, CoopPlaythroughData, Player, PlaythroughData } from '@domains'
 import { ScoringType } from '@services'
 
 
@@ -11,7 +11,8 @@ export class CoopFlow {
   public constructor(
     private deps: GameKeeperDeps,
     private data: PlaythroughData,
-    public readonly game: CoopGame
+    public readonly game: CoopGame,
+    public readonly players: ReadonlyArray<Player>
   ) { }
 
   public addScore(score: number): CoopFlow {

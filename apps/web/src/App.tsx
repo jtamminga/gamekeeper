@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 
 // base app
 export default function App() {
-
+  
   // keep track of whether the app is hydrated
   const [hydrated, setHydrated] = useState(false)
 

@@ -1,5 +1,6 @@
 {
   "name": "@gamekeeper/core",
+  "type": "module",
   "private": true,
   "version": "1.0.85",
   "description": "core parts of game keeper",
