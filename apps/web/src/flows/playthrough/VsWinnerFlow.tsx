@@ -1,11 +1,11 @@
-import { VsWinnerSelect } from '@app/components'
-import { PlayerId, VsFlow } from '@gamekeeper/core'
+import { Callback, PlayerId, VsFlow } from '@gamekeeper/core'
 import { useState } from 'react'
+import { VsWinnerSelect } from './VsWinnerSelect'
 
 
 type Props = {
   flow: VsFlow
-  onComplete: (winnerId: PlayerId) => void
+  onComplete: Callback<PlayerId>
 }
 
 

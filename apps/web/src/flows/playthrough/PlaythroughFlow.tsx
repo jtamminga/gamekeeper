@@ -1,11 +1,12 @@
 import { ReactNode, useState } from 'react'
-import { CoopFlow, VsFlow } from '@gamekeeper/core'
+import { Callback, CoopFlow, VsFlow } from '@gamekeeper/core'
 import { VsFlowPartial } from './VsFlow'
 import { BaseFlow } from './BaseFlow'
+import { CoopFlowPartial } from './CoopFlow'
 
 
 type Props = {
-  onComplete: (flow: VsFlow | CoopFlow) => void
+  onComplete: Callback<VsFlow | CoopFlow>
 }
 
 
@@ -26,6 +27,15 @@ export function PlaythroughFlow({ onComplete }: Props) {
   else if (flow instanceof VsFlow) {
     contents = (
       <VsFlowPartial
+        flow={flow}
+        onComplete={() => onComplete(flow)}
+      />
+    )
+  }
+
+  else if (flow instanceof CoopFlow) {
+    contents = (
+      <CoopFlowPartial
         flow={flow}
         onComplete={() => onComplete(flow)}
       />

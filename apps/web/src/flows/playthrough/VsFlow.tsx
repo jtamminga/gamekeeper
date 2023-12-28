@@ -1,4 +1,4 @@
-import { PlayerId, Scores, VsFlow } from '@gamekeeper/core'
+import { Action, PlayerId, Scores, VsFlow } from '@gamekeeper/core'
 import { ReactNode, useState } from 'react'
 import { VsWinnerFlow } from './VsWinnerFlow'
 import { VsScoresFlow } from './VsScoresFlow'
@@ -6,7 +6,7 @@ import { VsScoresFlow } from './VsScoresFlow'
 
 type Props = {
   flow: VsFlow
-  onComplete: () => void
+  onComplete: Action
 }
 
 

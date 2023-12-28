@@ -153,10 +153,10 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       // convert to record to map
       for (const [id, score] of Object.entries(scoreInputs)) {
         if (score === undefined) continue
-        scores.add(id as PlayerId, Number(score))
+        scores.set(id as PlayerId, Number(score))
       }
 
-      flow.addScores(scores)
+      flow.setScores(scores)
     }
     
     // show winner if not explicity inputed
@@ -176,7 +176,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
         choices: players.map(p => ({ value: p.id, name: p.name }))
       })
 
-      flow.addWinner(winnerInput.winner)
+      flow.setWinner(winnerInput.winner)
     }
   }
 
@@ -191,7 +191,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
       type: 'confirm',
       name: 'win'
     })
-    flow.addPlayersWon(win)
+    flow.setPlayersWon(win)
 
     // ask for scoring if applicable
     if (flow.game.hasScoring) {
@@ -199,7 +199,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
         name: 'score',
         ...numberOptions
       })
-      flow.addScore(scoreInput.score)
+      flow.setScore(scoreInput.score)
     }
   }
 }

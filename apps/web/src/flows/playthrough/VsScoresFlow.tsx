@@ -1,10 +1,10 @@
-import { PlayerId, Scores, VsFlow } from '@gamekeeper/core'
+import { Callback, PlayerId, Scores, VsFlow } from '@gamekeeper/core'
 import { useState } from 'react'
 
 
 type Props = {
   flow: VsFlow
-  onComplete: (scores: Scores) => void
+  onComplete: Callback<Scores>
 }
 
 

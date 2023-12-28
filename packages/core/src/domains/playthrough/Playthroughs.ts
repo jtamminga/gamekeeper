@@ -25,6 +25,10 @@ export class Playthroughs {
     return [...this._deps.store.playthroughs].sort(playthroughCompareFn)
   }
 
+  public latest(limit = 10): ReadonlyArray<Playthrough> {
+    return this.all().slice(0, limit)
+  } 
+
   public async create(data: VsPlaythroughData | CoopPlaythroughData): Promise<Playthrough> {
     const dto = await this._deps.services.playthroughService.addPlaythrough(data)
     return this._deps.store.bindPlaythrough(dto)
@@ -37,7 +41,9 @@ export class Playthroughs {
 }
 
 
-// helpers
+/**
+ * sort playthroughs from latest first to earliest last
+ */
 export function playthroughCompareFn(a: Playthrough, b: Playthrough): number {
-  return a.playedOn.getTime() - b.playedOn.getTime()
+  return b.playedOn.getTime() - a.playedOn.getTime()
 }

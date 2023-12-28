@@ -15,7 +15,7 @@ export class CoopFlow {
     public readonly players: ReadonlyArray<Player>
   ) { }
 
-  public addScore(score: number): CoopFlow {
+  public setScore(score: number): CoopFlow {
     if (this.game.scoring === ScoringType.NO_SCORE) {
       throw new Error('cannot add scoring to this game')
     }
@@ -24,7 +24,7 @@ export class CoopFlow {
     return this
   }
 
-  public addPlayersWon(won: boolean): CoopFlow {
+  public setPlayersWon(won: boolean): CoopFlow {
     this.playersWon = won
     return this
   }
