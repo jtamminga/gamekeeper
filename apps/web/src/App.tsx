@@ -14,7 +14,7 @@ export default function App() {
   // hydrate the app
   useEffect(() => {
     async function hydrateApp() {
-      await gamekeeper.hydrate()
+      await gamekeeper.hydrate({ limit: 10 })
       setHydrated(true)
     }
 

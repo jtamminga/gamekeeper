@@ -48,7 +48,7 @@ export class VsPlaythrough extends Playthrough {
       ...super.toData(),
       winnerId: this.winnerId
     }
-    if (this.scores) {
+    if (this.scores && this.scores.size > 0) {
       data.scores = this.scores.toData()
     }
     return data

@@ -71,7 +71,9 @@ export class VsFlow {
       playedOn,
       playerIds,
       winnerId: this.winnerId,
-      scores: this.scores?.toData()
+      scores: this.scores && this.scores.size > 0
+        ? this.scores.toData()
+        : undefined
     }
   }
 }

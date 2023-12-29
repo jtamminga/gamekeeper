@@ -15,7 +15,6 @@ export function DateSelect({ date, onChange }: Props) {
       value={formattedDate}
       onChange={e => {
         if (e.target.valueAsDate) {
-          console.log('onChange', e.target.valueAsDate)
           onChange(e.target.valueAsDate)
         }
       }}
