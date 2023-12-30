@@ -1,57 +1,123 @@
 import type { PlayerId } from '../player'
-import type { GameId } from '../game'
+import { GameType, type GameId } from '../game'
 import type { PlaythroughDto, PlaythroughService } from '../playthrough'
-import type { StatsQuery, StatsService, WinrateDto, WinstreakDto } from './StatsService'
+import type { StatsQuery, StatsResult, StatsService, WinrateDto } from './StatsService'
 import { endOfYear } from 'date-fns'
+import { VsPlaythrough } from '@domains'
 
 
-// stats service
+/**
+ * Simple implementation using the playthrough service
+ */
 export class SimpleStatsService implements StatsService {
 
-  private _playthroughsByYear: Map<number, readonly PlaythroughDto[]>
+  // TODO: add some playthrough caching
 
   public constructor(
     private _playthroughService: PlaythroughService
-  ) { 
-    this._playthroughsByYear = new Map<number, readonly PlaythroughDto[]>()
+  ) { }
+
+  public async getNumPlaythroughs(query: StatsQuery): Promise<StatsResult<number>> {
+    const playthroughs = await this.getPlaythroughs(query)
+    const grouped = this.groupedByGame(playthroughs)
+    return this.forEachGroup(grouped, playthroughs => playthroughs.length)
   }
 
-  public async getNumPlaythroughs(gameId: GameId, query: StatsQuery): Promise<number> {
-    return (await this.getPlaythroughsByGame(gameId, query)).length
+  public async getWinrates(query: StatsQuery): Promise<StatsResult<WinrateDto[]>> {
+    const playthroughs = await this.getPlaythroughs(query)
+    const grouped = this.groupedByGame(playthroughs)
+    return this.forEachGroup(grouped, playthroughs => {
+
+      // 1. store for each player how many plays and wins they got
+      const allStats = new Map<PlayerId, {plays: number, wins: number}>()
+      for (const playthrough of playthroughs) {
+        
+        // a. set/update play for each player in this playthrough
+        playthrough.players.forEach(playerId => {
+          const playerStats = allStats.get(playerId)
+          if (playerStats) {
+            playerStats.plays++
+          } else {
+            allStats.set(playerId, {wins: 0, plays: 1})
+          }
+        })
+
+        // b. update wins count based on playthrough result
+        if (playthrough.gameType === GameType.VS) {
+          const playerId = playthrough.result as PlayerId
+          const stats = allStats.get(playerId)!
+          stats.wins++
+        }
+        else if (playthrough.gameType === GameType.COOP) {
+          const playersWon = playthrough.result as boolean
+          if (playersWon) {
+            playthrough.players.forEach(playerId => {
+              allStats.get(playerId)!.wins++
+            })
+          }
+        }
+      }
+
+      // 2. once all plays and wins are counted then we calculate winrates for each player
+      const winrates: WinrateDto[] = []
+      for (const [playerId, stats] of allStats) {
+        winrates.push({ playerId, winrate: stats.wins / stats.plays })
+      }
+
+      return winrates
+    })
   }
 
-  public async getWinrate(gameId: GameId, playerId: PlayerId, query: StatsQuery): Promise<number> {
-    return 0
+  public async getLastPlaythroughs(query: StatsQuery): Promise<StatsResult<Date | undefined>> {
+    const playthroughs = await this.getPlaythroughs(query)
+    const grouped = this.groupedByGame(playthroughs)
+    return this.forEachGroup(grouped, playthroughs => playthroughs[0]?.playedOn)
+
   }
 
-  public async getWinrates(gameId: GameId, query: StatsQuery): Promise<readonly WinrateDto[]> {
-    return []
-  }
+  private async getPlaythroughs({ gameId, year }: StatsQuery): Promise<readonly PlaythroughDto[]> {
+    let fromDate: Date | undefined
+    let toDate: Date | undefined
 
-  public async getLastPlaythrough(gameId: GameId, query: StatsQuery): Promise<Date | undefined> {
-    return (await this.getPlaythroughsByGame(gameId, query))[0]?.playedOn
-  }
-
-  public async getWinstreaks(gameId: GameId, query: StatsQuery): Promise<readonly WinstreakDto[]> {
-    return []
-  }
-
-  private async getPlaythroughs({ year }: StatsQuery): Promise<readonly PlaythroughDto[]> {
-    let playthroughs = this._playthroughsByYear.get(year)
-    if (playthroughs) {
-      return playthroughs
+    if (year !== undefined) {
+      fromDate = new Date(year, 0, 1)
+      toDate = endOfYear(fromDate)
     }
-
-    const fromDate = new Date(year, 0, 0)
-    const toDate = endOfYear(fromDate)
-
-    playthroughs = await this._playthroughService.getPlaythroughs({ fromDate, toDate })
-    this._playthroughsByYear.set(year, playthroughs)
+    
+    const playthroughs = await this._playthroughService.getPlaythroughs({ gameId, fromDate, toDate })
     return playthroughs
   }
 
-  private async getPlaythroughsByGame(gameId: GameId, query: StatsQuery): Promise<readonly PlaythroughDto[]> {
-    return (await this.getPlaythroughs(query)).filter(playthrough => playthrough.gameId === gameId)
+  private groupedByGame(playthroughs: ReadonlyArray<PlaythroughDto>): Record<GameId, PlaythroughDto[]> {
+    const grouped: Record<GameId, PlaythroughDto[]> = {}
+
+    for (const playthrough of playthroughs) {
+      const group = grouped[playthrough.gameId]
+      
+      if (group) {
+        group.push(playthrough)
+      }
+      else {
+        grouped[playthrough.gameId] = [playthrough]
+      }
+    }
+
+    return grouped
+  }
+
+  private forEachGroup<TOut>(
+    grouped: Record<GameId, PlaythroughDto[]>,
+    reduce: (group: PlaythroughDto[]) => TOut
+  ): StatsResult<TOut> {
+
+    const result: StatsResult<TOut> = {}
+    for (const id in grouped) {
+      const gameId = id as GameId
+      const group = grouped[gameId]
+      result[gameId] = reduce(group)
+    }
+
+    return result
   }
 
 }

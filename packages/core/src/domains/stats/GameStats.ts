@@ -1,42 +1,41 @@
 import { Winrate } from './Winrate'
 import { Winrates } from './Winrates'
 import type { Game } from '../game'
-import type { GameType, PlayerId, StatsQuery, StatsService } from '@services'
-
-
-// types
-export interface StatsData {
-  type: GameType
-  playCount: number
-  lastPlayed: Date | undefined
-  winrates: Map<PlayerId, number>
-}
+import type { GameKeeperDeps } from '@core'
+import type { StatsQuery, StatsService } from '@services'
 
 
 // vs game stats
 export class GameStats {
 
+  private _statsService: StatsService
+
   public constructor(
+    private readonly _deps: GameKeeperDeps,
     public readonly game: Game,
-    private readonly _query: StatsQuery,
-    private readonly _statsService: StatsService
-  ) { }
-
-  public async getNumPlaythroughs(): Promise<number> {
-    return this._statsService.getNumPlaythroughs(this.game.id!, this._query)
+    private readonly _query?: Omit<StatsQuery, 'gameId'>
+  ) {
+    this._statsService = _deps.services.statsService
   }
 
-  public async getLastPlaythrough(): Promise<Date | undefined> {
-    return this._statsService.getLastPlaythrough(this.game.id!, this._query)
+  public async getNumPlaythroughs(query?: Omit<StatsQuery, 'gameId'>): Promise<number> {
+    const result = await this._statsService.getNumPlaythroughs({ ...this._query, ...query, gameId: this.game.id })
+    return result[this.game.id!]
   }
 
-  public async getWinrates(): Promise<Winrates> {
-    const winrates = await this._statsService.getWinrates(this.game.id!, this._query)
+  public async getLastPlaythrough(query?: Omit<StatsQuery, 'gameId'>): Promise<Date | undefined> {
+    const result = await this._statsService.getLastPlaythroughs({ ...this._query, ...query, gameId: this.game.id })
+    return result[this.game.id!]
+  }
+
+  public async getWinrates(query?: Omit<StatsQuery, 'gameId'>): Promise<Winrates> {
+    const result = await this._statsService.getWinrates({ ...this._query, ...query, gameId: this.game.id })
+    const winrates = result[this.game.id!]
 
     return new Winrates(winrates.map(winrate =>
       new Winrate(
-        winrate.playerId,
-        winrate.winrate
+        winrate,
+        this._deps
       )
     ))
   }

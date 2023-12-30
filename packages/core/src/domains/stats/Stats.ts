@@ -11,9 +11,9 @@ export class Stats {
 
   public forGame(
     game: Game,
-    query: StatsQuery = { year: new Date().getFullYear() }
+    query?: Omit<StatsQuery, 'gameId'>
   ): GameStats {
-    return new GameStats(game, query, this._deps.services.statsService)
+    return new GameStats(this._deps, game, query)
   }
 
 }

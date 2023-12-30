@@ -1,9 +1,9 @@
 import { GameService, PlayerService, PlaythroughService, Services, StatsService } from '@gamekeeper/core'
-import { ApiClient } from 'ApiClient'
-import { ApiGameService } from 'GameService'
-import { ApiPlayerService } from 'PlayerService'
-import { ApiPlaythroughService } from 'PlaythroughService'
-import { ApiStatsService } from 'StatsService'
+import { ApiClient } from './ApiClient'
+import { ApiGameService } from './GameService'
+import { ApiPlayerService } from './PlayerService'
+import { ApiPlaythroughService } from './PlaythroughService'
+import { ApiStatsService } from './StatsService'
 
 
 export class ApiServices implements Services {

@@ -3,23 +3,23 @@ import { ConsoleLogger, StatsService, type Services, SimpleStatsService } from '
 
 
 // types
-export type ExternalServices = Omit<Services, 'statsService'> & {
-  statsService?: StatsService
-}
+// export type ExternalServices = Omit<Services, 'statsService'> & {
+//   statsService?: StatsService
+// }
 
 
 // factory
 export namespace GameKeeperFactory {
-  export function create(externalServices: ExternalServices) {
+  export function create(services: Services) {
 
     // external services
     // use simple stats service if no other is specified
-    const services: Services = {
-      ...externalServices,
-      statsService: externalServices.statsService
-        ? externalServices.statsService
-        : new SimpleStatsService(externalServices.playthroughService)
-    }
+    // const services: Services = {
+    //   ...externalServices,
+    //   statsService: externalServices.statsService
+    //     ? externalServices.statsService
+    //     : new SimpleStatsService(externalServices.playthroughService)
+    // }
 
     // create other dependencies
     const logger = new ConsoleLogger(process.env.NODE_ENV === 'production')

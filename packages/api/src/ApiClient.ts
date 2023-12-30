@@ -1,4 +1,4 @@
-import { ApiError } from "ApiError"
+import { ApiError } from './ApiError'
 
 
 // consts
@@ -17,8 +17,12 @@ export class ApiClient {
 
   public constructor(private baseUrl: string) { }
 
-  public async get<T>(path: string): Promise<T> {
-    return this.handledFetch(path, {
+  public async get<T>(path: string, query?: Record<string, string>): Promise<T> {
+    const fullPath = query
+      ? path + '?' + new URLSearchParams(query).toString()
+      : path
+
+    return this.handledFetch(fullPath, {
       referrerPolicy: 'no-referrer',
       method: 'GET',
       headers: BASE_HEADERS

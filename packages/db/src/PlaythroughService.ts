@@ -1,4 +1,4 @@
-import { DbService } from 'DbService'
+import { DbService } from './DbService'
 import { CoopPlaythroughData, GameId, GameType, PlayerId, PlaythroughDto, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData } from '@gamekeeper/core'
 
 

@@ -1,4 +1,5 @@
-import { CoopPlaythroughData, GameId, PlayerId, PlaythroughData, ScoreData, VsPlaythroughData } from '@gamekeeper/core'
+import { CoopPlaythroughData, GameId, PlayerId, PlaythroughData, PlaythroughQueryOptions, ScoreData, VsPlaythroughData } from '@gamekeeper/core'
+import { Request } from 'express'
 
 
 export type ApiPlaythroughDto = {
@@ -43,4 +44,24 @@ export function toPlaythroughData(dto: ApiPlaythroughDto): VsPlaythroughData | C
   else {
     throw new Error('invalid playthrough data')
   }
+}
+
+export function toPlaythroughQueryOptions(req: Request): PlaythroughQueryOptions {
+  const {limit, fromDate, toDate, gameId} = req.query
+  
+  const query: PlaythroughQueryOptions = {}
+  if (typeof limit === 'string') {
+    query.limit = Number.parseInt(limit)
+  }
+  if (typeof fromDate === 'string') {
+    query.fromDate = new Date(fromDate)
+  }
+  if (typeof toDate === 'string') {
+    query.toDate = new Date(toDate)
+  }
+  if (typeof gameId === 'string') {
+    query.gameId = gameId as GameId
+  }
+
+  return query
 }

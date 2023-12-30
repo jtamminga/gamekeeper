@@ -3,28 +3,22 @@ import type { GameId } from '../game'
 
 
 export type StatsQuery = {
-  year: number
-}
-export type WinstreakDto = {
-  playerId: PlayerId
-  steak: number
+  gameId?: GameId
+  year?: number
 }
 export type WinrateDto = {
   playerId: PlayerId
   winrate: number
 }
+export type StatsResult<TData> = Record<GameId, Readonly<TData>>
 
 
 export interface StatsService {
 
-  getNumPlaythroughs(gameId: GameId, query: StatsQuery): Promise<number>
+  getNumPlaythroughs(query: StatsQuery): Promise<StatsResult<number>>
 
-  getWinrate(gameId: GameId, playerId: PlayerId, query: StatsQuery): Promise<number>
+  getWinrates(query: StatsQuery): Promise<StatsResult<WinrateDto[]>>
 
-  getWinrates(gameId: GameId, query: StatsQuery): Promise<ReadonlyArray<WinrateDto>>
-
-  getLastPlaythrough(gameId: GameId, query: StatsQuery): Promise<Date | undefined>
-
-  getWinstreaks(gameId: GameId, query: StatsQuery): Promise<ReadonlyArray<WinstreakDto>>
+  getLastPlaythroughs(query: StatsQuery): Promise<StatsResult<Date | undefined>>
 
 }

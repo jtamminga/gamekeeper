@@ -1,3 +1,4 @@
+import { GameStats } from '@app/components/GameStats'
 import { PlaythroughFlow } from '@app/flows'
 import { useGamekeeper } from '@app/hooks'
 import { CoopFlow, Playthrough, VsFlow } from '@gamekeeper/core'
@@ -40,6 +41,8 @@ export function AddPlaythrough() {
         <p>{playthrough.winnerName} won!</p>
 
         <p>playthrough recorded</p>
+
+        <GameStats game={playthrough.game} />
 
         <button
           onClick={onRecordAnother}

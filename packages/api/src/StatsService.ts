@@ -1,28 +1,22 @@
-import { GameId, PlayerId, StatsQuery, StatsService, WinrateDto, WinstreakDto } from '@gamekeeper/core'
-import { ApiService } from 'ApiService'
+import { StatsQuery, StatsResult, StatsService, WinrateDto } from '@gamekeeper/core'
+import { ApiService } from './ApiService'
+import { Route } from './Route'
+import { toCleanQuery } from './utils'
 
 
 // stats service
 export class ApiStatsService extends ApiService implements StatsService {
 
-  getNumPlaythroughs(gameId: GameId, query: StatsQuery): Promise<number> {
-    throw new Error('Method not implemented.')
+  public async getNumPlaythroughs(query: StatsQuery): Promise<StatsResult<number>> {
+    return this.apiClient.get(Route.STATS.NUM_PLAYTHROUGHS, toCleanQuery(query))
   }
 
-  getWinrate(gameId: GameId, playerId: PlayerId, query: StatsQuery): Promise<number> {
-    throw new Error('Method not implemented.')
+  public async getWinrates(query: StatsQuery): Promise<StatsResult<WinrateDto[]>> {
+    return this.apiClient.get(Route.STATS.WINRATES, toCleanQuery(query))
   }
 
-  getWinrates(gameId: GameId, query: StatsQuery): Promise<readonly WinrateDto[]> {
-    throw new Error('Method not implemented.')
-  }
-
-  getLastPlaythrough(gameId: GameId, query: StatsQuery): Promise<Date | undefined> {
-    throw new Error('Method not implemented.')
-  }
-
-  getWinstreaks(gameId: GameId, query: StatsQuery): Promise<readonly WinstreakDto[]> {
-    throw new Error('Method not implemented.')
+  public async getLastPlaythroughs(query: StatsQuery): Promise<StatsResult<Date | undefined>> {
+    return this.apiClient.get(Route.STATS.LAST_PLAYTHROUGHS, toCleanQuery(query))
   }
 
 }

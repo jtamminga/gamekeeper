@@ -1,6 +1,6 @@
 import { PlayerData, PlayerDto, PlayerService } from '@gamekeeper/core'
-import { ApiService } from 'ApiService'
-import { Route } from 'Route'
+import { ApiService } from './ApiService'
+import { Route } from './Route'
 
 
 // player service

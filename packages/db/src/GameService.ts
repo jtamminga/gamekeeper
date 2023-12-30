@@ -1,4 +1,4 @@
-import { DbService } from 'DbService'
+import { DbService } from './DbService'
 import { NotFoundError, GameService, GameDto, GameId, GameData, GameType, ScoringType } from '@gamekeeper/core'
 
 

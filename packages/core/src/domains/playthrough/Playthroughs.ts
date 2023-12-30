@@ -27,7 +27,7 @@ export class Playthroughs {
 
   public latest(limit = 10): ReadonlyArray<Playthrough> {
     return this.all().slice(0, limit)
-  } 
+  }
 
   public async create(data: VsPlaythroughData | CoopPlaythroughData): Promise<Playthrough> {
     const dto = await this._deps.services.playthroughService.addPlaythrough(data)

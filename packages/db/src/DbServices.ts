@@ -2,8 +2,7 @@ import { DataService } from './DataService'
 import { DbGameService } from './GameService'
 import { DbPlayerService } from './PlayerService'
 import { DbPlaythroughService } from './PlaythroughService'
-import { DbStatsService } from './StatsService'
-import { GameService, PlayerService, PlaythroughService, Services, StatsService } from '@gamekeeper/core'
+import { GameService, PlayerService, PlaythroughService, Services, SimpleStatsService, StatsService } from '@gamekeeper/core'
 
 
 export class DbServices implements Services {
@@ -19,6 +18,7 @@ export class DbServices implements Services {
     this.gameService = new DbGameService(dataService)
     this.playerService = new DbPlayerService(dataService)
     this.playthroughService = new DbPlaythroughService(dataService)
-    this.statsService = new DbStatsService(this.playthroughService)
+    // TODO: implement db stats service
+    this.statsService = new SimpleStatsService(this.playthroughService)
   }
 }
