@@ -23,9 +23,10 @@ export function PlayerSelect({ playerIds, onChange }: Props) {
   }
 
   return (
-    <>
+    <div className="form-control">
+      <label>Players</label>
       {players.map(player =>
-        <label key={player.id}>
+        <label className="checkbox-label" key={player.id}>
           <input
             type="checkbox"
             checked={playerIds.includes(player.id!)}
@@ -34,7 +35,7 @@ export function PlayerSelect({ playerIds, onChange }: Props) {
           {player.name}
         </label>
       )}
-    </>
+    </div>
   )
 
 }

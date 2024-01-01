@@ -31,7 +31,8 @@ export function CoopFlowPartial({ flow, onComplete }: Props) {
     <div>
 
       {flow.game.hasScoring &&
-        <div>
+        <div className="form-control">
+          <label>Score</label>
           <input
             type="number"
             value={score}

@@ -54,6 +54,29 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.form-control {
+  margin-bottom: 30px;
+}
+.form-control > label:first-of-type {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.form-control > .checkbox-label {
+  display: block;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+.form-control > .checkbox-label > input {
+  margin-right: 10px;
+}
+
+.player-score-inputs {
+  margin-bottom: 5px;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

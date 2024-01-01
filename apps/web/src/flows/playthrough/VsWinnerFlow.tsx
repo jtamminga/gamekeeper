@@ -22,8 +22,7 @@ export function VsWinnerFlow({ flow, onComplete }: Props) {
   }
 
   return (
-    <div>
-
+    <>
       <VsWinnerSelect
         flow={flow}
         winnerId={winnerId}
@@ -33,7 +32,6 @@ export function VsWinnerFlow({ flow, onComplete }: Props) {
       <button
         onClick={onNext}
       >Next</button>
-
-    </div>
+    </>
   )
 }

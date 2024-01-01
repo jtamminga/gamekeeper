@@ -10,8 +10,9 @@ type Props = {
 
 export function VsScoresFlow({ flow, onComplete }: Props) {
 
-  const [scores] = useState(new Scores())
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setUpdatedAt] = useState(0)
+  const [scores] = useState(new Scores())
   
   function updateScore(playerId: PlayerId, score: number) {
     scores.set(playerId, score)
@@ -23,23 +24,28 @@ export function VsScoresFlow({ flow, onComplete }: Props) {
   }
 
   return (
-    <div>
-      {flow.players.map(player =>
-        <div key={player.id!}>
-          {player.name}
-          <input
-            type="number"
-            value={scores.for(player.id!) ?? 0}
-            onChange={e => updateScore(player.id!, e.target.valueAsNumber)}
-          />
+    <>
+      <div className="form-control">
+        <label>Scores</label>
+        <div className="player-score-inputs">
+          {flow.players.map(player =>
+            <>
+              <label>{player.name}</label>
+              <input
+                type="number"
+                value={scores.for(player.id!) ?? 0}
+                onChange={e => updateScore(player.id!, e.target.valueAsNumber)}
+              />
+            </>
+          )}
         </div>
-      )}
+      </div>
 
       <button
         onClick={onNext}
       >
         Next
       </button>
-    </div>
+    </>
   )
 }

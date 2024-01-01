@@ -12,6 +12,7 @@ type Props = {
 
 export function VsFlowPartial({ flow, onComplete }: Props) {
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setUpdatedAt] = useState(0)
 
   function onScoresComplete(scores: Scores) {

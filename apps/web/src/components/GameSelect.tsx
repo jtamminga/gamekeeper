@@ -14,14 +14,17 @@ export function GameSelect({ gameId, onChange }: Props) {
   const games = gamekeeper.games.all()
 
   return (
-    <select
-      value={gameId ?? ''}
-      onChange={e => onChange(e.target.value as GameId)}
-    >
-      <option value="" disabled>select game</option>
-      {games.map(game =>
-        <option key={game.id} value={game.id}>{game.name}</option>
-      )}
-    </select>
+    <div className="form-control">
+      <label>Game played</label>
+      <select
+        value={gameId ?? ''}
+        onChange={e => onChange(e.target.value as GameId)}
+      >
+        <option value="" disabled>select game</option>
+        {games.map(game =>
+          <option key={game.id} value={game.id}>{game.name}</option>
+        )}
+      </select>
+    </div>
   )
 }
