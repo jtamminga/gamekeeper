@@ -1,28 +1,29 @@
-import { GameKeeperDeps, Serializable } from '@core'
-import { Entity } from '../Entity'
-import { Game } from '../game'
-import { GameId, PlayerId, PlaythroughId } from '@services'
+import { type NewData, Entity } from '../Entity'
+import type { Game } from '../game'
+import type { GameId, PlayerId, PlaythroughId } from '@services'
+import type { GameKeeperDeps, Serializable } from '@core'
 
 
 // types
-export interface PlaythroughData {
-  id?: PlaythroughId
+export interface BasePlaythroughData {
+  id: PlaythroughId
   gameId: GameId
   playerIds: ReadonlyArray<PlayerId>
   playedOn: Date
 }
+export type NewBasePlaythroughData = NewData<BasePlaythroughData>
 
 
 // class
 export abstract class Playthrough
   extends Entity<PlaythroughId>
-  implements Serializable<PlaythroughData> {
+  implements Serializable<BasePlaythroughData> {
 
   public readonly playerIds: ReadonlyArray<PlayerId>
   public readonly gameId: GameId
   public readonly playedOn: Date
 
-  public constructor(protected _deps: GameKeeperDeps, data: PlaythroughData) {
+  public constructor(protected _deps: GameKeeperDeps, data: BasePlaythroughData) {
     super(data.id)
     this.gameId = data.gameId
     this.playerIds = data.playerIds
@@ -33,11 +34,7 @@ export abstract class Playthrough
     return this._deps.store.getGame(this.gameId)
   }
 
-  public abstract didWinBy(playerId: PlayerId): boolean
-
-  public abstract get winnerName(): string
-
-  public toData(): PlaythroughData {
+  public toData(): BasePlaythroughData {
     return {
       id: this.id,
       gameId: this.gameId,

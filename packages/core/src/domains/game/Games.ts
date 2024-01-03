@@ -1,5 +1,5 @@
 import type { GameKeeperDeps } from '@core'
-import type { Game, GameData } from './Game'
+import type { Game, GameData, NewGameData } from './Game'
 import type { GameId } from '@services'
 
 
@@ -25,21 +25,13 @@ export class Games {
     return this._deps.store.getGame(id) as T
   }
 
-  public async create(data: GameData): Promise<Game> {
+  public async create(data: NewGameData): Promise<Game> {
     const dto = await this._deps.services.gameService.addGame(data)
     return this._deps.store.bindGame(dto)
   }
 
   public toData(): ReadonlyArray<GameData> {
     return this.all().map(game => game.toData())
-  }
-
-  public toMapData(): Readonly<Record<GameId, GameData>> {
-    const data: Record<GameId, GameData> = { }
-    for (const gameData of this.toData()) {
-      data[gameData.id!] = gameData
-    }
-    return data
   }
 
 }

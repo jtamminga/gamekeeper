@@ -1,4 +1,4 @@
-import { Opaque } from "@core"
+import { Opaque } from '@core'
 
 export type GameId = Opaque<string, 'GameId'>
 

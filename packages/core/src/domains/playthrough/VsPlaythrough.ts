@@ -1,17 +1,19 @@
 import { GameKeeperDeps } from '@core'
 import { VsGame } from '../game'
-import { Playthrough, PlaythroughData } from './Playthrough'
+import { Playthrough, BasePlaythroughData } from './Playthrough'
 import { ScoreData, Scores } from './Scores'
 import { PlayerId } from '@services'
+import { Player, type NewData } from '@domains'
 
 
 // types
-export interface VsPlaythroughData extends PlaythroughData {
+export interface VsPlaythroughData extends BasePlaythroughData {
   winnerId: PlayerId
   scores?: ReadonlyArray<ScoreData>
 }
+export type NewVsPlaythroughData = NewData<VsPlaythroughData>
 export namespace VsPlaythroughData {
-  export function guard(data: PlaythroughData): data is VsPlaythroughData {
+  export function guard(data: BasePlaythroughData): data is VsPlaythroughData {
     return Object.hasOwn(data, 'winnerId')
   }
 }
@@ -35,12 +37,8 @@ export class VsPlaythrough extends Playthrough {
     return super.game as VsGame
   }
 
-  public didWinBy(playerId: PlayerId): boolean {
-    return this.winnerId === playerId
-  }
-
-  public get winnerName(): string {
-    return this._deps.store.getPlayer(this.winnerId).name
+  public get winner(): Player {
+    return this._deps.store.getPlayer(this.winnerId)
   }
 
   public override toData(): VsPlaythroughData {

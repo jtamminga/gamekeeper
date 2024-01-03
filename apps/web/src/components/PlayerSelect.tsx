@@ -29,8 +29,8 @@ export function PlayerSelect({ playerIds, onChange }: Props) {
         <label className="checkbox-label" key={player.id}>
           <input
             type="checkbox"
-            checked={playerIds.includes(player.id!)}
-            onChange={e => handleChange(player.id!, e.target.checked)}
+            checked={playerIds.includes(player.id)}
+            onChange={e => handleChange(player.id, e.target.checked)}
           />
           {player.name}
         </label>

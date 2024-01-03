@@ -1,6 +1,6 @@
 import type { GameId } from '../game'
 import type { PlaythroughDto } from './PlaythroughDto'
-import type { CoopPlaythroughData, VsPlaythroughData } from 'domains'
+import type { NewPlaythroughData } from 'domains'
 
 
 export type PlaythroughQueryOptions = {
@@ -10,11 +10,10 @@ export type PlaythroughQueryOptions = {
   gameId?: GameId
 }
 
-
 export interface PlaythroughService {
 
   getPlaythroughs(options?: PlaythroughQueryOptions): Promise<readonly PlaythroughDto[]>
 
-  addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughDto>
+  addPlaythrough(playthrough: NewPlaythroughData): Promise<PlaythroughDto>
 
 }

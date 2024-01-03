@@ -33,8 +33,8 @@ export function VsScoresFlow({ flow, onComplete }: Props) {
               <label>{player.name}</label>
               <input
                 type="number"
-                value={scores.for(player.id!) ?? 0}
-                onChange={e => updateScore(player.id!, e.target.valueAsNumber)}
+                value={scores.for(player.id) ?? 0}
+                onChange={e => updateScore(player.id, e.target.valueAsNumber)}
               />
             </>
           )}

@@ -1,5 +1,5 @@
 import { GameKeeperDeps } from '@core'
-import { CoopGame, CoopPlaythroughData, Player, PlaythroughData } from '@domains'
+import { CoopGame, CoopPlaythroughData, NewBasePlaythroughData, Player } from '@domains'
 import { ScoringType } from '@services'
 
 
@@ -10,7 +10,7 @@ export class CoopFlow {
 
   public constructor(
     private deps: GameKeeperDeps,
-    private data: PlaythroughData,
+    private data: NewBasePlaythroughData,
     public readonly game: CoopGame,
     public readonly players: ReadonlyArray<Player>
   ) { }
@@ -29,7 +29,7 @@ export class CoopFlow {
     return this
   }
 
-  public build(): CoopPlaythroughData {
+  public build(): Omit<CoopPlaythroughData, 'id'> {
     if (this.playersWon === undefined) {
       throw new Error('winner must be specified')
     }

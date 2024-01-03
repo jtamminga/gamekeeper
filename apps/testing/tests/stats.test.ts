@@ -9,7 +9,7 @@ describe('stats', async function () {
   await gamekeeper.players.hydrate()
 
   const players = gamekeeper.players.all()
-  const winnerId = players[0].id!
+  const winnerId = players[0].id
 
   const game = await gamekeeper.games.create({
     name: 'test',
@@ -18,8 +18,8 @@ describe('stats', async function () {
   })
 
   const playthrough = await gamekeeper.playthroughs.create({
-    gameId: game.id!,
-    playerIds: players.map(player => player.id!),
+    gameId: game.id,
+    playerIds: players.map(player => player.id),
     playedOn: new Date(),
     winnerId
   })

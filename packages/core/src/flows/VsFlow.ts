@@ -1,5 +1,5 @@
 import { PlayerId, ScoringType } from '@services'
-import { Player, PlaythroughData, Scores, VsGame, VsPlaythroughData } from '@domains'
+import { NewBasePlaythroughData, Player, Scores, VsGame, VsPlaythroughData } from '@domains'
 import { GameKeeperDeps } from '@core'
 
 
@@ -11,7 +11,7 @@ export class VsFlow {
 
   public constructor(
     private deps: GameKeeperDeps,
-    private data: PlaythroughData,
+    private data: NewBasePlaythroughData,
     public readonly game: VsGame,
     public readonly players: ReadonlyArray<Player>
   ) { }
@@ -59,7 +59,7 @@ export class VsFlow {
     return this
   }
 
-  public build(): VsPlaythroughData {
+  public build(): Omit<VsPlaythroughData, 'id'> {
     if (this.winnerId === undefined) {
       throw new Error('winner must be specified')
     }

@@ -2,7 +2,7 @@ import fuzzy from 'fuzzy'
 import inquirer, { QuestionCollection } from 'inquirer'
 import inquirerPrompt from 'inquirer-autocomplete-prompt'
 import { GameKeeperCommand } from '../../GameKeeperCommand'
-import { Game, PlayerId, StatsData, ArrayUtils, Scores, GameId, VsFlow, CoopFlow } from '@gamekeeper/core'
+import { Game, PlayerId, ArrayUtils, Scores, GameId, VsFlow, CoopFlow } from '@gamekeeper/core'
 import chalk from 'chalk'
 import { format, isMatch, parse } from 'date-fns'
 
@@ -44,7 +44,7 @@ export default class PlaythroughCommand extends GameKeeperCommand {
 
     // get player ids
     const playerIds = this.gamekeeper.players.all()
-      .map(player => player.id!)
+      .map(player => player.id)
 
     const flow = this.gamekeeper.playthroughs.startFlow({
       gameId,

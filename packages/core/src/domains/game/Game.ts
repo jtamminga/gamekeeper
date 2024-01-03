@@ -1,16 +1,17 @@
 import { GameKeeperDeps, Serializable } from '@core'
 import { Playthrough, playthroughCompareFn } from '../playthrough'
-import { Entity } from '../Entity'
+import { NewData, Entity } from '../Entity'
 import { GameId, GameType, ScoringType } from '@services'
 
 
 // types
 export interface GameData {
-  id?: GameId
+  id: GameId
   name: string
   scoring: ScoringType
   type: GameType
 }
+export type NewGameData = NewData<GameData>
 
 
 // class
@@ -27,8 +28,6 @@ export abstract class Game<T extends Playthrough = Playthrough>
     this.scoring = data.scoring
   }
 
-  public abstract readonly type: GameType
-
   public get hasScoring(): boolean {
     return this.scoring !== ScoringType.NO_SCORE
   }
@@ -43,11 +42,12 @@ export abstract class Game<T extends Playthrough = Playthrough>
       .sort(playthroughCompareFn) as T[]
   }
 
-  public toData(): GameData {
+  public abstract toData(): GameData
+
+  protected toBaseData(): Omit<GameData, 'type'> {
     return {
-      id: this.id!,
+      id: this.id,
       name: this.name,
-      type: this.type,
       scoring: this.scoring
     }
   }

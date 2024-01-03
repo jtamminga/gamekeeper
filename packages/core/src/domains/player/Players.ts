@@ -29,12 +29,4 @@ export class Players {
     return this.all().map(player => player.toData())
   }
 
-  public toMapData(): Readonly<Record<PlayerId, PlayerData>> {
-    const data: Record<PlayerId, PlayerData> = { }
-    for (const playerData of this.toData()) {
-      data[playerData.id!] = playerData
-    }
-    return data
-  }
-
 }

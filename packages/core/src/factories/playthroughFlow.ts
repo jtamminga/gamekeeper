@@ -1,11 +1,11 @@
 import { GameKeeperDeps } from '@core'
-import { CoopGame, PlaythroughData, VsGame } from '@domains'
+import { CoopGame, NewBasePlaythroughData, VsGame } from '@domains'
 import { CoopFlow, VsFlow } from '@flows'
 
 
 export namespace PlaythroughFlowFactory {
 
-  export function create(deps: GameKeeperDeps, data: PlaythroughData): VsFlow | CoopFlow {
+  export function create(deps: GameKeeperDeps, data: NewBasePlaythroughData): VsFlow | CoopFlow {
     
     const game = deps.store.getGame(data.gameId)
     const players = deps.store.getPlayers(data.playerIds)

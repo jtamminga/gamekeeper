@@ -1,48 +1,46 @@
-import { GameStats } from '@app/components/GameStats'
 import { PlaythroughFlow } from '@app/flows'
 import { useGamekeeper } from '@app/hooks'
-import { CoopFlow, Playthrough, VsFlow } from '@gamekeeper/core'
+import { CoopFlow, HydratedPlaythroughView, PlaythroughView, VsFlow } from '@gamekeeper/core'
 import { useState } from 'react'
+import { PlaythroughSummary } from './PlaythroughSummary'
 
 
 //
 export function AddPlaythrough() {
 
   const gamekeeper = useGamekeeper()
-  const [loading, setLoading] = useState(false)
-  const [playthrough, setPlaythrough] = useState<Playthrough>()
+  const [completed, setCompleted] = useState(false)
+  const [summaryView, setSummaryView] = useState<HydratedPlaythroughView>()
 
   async function onComplete(flow: VsFlow | CoopFlow) {
-    setLoading(true)
+    setCompleted(true)
 
     const playthroughData = flow.build()
     const playthrough = await gamekeeper.playthroughs.create(playthroughData)
+    const view = await new PlaythroughView(playthrough).hydrate(gamekeeper)
 
-    setPlaythrough(playthrough)
-    setLoading(false)
+    setSummaryView(view)
   }
 
   function onRecordAnother() {
-    setPlaythrough(undefined)
+    setSummaryView(undefined)
   }
 
-  // show loader if loading
-  if (loading) {
+  // if flow not completed then render flow
+  if (!completed) {
     return (
-      <div>loading...</div>
+      <PlaythroughFlow
+        onComplete={onComplete}
+      />
     )
   }
 
-  // if playthrough show complete screen
-  if (playthrough) {
+  // otherwise show summary screen
+  else {
     return (
       <div>
 
-        <p>{playthrough.winnerName} won!</p>
-
         <p>playthrough recorded</p>
-
-        <GameStats game={playthrough.game} />
 
         <button
           onClick={onRecordAnother}
@@ -50,14 +48,12 @@ export function AddPlaythrough() {
           Record another
         </button>
 
+        {summaryView &&
+          <PlaythroughSummary
+            view={summaryView}
+          />
+        }
       </div>
     )
   }
-
-  // else render flow
-  return (
-    <PlaythroughFlow
-      onComplete={onComplete}
-    />
-  )
 }

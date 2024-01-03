@@ -1,16 +1,18 @@
 import { GameKeeperDeps } from '@core'
 import { CoopGame } from '../game'
-import { Playthrough, PlaythroughData } from './Playthrough'
+import { Playthrough, BasePlaythroughData } from './Playthrough'
 import { PlayerId } from '@services'
+import { NewData } from '@domains'
 
 
 // types
-export interface CoopPlaythroughData extends PlaythroughData {
+export interface CoopPlaythroughData extends BasePlaythroughData {
   playersWon: boolean
   score?: number
 }
+export type NewCoopPlaythroughData = NewData<CoopPlaythroughData>
 export namespace CoopPlaythroughData {
-  export function guard(data: PlaythroughData): data is CoopPlaythroughData {
+  export function guard(data: BasePlaythroughData): data is CoopPlaythroughData {
     return Object.hasOwn(data, 'playersWon')
   }
 }
@@ -30,16 +32,6 @@ export class CoopPlaythrough extends Playthrough {
 
   public get game(): CoopGame {
     return super.game as CoopGame
-  }
-
-  public get winnerName(): string {
-    return this.playersWon
-      ? 'players'
-      : 'game'
-  }
-
-  public didWinBy(playerId: PlayerId): boolean {
-    return this.playersWon && this.playerIds.includes(playerId)
   }
 
   public override toData(): CoopPlaythroughData {
