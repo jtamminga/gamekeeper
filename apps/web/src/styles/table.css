@@ -1,0 +1,31 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-lg);
+  --table-x-gap: 15px;
+  --table-y-gap: 5px;
+}
+
+tr > td + td {
+  border-left-width: var(--table-x-gap);
+}
+tr > th + th {
+  border-left-width: var(--table-x-gap);
+}
+tr + tr > td {
+  padding-top: var(--table-y-gap);
+}
+td, th {
+  text-align: left;
+  border: 0px solid transparent;
+  background-clip: padding-box;
+}
+th {
+  font-weight: normal;
+  color: var(--color-gray);
+  padding-bottom: var(--table-y-gap);
+}
+
+td.num, th.num {
+  text-align: right;
+}

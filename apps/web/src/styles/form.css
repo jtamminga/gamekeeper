@@ -1,0 +1,19 @@
+.form-control {
+  margin-bottom: var(--space-lg);
+}
+
+.form-control > label:first-of-type {
+  display: block;
+  margin-bottom: var(--space-md);
+  font-weight: bold;
+}
+
+.form-control > .checkbox-label {
+  display: block;
+  margin-bottom: var(--space-sm);
+  cursor: pointer;
+}
+
+.form-control > .checkbox-label > input {
+  margin-right: var(--space-md);
+}

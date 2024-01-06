@@ -14,6 +14,17 @@ type FormattedWinrate = {
   name: string,
   winrate: string
 }
+type FormattedStat = {
+  name: string
+  valueAllTime: string,
+  valueThisYear: string
+}
+type HydratedData = {
+  numPlaythroughsAllTime: number
+  numPlaythroughsThisYear: number
+  winratesAllTime: Winrates,
+  winratesThisYear: Winrates
+}
 
 
 export class PlaythroughView {
@@ -22,17 +33,31 @@ export class PlaythroughView {
 
   public async hydrate(gamekeeper: GameKeeper): Promise<HydratedPlaythroughView> {
     const stats = gamekeeper.stats.forGame(this.playthrough.game)
-    const [numPlaythroughs, winrates] = await Promise.all([
+    const year = new Date().getFullYear()
+
+    // fetch data
+    const [
+      numPlaythroughsAllTime,
+      numPlaythroughsThisYear,
+      winratesAllTime,
+      winratesThisYear
+    ] = await Promise.all([
       stats.getNumPlaythroughs(),
+      stats.getNumPlaythroughs({ year }),
       stats.getWinrates(),
+      stats.getWinrates({ year }),
       gamekeeper.playthroughs.hydrate({ gameId: this.playthrough.gameId, limit: 5 })
     ])
 
     return new HydratedPlaythroughView(
       gamekeeper,
       this.playthrough,
-      numPlaythroughs,
-      winrates
+      {
+        numPlaythroughsAllTime,
+        numPlaythroughsThisYear,
+        winratesAllTime,
+        winratesThisYear
+      }
     )
   }
 
@@ -65,12 +90,42 @@ export class HydratedPlaythroughView extends PlaythroughView {
   public constructor(
     private _gamekeeper: GameKeeper,
     playthrough: Playthrough,
-    public readonly numPlaythroughs: number,
-    private readonly _winrates: Winrates,
+    private _data: HydratedData
   ) {
     super(playthrough)
 
     this._latestPlaythroughs = _gamekeeper.playthroughs.latest(5)
+  }
+
+  public get stats(): FormattedStat[] {
+    const {
+      numPlaythroughsAllTime,
+      numPlaythroughsThisYear,
+      winratesAllTime,
+      winratesThisYear
+    } = this._data
+
+    // start with initial stat
+    const formattedStats: FormattedStat[] = [
+      {
+        name: 'Plays',
+        valueAllTime: numPlaythroughsAllTime.toString(),
+        valueThisYear: numPlaythroughsThisYear.toString()
+      }
+    ]
+
+    // add winrates to stats
+    for (const player of this.playthrough.players) {
+      formattedStats.push({
+        name: player.name,
+        valueAllTime: winratesAllTime.winrates
+          .find(wr => wr.player === player)?.winrate.toLocaleString('en-US', { style: 'percent' }) ?? '',
+        valueThisYear: winratesThisYear.winrates
+          .find(wr => wr.player === player)?.winrate.toLocaleString('en-US', { style: 'percent' }) ?? ''
+      })
+    }
+
+    return formattedStats
   }
 
   public get latestPlaythroughs(): FormattedPlaythrough[] {
@@ -79,13 +134,6 @@ export class HydratedPlaythroughView extends PlaythroughView {
       playedOn: formatDate(playthrough.playedOn),
       winner: this.winnerNameFor(playthrough),
       scores: this.scoresFor(playthrough)
-    }))
-  }
-
-  public get winrates(): FormattedWinrate[] {
-    return this._winrates.winrates.map(winrate => ({
-      name: winrate.player.name,
-      winrate: winrate.winrate.toLocaleString('en-US', { style: 'percent' })
     }))
   }
 

@@ -2,6 +2,7 @@ import { type NewData, Entity } from '../Entity'
 import type { Game } from '../game'
 import type { GameId, PlayerId, PlaythroughId } from '@services'
 import type { GameKeeperDeps, Serializable } from '@core'
+import type { Player } from '@domains'
 
 
 // types
@@ -32,6 +33,10 @@ export abstract class Playthrough
 
   public get game(): Game {
     return this._deps.store.getGame(this.gameId)
+  }
+
+  public get players(): ReadonlyArray<Player> {
+    return this._deps.store.getPlayers(this.playerIds)
   }
 
   public toData(): BasePlaythroughData {

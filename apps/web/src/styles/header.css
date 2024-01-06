@@ -1,0 +1,14 @@
+header {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  display: flex;
+  justify-content: center;
+  padding: var(--space-lg);
+}
+
+header > nav {
+  display: flex;
+  gap: var(--space-lg);
+}

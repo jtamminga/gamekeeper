@@ -24,6 +24,7 @@ export function AddPlaythrough() {
 
   function onRecordAnother() {
     setSummaryView(undefined)
+    setCompleted(false)
   }
 
   // if flow not completed then render flow

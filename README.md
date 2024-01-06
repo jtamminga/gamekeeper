@@ -20,6 +20,6 @@ Project to play around with domain driven development, npm packages, and mono re
 
 ## core todos
 
-- [ ] change typing on id's to not optional
-- [ ] get rid of winnersName and any other presentation stuff
-- [ ] add presentation layer?
+- [x] change typing on id's to not optional
+- [x] get rid of winnersName and any other presentation stuff
+- [x] add presentation layer?

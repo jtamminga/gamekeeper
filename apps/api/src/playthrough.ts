@@ -1,4 +1,13 @@
-import { CoopPlaythroughData, GameId, PlayerId, PlaythroughData, PlaythroughQueryOptions, ScoreData, VsPlaythroughData } from '@gamekeeper/core'
+import {
+  GameId,
+  NewBasePlaythroughData,
+  NewCoopPlaythroughData,
+  NewPlaythroughData,
+  NewVsPlaythroughData,
+  PlayerId,
+  PlaythroughQueryOptions,
+  ScoreData
+} from '@gamekeeper/core'
 import { Request } from 'express'
 
 
@@ -12,15 +21,15 @@ export type ApiPlaythroughDto = {
   score?: number
 }
 
-export function toPlaythroughData(dto: ApiPlaythroughDto): VsPlaythroughData | CoopPlaythroughData {
-  const baseData: PlaythroughData = {
+export function toPlaythroughData(dto: ApiPlaythroughDto): NewPlaythroughData {
+  const baseData: NewBasePlaythroughData = {
     gameId: dto.gameId,
     playerIds: dto.playerIds,
     playedOn: new Date(dto.playedOn)
   }
 
   if (dto.winnerId !== undefined) {
-    const vsData: VsPlaythroughData = {
+    const vsData: NewVsPlaythroughData = {
       ...baseData,
       winnerId: dto.winnerId
     }
@@ -31,7 +40,7 @@ export function toPlaythroughData(dto: ApiPlaythroughDto): VsPlaythroughData | C
   }
 
   else if (dto.playersWon !== undefined) {
-    const coopData: CoopPlaythroughData = {
+    const coopData: NewCoopPlaythroughData = {
       ...baseData,
       playersWon: dto.playersWon
     }

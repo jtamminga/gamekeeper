@@ -1,9 +1,8 @@
 import type { PlayerId } from '../player'
 import { GameType, type GameId } from '../game'
-import type { PlaythroughDto, PlaythroughService } from '../playthrough'
+import type { PlaythroughDto, PlaythroughQueryOptions, PlaythroughService } from '../playthrough'
 import type { StatsQuery, StatsResult, StatsService, WinrateDto } from './StatsService'
 import { endOfYear } from 'date-fns'
-import { VsPlaythrough } from '@domains'
 
 
 /**
@@ -72,19 +71,26 @@ export class SimpleStatsService implements StatsService {
     const playthroughs = await this.getPlaythroughs(query)
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, playthroughs => playthroughs[0]?.playedOn)
+  }
 
+  protected getDateRangeFromYear(year: number): { fromDate: Date, toDate: Date } {
+    const fromDate = new Date(year, 0, 1)
+    return {
+      fromDate,
+      toDate: endOfYear(fromDate)
+    }
   }
 
   private async getPlaythroughs({ gameId, year }: StatsQuery): Promise<readonly PlaythroughDto[]> {
-    let fromDate: Date | undefined
-    let toDate: Date | undefined
+    let query: PlaythroughQueryOptions  = { gameId }
 
+    // add date range to query if year is specified
     if (year !== undefined) {
-      fromDate = new Date(year, 0, 1)
-      toDate = endOfYear(fromDate)
+      const dateRange = this.getDateRangeFromYear(year)
+      query = { ...query, ...dateRange }
     }
     
-    const playthroughs = await this._playthroughService.getPlaythroughs({ gameId, fromDate, toDate })
+    const playthroughs = await this._playthroughService.getPlaythroughs(query)
     return playthroughs
   }
 

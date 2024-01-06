@@ -1,5 +1,4 @@
 import { HydratedPlaythroughView } from '@gamekeeper/core'
-import { Fragment } from 'react'
 
 
 export type Props = {
@@ -13,49 +12,56 @@ export function PlaythroughSummary({ view }: Props) {
     <div>
       <p>winner is {view.winner}</p>
 
-      <table>
-        <tbody>
-          <tr>
-            <td>Plays</td>
-            <td>{view.numPlaythroughs}</td>
-          </tr>
-          <tr>
-            <td>Winrate</td>
-            <td>
-              <ul>
-                {view.winrates.map((winrate, index) =>
-                  <li key={`winrate-${index}`}>
-                    {winrate.name} {winrate.winrate}
-                  </li>
-                )}
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td>Lastest Plays</td>
-            <td>
-              <ul>
-                {view.latestPlaythroughs.map(playthrough =>
-                  <Fragment key={playthrough.id}>
-                    <div>date {playthrough.playedOn}</div>
-                    <div>winner {playthrough.winner}</div>
-                    <div>
-                      <ul>
-                        {playthrough.scores.map((score, index) =>
-                          <li key={`score-${playthrough.id}-${index}`}>
-                            {score.name} {score.score}
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  </Fragment>
-                )}
-              </ul>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      {renderYearVsTotalStats(view)}
+
+      {renderLatestPlaythroughs(view)}
     </div>
   )
 
+}
+
+function renderYearVsTotalStats({stats}: HydratedPlaythroughView) {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Stat</th>
+          <th className="num">This year</th>
+          <th className="num">All Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {stats.map((stat, index) =>
+          <tr key={`stat-${index}`}>
+            <td>{stat.name}</td>
+            <td className="num">{stat.valueThisYear}</td>
+            <td className="num">{stat.valueAllTime}</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  )
+}
+
+function renderLatestPlaythroughs({latestPlaythroughs}: HydratedPlaythroughView) {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Winner</th>
+          <th>Scores</th>
+        </tr>
+      </thead>
+      <tbody>
+        {latestPlaythroughs.map(playthrough =>
+          <tr key={playthrough.id}>
+            <td>{playthrough.playedOn}</td>
+            <td>{playthrough.winner}</td>
+            <td>{playthrough.scores.map(score => `${score.name}: ${score.score}`).join(', ')}</td>
+          </tr>  
+        )}
+      </tbody>
+    </table>
+  )
 }
