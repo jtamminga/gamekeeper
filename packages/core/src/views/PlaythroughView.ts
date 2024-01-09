@@ -3,16 +3,12 @@ import { formatDate } from './utils'
 
 
 // types
+type FormattedScore = { name: string, score: string }
 type FormattedPlaythrough = {
   id: string
   playedOn: string
   winner: string
   scores: FormattedScore[]
-}
-type FormattedScore = { name: string, score: string }
-type FormattedWinrate = {
-  name: string,
-  winrate: string
 }
 type FormattedStat = {
   name: string
@@ -88,44 +84,46 @@ export class HydratedPlaythroughView extends PlaythroughView {
   private readonly _latestPlaythroughs: ReadonlyArray<Playthrough>
 
   public constructor(
-    private _gamekeeper: GameKeeper,
+    gamekeeper: GameKeeper,
     playthrough: Playthrough,
     private _data: HydratedData
   ) {
     super(playthrough)
 
-    this._latestPlaythroughs = _gamekeeper.playthroughs.latest(5)
+    this._latestPlaythroughs = gamekeeper.playthroughs.latest(5)
   }
 
-  public get stats(): FormattedStat[] {
+  public get numPlaythroughs(): FormattedStat {
     const {
       numPlaythroughsAllTime,
       numPlaythroughsThisYear,
+    } = this._data
+
+    return {
+      name: 'Plays',
+      valueThisYear: numPlaythroughsThisYear.toString(),
+      valueAllTime: numPlaythroughsAllTime.toString()
+    }
+  }
+
+  public get winrates(): FormattedStat[] {
+    const {
       winratesAllTime,
       winratesThisYear
     } = this._data
 
-    // start with initial stat
-    const formattedStats: FormattedStat[] = [
-      {
-        name: 'Plays',
-        valueAllTime: numPlaythroughsAllTime.toString(),
-        valueThisYear: numPlaythroughsThisYear.toString()
-      }
+    return this.playthrough.players.map(player => ({
+      name: player.name,
+      valueAllTime: formatPercent(winratesAllTime.winrates.find(wr => wr.player === player)?.winrate),
+      valueThisYear: formatPercent(winratesThisYear.winrates.find(wr => wr.player === player)?.winrate)
+    }))
+  }
+
+  public get stats(): FormattedStat[] {
+    return [
+      this.numPlaythroughs,
+      ...this.winrates
     ]
-
-    // add winrates to stats
-    for (const player of this.playthrough.players) {
-      formattedStats.push({
-        name: player.name,
-        valueAllTime: winratesAllTime.winrates
-          .find(wr => wr.player === player)?.winrate.toLocaleString('en-US', { style: 'percent' }) ?? '',
-        valueThisYear: winratesThisYear.winrates
-          .find(wr => wr.player === player)?.winrate.toLocaleString('en-US', { style: 'percent' }) ?? ''
-      })
-    }
-
-    return formattedStats
   }
 
   public get latestPlaythroughs(): FormattedPlaythrough[] {
@@ -133,34 +131,31 @@ export class HydratedPlaythroughView extends PlaythroughView {
       id: playthrough.id,
       playedOn: formatDate(playthrough.playedOn),
       winner: this.winnerNameFor(playthrough),
-      scores: this.scoresFor(playthrough)
+      scores: scoresFor(playthrough)
     }))
   }
 
-  private scoresFor(playthrough: Playthrough): FormattedScore[] {
-    if (playthrough instanceof VsPlaythrough) {
-      const data = playthrough.scores?.toData()
-      if (!data) {
-        return []
-      }
+  
+}
 
-      return data.map(row => ({
-        name: this._gamekeeper.players.get(row.playerId).name,
-        score: row.score.toString()
-      }))
-    }
-  
-    else if (playthrough instanceof CoopPlaythrough) {
-      if (playthrough.score === undefined) {
-        return []
-      }
-      else {
-        return [{ name: 'players', score: playthrough.score.toString() }]
-      }
-    }
-  
-    else {
-      throw new Error('unsupported playthrough type')
-    }
+
+// helpers
+function formatPercent(value: number | undefined): string {
+  return value?.toLocaleString('en-US', { style: 'percent' }) ?? ''
+}
+function scoresFor(playthrough: Playthrough): FormattedScore[] {
+  if (playthrough instanceof VsPlaythrough) {
+    return playthrough.scores.all.map(score => ({
+      name: score.player.name,
+      score: score.value.toString()
+    }))
+  }
+  else if (playthrough instanceof CoopPlaythrough) {
+    return playthrough.score === undefined
+      ? []
+      : [{ name: 'players', score: playthrough.score.toString() }]
+  }
+  else {
+    throw new Error('unsupported playthrough type')
   }
 }

@@ -2,7 +2,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: var(--space-lg);
-  --table-x-gap: 15px;
+  --table-x-gap: 20px;
   --table-y-gap: 5px;
 }
 

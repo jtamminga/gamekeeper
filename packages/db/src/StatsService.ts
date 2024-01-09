@@ -3,7 +3,7 @@ import {
   PlaythroughService,
   SimpleStatsService,
   StatsQuery,
-  StatsResult
+  StatsResultData
 } from '@gamekeeper/core'
 import { DataService } from './DataService'
 
@@ -30,7 +30,7 @@ export class DbStatsService extends SimpleStatsService {
     super(playthroughService)
   }
 
-  public override async getNumPlaythroughs({ gameId, year }: StatsQuery): Promise<StatsResult<number>> {
+  public override async getNumPlays({ gameId, year }: StatsQuery = {}): Promise<StatsResultData<number>> {
     
     // create base query
     let query = `
@@ -66,7 +66,7 @@ export class DbStatsService extends SimpleStatsService {
     })
 
     // convert to records
-    const result: StatsResult<number> = {}
+    const result: StatsResultData<number> = {}
     for (const dto of dtos) {
       result[dto.gameId.toString() as GameId] = dto.numPlays
     }
@@ -75,7 +75,7 @@ export class DbStatsService extends SimpleStatsService {
     return result
   }
 
-  public override async getLastPlaythroughs({ gameId, year }: StatsQuery): Promise<StatsResult<Date | undefined>> {
+  public override async getLastPlayed({ gameId, year }: StatsQuery = {}): Promise<StatsResultData<Date | undefined>> {
     // create base query
     let query = `
       SELECT
@@ -110,7 +110,7 @@ export class DbStatsService extends SimpleStatsService {
     })
 
     // convert to records
-    const result: StatsResult<Date> = {}
+    const result: StatsResultData<Date> = {}
     for (const dto of dtos) {
       result[dto.gameId.toString() as GameId] = new Date(dto.lastPlay)
     }

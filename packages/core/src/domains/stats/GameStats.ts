@@ -19,12 +19,12 @@ export class GameStats {
   }
 
   public async getNumPlaythroughs(query?: Omit<StatsQuery, 'gameId'>): Promise<number> {
-    const result = await this._statsService.getNumPlaythroughs({ ...this._query, ...query, gameId: this.game.id })
+    const result = await this._statsService.getNumPlays({ ...this._query, ...query, gameId: this.game.id })
     return result[this.game.id]
   }
 
   public async getLastPlaythrough(query?: Omit<StatsQuery, 'gameId'>): Promise<Date | undefined> {
-    const result = await this._statsService.getLastPlaythroughs({ ...this._query, ...query, gameId: this.game.id })
+    const result = await this._statsService.getLastPlayed({ ...this._query, ...query, gameId: this.game.id })
     return result[this.game.id]
   }
 

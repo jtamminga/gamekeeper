@@ -43,13 +43,13 @@ export class VsFlow {
     }
 
     this.scores = scores
-    
+
     // make sure all players have scores
     if (scores.size === this.data.playerIds.length) {
       this.winnerId = determineWinner(this.game.scoring, scores)
       this.implicitWinner = true
     }
-    
+
     return this
   }
 

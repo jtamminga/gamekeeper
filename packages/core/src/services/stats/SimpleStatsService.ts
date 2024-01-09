@@ -1,7 +1,7 @@
 import type { PlayerId } from '../player'
 import { GameType, type GameId } from '../game'
 import type { PlaythroughDto, PlaythroughQueryOptions, PlaythroughService } from '../playthrough'
-import type { StatsQuery, StatsResult, StatsService, WinrateDto } from './StatsService'
+import type { StatsQuery, StatsResultData, StatsService, WinrateDto } from './StatsService'
 import { endOfYear } from 'date-fns'
 
 
@@ -16,13 +16,13 @@ export class SimpleStatsService implements StatsService {
     private _playthroughService: PlaythroughService
   ) { }
 
-  public async getNumPlaythroughs(query: StatsQuery): Promise<StatsResult<number>> {
+  public async getNumPlays(query: StatsQuery = {}): Promise<StatsResultData<number>> {
     const playthroughs = await this.getPlaythroughs(query)
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, playthroughs => playthroughs.length)
   }
 
-  public async getWinrates(query: StatsQuery): Promise<StatsResult<WinrateDto[]>> {
+  public async getWinrates(query: StatsQuery = {}): Promise<StatsResultData<WinrateDto[]>> {
     const playthroughs = await this.getPlaythroughs(query)
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, playthroughs => {
@@ -67,7 +67,7 @@ export class SimpleStatsService implements StatsService {
     })
   }
 
-  public async getLastPlaythroughs(query: StatsQuery): Promise<StatsResult<Date | undefined>> {
+  public async getLastPlayed(query: StatsQuery = {}): Promise<StatsResultData<Date | undefined>> {
     const playthroughs = await this.getPlaythroughs(query)
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, playthroughs => playthroughs[0]?.playedOn)
@@ -114,9 +114,9 @@ export class SimpleStatsService implements StatsService {
   private forEachGroup<TOut>(
     grouped: Record<GameId, PlaythroughDto[]>,
     reduce: (group: PlaythroughDto[]) => TOut
-  ): StatsResult<TOut> {
+  ): StatsResultData<TOut> {
 
-    const result: StatsResult<TOut> = {}
+    const result: StatsResultData<TOut> = {}
     for (const id in grouped) {
       const gameId = id as GameId
       const group = grouped[gameId]

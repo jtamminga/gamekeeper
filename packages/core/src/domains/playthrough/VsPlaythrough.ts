@@ -4,6 +4,7 @@ import { Playthrough, BasePlaythroughData } from './Playthrough'
 import { ScoreData, Scores } from './Scores'
 import { PlayerId } from '@services'
 import { Player, type NewData } from '@domains'
+import { VsPlaythroughScores } from './VsPlaythroughScores'
 
 
 // types
@@ -23,14 +24,12 @@ export namespace VsPlaythroughData {
 export class VsPlaythrough extends Playthrough {
 
   public readonly winnerId: PlayerId
-  public readonly scores?: Scores
+  public readonly scores: VsPlaythroughScores
 
   public constructor(deps: GameKeeperDeps, data: VsPlaythroughData) {
     super(deps, data)
     this.winnerId = data.winnerId
-    this.scores = data.scores
-      ? new Scores(data.scores)
-      : undefined
+    this.scores = new VsPlaythroughScores(deps, data.scores ?? [])
   }
 
   public get game(): VsGame {
@@ -46,7 +45,7 @@ export class VsPlaythrough extends Playthrough {
       ...super.toData(),
       winnerId: this.winnerId
     }
-    if (this.scores && this.scores.size > 0) {
+    if (this.scores.all.length > 0) {
       data.scores = this.scores.toData()
     }
     return data

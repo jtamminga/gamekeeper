@@ -10,15 +10,15 @@ export type WinrateDto = {
   playerId: PlayerId
   winrate: number
 }
-export type StatsResult<TData> = Record<GameId, Readonly<TData>>
+export type StatsResultData<TData> = Record<GameId, Readonly<TData>>
 
 
 export interface StatsService {
 
-  getNumPlaythroughs(query: StatsQuery): Promise<StatsResult<number>>
+  getNumPlays(query?: StatsQuery): Promise<StatsResultData<number>>
 
-  getWinrates(query: StatsQuery): Promise<StatsResult<WinrateDto[]>>
+  getWinrates(query?: StatsQuery): Promise<StatsResultData<WinrateDto[]>>
 
-  getLastPlaythroughs(query: StatsQuery): Promise<StatsResult<Date | undefined>>
+  getLastPlayed(query?: StatsQuery): Promise<StatsResultData<Date | undefined>>
 
 }
