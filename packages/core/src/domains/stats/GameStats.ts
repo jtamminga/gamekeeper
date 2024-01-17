@@ -2,7 +2,7 @@ import { Winrate } from './Winrate'
 import { Winrates } from './Winrates'
 import type { Game } from '../game'
 import type { GameKeeperDeps } from '@core'
-import type { StatsQuery, StatsService } from '@services'
+import type { StatsQuery, StatsService, WinrateDto } from '@services'
 
 
 // vs game stats
@@ -20,7 +20,7 @@ export class GameStats {
 
   public async getNumPlaythroughs(query?: Omit<StatsQuery, 'gameId'>): Promise<number> {
     const result = await this._statsService.getNumPlays({ ...this._query, ...query, gameId: this.game.id })
-    return result[this.game.id]
+    return result[this.game.id] ?? 0
   }
 
   public async getLastPlaythrough(query?: Omit<StatsQuery, 'gameId'>): Promise<Date | undefined> {
@@ -30,7 +30,7 @@ export class GameStats {
 
   public async getWinrates(query?: Omit<StatsQuery, 'gameId'>): Promise<Winrates> {
     const result = await this._statsService.getWinrates({ ...this._query, ...query, gameId: this.game.id })
-    const winrates = result[this.game.id]
+    const winrates = result[this.game.id] ?? []
 
     return new Winrates(winrates.map(winrate =>
       new Winrate(

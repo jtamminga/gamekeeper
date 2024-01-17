@@ -1,4 +1,4 @@
-import { GameId } from '@gamekeeper/core'
+import { GameId } from '@services'
 
 export namespace Route {
 

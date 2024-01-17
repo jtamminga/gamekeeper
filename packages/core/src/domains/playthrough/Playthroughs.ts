@@ -2,7 +2,7 @@ import { PlaythroughFlowFactory } from '@factories'
 import type { CoopFlow, VsFlow } from '@flows'
 import type { GameKeeperDeps } from '@core'
 import type { NewBasePlaythroughData, Playthrough } from './Playthrough'
-import type { PlaythroughQueryOptions } from '@services'
+import type { GameId, PlaythroughQueryOptions } from '@services'
 import type { NewVsPlaythroughData } from './VsPlaythrough'
 import type { NewCoopPlaythroughData } from './CoopPlaythrough'
 
@@ -26,11 +26,15 @@ export class Playthroughs {
   }
 
   public all(): ReadonlyArray<Playthrough> {
-    return [...this._deps.store.playthroughs].sort(playthroughCompareFn)
+    return [...this._deps.store.playthroughs].sort(Playthroughs.sortLastPlayedFirst)
   }
 
-  public latest(limit = 10): ReadonlyArray<Playthrough> {
-    return this.all().slice(0, limit)
+  public latest(limit = 10, gameId?: GameId): ReadonlyArray<Playthrough> {
+    const playthroughs = gameId === undefined
+      ? this.all()
+      : this.all().filter(p => p.gameId === gameId)
+
+    return playthroughs.slice(0, limit)
   }
 
   public async create(data: NewPlaythroughData): Promise<Playthrough> {
@@ -42,12 +46,11 @@ export class Playthroughs {
     return PlaythroughFlowFactory.create(this._deps, data)
   }
 
-}
+  /**
+   * sort playthroughs from latest first to earliest last
+   */
+  public static sortLastPlayedFirst(a: Playthrough, b: Playthrough): number {
+    return b.playedOn.getTime() - a.playedOn.getTime()
+  }
 
-
-/**
- * sort playthroughs from latest first to earliest last
- */
-export function playthroughCompareFn(a: Playthrough, b: Playthrough): number {
-  return b.playedOn.getTime() - a.playedOn.getTime()
 }

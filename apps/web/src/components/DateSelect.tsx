@@ -1,3 +1,5 @@
+import { format, parse } from 'date-fns'
+
 
 type Props = {
   date: Date
@@ -5,9 +7,12 @@ type Props = {
 }
 
 
+const DATE_FORMAT = 'yyyy-MM-dd'
+
+
 export function DateSelect({ date, onChange }: Props) {
 
-  const formattedDate = date.toISOString().split('T')[0]
+  const formattedDate = format(date, DATE_FORMAT)
 
   return (
     <div className="form-control">
@@ -16,8 +21,9 @@ export function DateSelect({ date, onChange }: Props) {
         type="date"
         value={formattedDate}
         onChange={e => {
-          if (e.target.valueAsDate) {
-            onChange(e.target.valueAsDate)
+          if (e.target.value) {
+            const date = parse(e.target.value, DATE_FORMAT, new Date())
+            onChange(date)
           }
         }}
       />

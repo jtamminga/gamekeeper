@@ -1,5 +1,5 @@
 import { GameKeeperDeps, Serializable } from '@core'
-import { Playthrough, playthroughCompareFn } from '../playthrough'
+import { Playthrough, Playthroughs } from '../playthrough'
 import { NewData, Entity } from '../Entity'
 import { GameId, GameType, ScoringType } from '@services'
 
@@ -39,7 +39,7 @@ export abstract class Game<T extends Playthrough = Playthrough>
   public get playthroughs(): ReadonlyArray<T> {
     return this._deps.store.playthroughs
       .filter(playthrough => playthrough.gameId === this.id)
-      .sort(playthroughCompareFn) as T[]
+      .sort(Playthroughs.sortLastPlayedFirst) as T[]
   }
 
   public abstract toData(): GameData

@@ -1,6 +1,5 @@
-import { GameId, StatsQuery, StatsResultData, StatsService, WinrateDto } from '@gamekeeper/core'
+import { GameId, StatsQuery, StatsResultData, StatsService, WinrateDto, Route } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
-import { Route } from './Route'
 import { toCleanQuery } from './utils'
 
 

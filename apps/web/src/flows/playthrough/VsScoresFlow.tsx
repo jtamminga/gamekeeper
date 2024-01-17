@@ -1,5 +1,5 @@
 import { Callback, PlayerId, Scores, VsFlow } from '@gamekeeper/core'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 
 
 type Props = {
@@ -29,14 +29,14 @@ export function VsScoresFlow({ flow, onComplete }: Props) {
         <label>Scores</label>
         <div className="player-score-inputs">
           {flow.players.map(player =>
-            <>
+            <Fragment key={player.id}>
               <label>{player.name}</label>
               <input
                 type="number"
                 value={scores.for(player.id) ?? 0}
                 onChange={e => updateScore(player.id, e.target.valueAsNumber)}
               />
-            </>
+            </Fragment>
           )}
         </div>
       </div>

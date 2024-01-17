@@ -18,7 +18,7 @@ export class Games {
   }
 
   public all(): ReadonlyArray<Game> {
-    return this._deps.store.games
+    return [...this._deps.store.games].sort(Games.sortByName)
   }
 
   public get<T extends Game>(id: GameId): T {
@@ -34,4 +34,20 @@ export class Games {
     return this.all().map(game => game.toData())
   }
 
+  public static sortByName(a: Game, b: Game): number {
+    const aName = a.name.toUpperCase()
+    const bName = b.name.toUpperCase()
+
+    if (aName < bName) {
+      return -1
+    }
+    else if (aName > bName) {
+      return 1
+    }
+    else {
+      return 0
+    }
+  }
+
 }
+

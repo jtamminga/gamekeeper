@@ -1,6 +1,5 @@
-import { CoopPlaythroughData, GameId, GameType, PlayerId, PlaythroughDto, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData } from '@gamekeeper/core'
+import { CoopPlaythroughData, GameId, GameType, PlayerId, PlaythroughDto, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData, Route } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
-import { Route } from './Route'
 import { toCleanQuery } from './utils'
 
 

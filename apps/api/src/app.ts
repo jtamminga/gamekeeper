@@ -1,9 +1,8 @@
 import { ApiPlaythroughDto, toPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
 import { config } from './config'
 import { DbServices } from '@gamekeeper/db-services'
-import { Route } from '@gamekeeper/api-services'
 import { toStatsQuery } from './stats'
-import { type GameId } from '@gamekeeper/core'
+import { type GameId, Route } from '@gamekeeper/core'
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 import { InvalidParamsError } from './InvalidParamsError'
@@ -61,12 +60,12 @@ app.post(Route.PLAYTHROUGHS, async function (req, res) {
 // stats
 app.get(Route.STATS.LAST_PLAYTHROUGHS, async function (req, res) {
   const query = toStatsQuery(req)
-  const stats = await statsService.getLastPlaythroughs(query)
+  const stats = await statsService.getLastPlayed(query)
   res.json({ data: stats })
 })
 app.get(Route.STATS.NUM_PLAYTHROUGHS, async function (req, res) {
   const query = toStatsQuery(req)
-  const stats = await statsService.getNumPlaythroughs(query)
+  const stats = await statsService.getNumPlays(query)
   res.json({ data: stats })
 })
 app.get(Route.STATS.WINRATES, async function (req, res) {

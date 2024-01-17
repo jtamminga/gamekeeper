@@ -18,8 +18,6 @@ Project to play around with domain driven development, npm packages, and mono re
 - number of plays
 
 
-## core todos
+## todos
 
-- [x] change typing on id's to not optional
-- [x] get rid of winnersName and any other presentation stuff
-- [x] add presentation layer?
+- [ ] (web) support negative scores

@@ -120,3 +120,17 @@ export class DbStatsService extends SimpleStatsService {
   }
 
 }
+
+
+/**
+ * 
+ * select play count by month and game
+ * 
+SELECT
+    p.game_id as gameId,
+    count(*) as numPlays,
+    strftime("%m", p.played_on) as month
+FROM playthroughs p
+group by strftime("%m", p.played_on), p.game_id
+order by p.game_id
+ */

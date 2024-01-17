@@ -9,7 +9,7 @@
     "build": "tsc && tsc-alias"
   },
   "dependencies": {
-    "@gamekeeper/core": "workspace:1.0.85"
+    "@gamekeeper/core": "1.0.85"
   },
   "devDependencies": {
     "tsc-alias": "^1.8.8",

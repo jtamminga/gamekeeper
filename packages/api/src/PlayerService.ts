@@ -1,6 +1,6 @@
 import type { PlayerData, PlayerDto, PlayerId, PlayerService } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
-import { Route } from './Route'
+import { Route } from '@gamekeeper/core'
 
 
 // types

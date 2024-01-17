@@ -23,6 +23,10 @@ type HydratedData = {
 }
 
 
+// constants
+const NUM_HISTORICAL_PLAYTHROUGHS = 5
+
+
 export class PlaythroughView {
 
   public constructor(public readonly playthrough: Playthrough) { }
@@ -42,7 +46,10 @@ export class PlaythroughView {
       stats.getNumPlaythroughs({ year }),
       stats.getWinrates(),
       stats.getWinrates({ year }),
-      gamekeeper.playthroughs.hydrate({ gameId: this.playthrough.gameId, limit: 5 })
+      gamekeeper.playthroughs.hydrate({
+        gameId: this.playthrough.gameId,
+        limit: NUM_HISTORICAL_PLAYTHROUGHS
+      })
     ])
 
     return new HydratedPlaythroughView(
@@ -90,7 +97,8 @@ export class HydratedPlaythroughView extends PlaythroughView {
   ) {
     super(playthrough)
 
-    this._latestPlaythroughs = gamekeeper.playthroughs.latest(5)
+    this._latestPlaythroughs = gamekeeper.playthroughs
+      .latest(NUM_HISTORICAL_PLAYTHROUGHS, playthrough.gameId)
   }
 
   public get numPlaythroughs(): FormattedStat {

@@ -15,7 +15,7 @@ export interface DbGameDto {
 export class DbGameService extends DbService implements GameService {
 
   public async getGames(): Promise<readonly GameDto[]> {
-    const query = 'SELECT * FROM games'
+    const query = 'SELECT g.* FROM games g ORDER BY g.name'
     const games = await this._dataService.all<DbGameDto>(query)
     return games.map(game => transform(game))
   }
