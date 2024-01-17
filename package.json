@@ -9,6 +9,15 @@
   ],
   "packageManager": "yarn@4.0.2",
   "scripts": {
-    "build:packages": "yarn workspaces foreach -Rpt --from 'packages/*' run build"
+    "build:packages": "yarn workspaces foreach -Rpt --from 'packages/*' run build",
+    "build:all": "yarn workspaces foreach -Rpt --from 'apps/*' run build",
+    "build:api": "yarn workspaces foreach -Rpt --from 'apps/api' run build",
+    "build:web": "yarn workspaces foreach -Rpt --from 'apps/web' run build",
+    "dev:web": "yarn workspace @gamekeeper/web dev",
+    "dev:api": "yarn workspace @gamekeeper/api start",
+    "dev:all": "npm-run-all --parallel dev:web dev:api"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
   }
 }

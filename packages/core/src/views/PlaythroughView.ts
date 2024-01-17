@@ -16,8 +16,8 @@ type FormattedStat = {
   valueThisYear: string
 }
 type HydratedData = {
-  numPlaythroughsAllTime: number
-  numPlaythroughsThisYear: number
+  numPlaysAllTime: number
+  numPlaysThisYear: number
   winratesAllTime: Winrates,
   winratesThisYear: Winrates
 }
@@ -37,8 +37,8 @@ export class PlaythroughView {
 
     // fetch data
     const [
-      numPlaythroughsAllTime,
-      numPlaythroughsThisYear,
+      numPlaysAllTime,
+      numPlaysThisYear,
       winratesAllTime,
       winratesThisYear
     ] = await Promise.all([
@@ -56,8 +56,8 @@ export class PlaythroughView {
       gamekeeper,
       this.playthrough,
       {
-        numPlaythroughsAllTime,
-        numPlaythroughsThisYear,
+        numPlaysAllTime,
+        numPlaysThisYear,
         winratesAllTime,
         winratesThisYear
       }
@@ -103,14 +103,14 @@ export class HydratedPlaythroughView extends PlaythroughView {
 
   public get numPlaythroughs(): FormattedStat {
     const {
-      numPlaythroughsAllTime,
-      numPlaythroughsThisYear,
+      numPlaysAllTime,
+      numPlaysThisYear,
     } = this._data
 
     return {
       name: 'Plays',
-      valueThisYear: numPlaythroughsThisYear.toString(),
-      valueAllTime: numPlaythroughsAllTime.toString()
+      valueThisYear: numPlaysThisYear.toString(),
+      valueAllTime: numPlaysAllTime.toString()
     }
   }
 

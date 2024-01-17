@@ -9,13 +9,13 @@ export type Props = {
 export function PlaythroughSummary({ view }: Props) {
 
   return (
-    <div>
-      <p>winner is {view.winner}</p>
-
+    <>
+      <h3>General stats</h3>
       {renderYearVsTotalStats(view)}
 
+      <h3>Last playthroughs</h3>
       {renderLatestPlaythroughs(view)}
-    </div>
+    </>
   )
 
 }

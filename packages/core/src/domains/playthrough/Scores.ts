@@ -31,6 +31,10 @@ export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
     this._scores.set(playerId, score)
   }
 
+  public remove(playerId: PlayerId) {
+    this._scores.delete(playerId)
+  }
+
   public for(playerId: PlayerId): number | undefined {
     return this._scores.get(playerId)
   }

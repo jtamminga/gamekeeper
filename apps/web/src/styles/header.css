@@ -14,7 +14,6 @@ header > nav {
   padding: var(--space-md) var(--space-lg);
   border-radius: 10px;
   background-color: #1d1d1d;
-  box-shadow: #646cff33 0 0 10px;
 }
 
 header > nav > a {

@@ -1,4 +1,4 @@
-import { AddPlaythrough, Games } from './screens'
+import { AddPlaythrough, Games, Stats } from './screens'
 
 
 // all possible pages
@@ -12,7 +12,7 @@ export type Page =
 export function router(page: Page) {
   switch (page) {
     case 'Stats':
-      return <div>stats</div>
+      return <Stats />
     case 'Games':
       return <Games />
     case 'AddPlaythrough':

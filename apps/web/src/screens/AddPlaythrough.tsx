@@ -1,11 +1,11 @@
+import { PlaythroughSummary } from '@app/components'
 import { PlaythroughFlow } from '@app/flows'
 import { useGamekeeper } from '@app/hooks'
 import { CoopFlow, HydratedPlaythroughView, PlaythroughView, VsFlow } from '@gamekeeper/core'
 import { useState } from 'react'
-import { PlaythroughSummary } from './PlaythroughSummary'
 
 
-//
+// screen
 export function AddPlaythrough() {
 
   const gamekeeper = useGamekeeper()
@@ -39,9 +39,12 @@ export function AddPlaythrough() {
   // otherwise show summary screen
   else {
     return (
-      <div>
+      <>
+        <h1>Playthrough recorded</h1>
 
-        <p>playthrough recorded</p>
+        {summaryView &&
+          <p>🎉 winner is <span className="highlight">{summaryView.winner}</span></p>
+        }
 
         <button
           onClick={onRecordAnother}
@@ -54,8 +57,7 @@ export function AddPlaythrough() {
             view={summaryView}
           />
         }
-        
-      </div>
+      </>
     )
   }
 }
