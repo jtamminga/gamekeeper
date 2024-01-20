@@ -43,8 +43,10 @@ export function PlaythroughFlow({ onComplete }: Props) {
   }
 
   return (
-    <div>
+    <>
+      <h1>Record</h1>
+      
       {contents}
-    </div>
+    </>
   )
 }

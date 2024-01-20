@@ -1,18 +1,17 @@
-import { Callback } from '@gamekeeper/core'
-import { Page, router } from './routing'
+import { router } from './routing'
 import { Header } from './Header'
+import { useRouter } from './hooks'
 
 
-type Props = {
-  page: Page
-  navTo: Callback<Page>
-}
+export function Layout() {
 
+  // hook
+  const { page, setPage } = useRouter()
 
-export function Layout({ page, navTo }: Props) {
+  // render
   return (
     <>
-      <Header page={page} navTo={navTo} />
+      <Header page={page} navTo={setPage} />
 
       <main>
         {router(page)}

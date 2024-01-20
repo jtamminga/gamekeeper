@@ -20,4 +20,7 @@ Project to play around with domain driven development, npm packages, and mono re
 
 ## todos
 
-- [ ] (web) support negative scores
+- [x] (web) support negative scores
+- [ ] support ties
+- [ ] add games
+- [ ] add players

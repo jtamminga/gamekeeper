@@ -1,5 +1,5 @@
 import type { GameKeeperDeps } from '@core'
-import type { Player, PlayerData } from './Player'
+import type { NewPlayerData, Player, PlayerData } from './Player'
 import type { PlayerId } from '@services'
 
 
@@ -23,6 +23,11 @@ export class Players {
 
   public get(id: PlayerId): Player {
     return this._deps.store.getPlayer(id)
+  }
+
+  public async create(data: NewPlayerData): Promise<Player> {
+    const dto = await this._deps.services.playerService.addPlayer(data)
+    return this._deps.store.bindPlayer(dto)
   }
 
   public toData(): ReadonlyArray<PlayerData> {

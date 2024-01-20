@@ -12,6 +12,7 @@
   display: block;
   margin-bottom: var(--space-sm);
   cursor: pointer;
+  padding: var(--space-sm) 0;
 }
 
 .form-control > .checkbox-label > input {

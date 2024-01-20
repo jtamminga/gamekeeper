@@ -1,5 +1,6 @@
 export * from './DateSelect'
 export * from './GameSelect'
+export * from './Link'
 export * from './Loading'
 export * from './NumberInput'
 export * from './PlayerSelect'

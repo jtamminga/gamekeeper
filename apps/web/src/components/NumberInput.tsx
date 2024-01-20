@@ -28,6 +28,7 @@ export function NumberInput({ initialValue, onChange }: Props) {
   return (
     <input
       type="number"
+      pattern="\d*"
       value={value}
       onChange={e => updateValue(e.target.value)}
     />

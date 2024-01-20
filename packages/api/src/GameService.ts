@@ -1,4 +1,4 @@
-import type { GameData, GameDto, GameId, GameService, GameType, ScoringType } from '@gamekeeper/core'
+import type { GameDto, GameId, GameService, GameType, NewGameData, ScoringType } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { Route } from '@gamekeeper/core'
 
@@ -25,8 +25,9 @@ export class ApiGameService extends ApiService implements GameService {
     return transform(game)
   }
 
-  public async addGame(game: GameData): Promise<GameDto> {
-    throw new Error('Method not implemented.')
+  public async addGame(game: NewGameData): Promise<GameDto> {
+    const newGame = await this.apiClient.post<ApiGameDto>(Route.GAMES, game)
+    return transform(newGame)
   }
 
 }

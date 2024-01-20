@@ -1,4 +1,4 @@
-import { Loading } from '@app/components'
+import { Link, Loading } from '@app/components'
 import { useGamekeeper } from '@app/hooks'
 import { GameSortBy, GamesView, HydratedGamesView } from '@gamekeeper/core'
 import { useEffect, useState } from 'react'
@@ -44,18 +44,23 @@ export function Games() {
 
   // render games
   return (
-    <div>
+    <>
+      <div className="flex space-between">
+        <div className="form-control">
+          <label>Order by</label>
+          <select
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value)}
+          >
+            {Object.keys(sortByOptions).map(sortById =>
+              <option key={sortById} value={sortById}>{sortByOptions[sortById].label}</option>
+            )}
+          </select>
+        </div>
 
-      <div className="form-control">
-        <label>Order by</label>
-        <select
-          value={sortBy}
-          onChange={e => setSortBy(e.target.value)}
-        >
-          {Object.keys(sortByOptions).map(sortById =>
-            <option key={sortById} value={sortById}>{sortByOptions[sortById].label}</option>
-          )}
-        </select>
+        <Link page="AddGame">
+          Add game
+        </Link>
       </div>
 
       <table>
@@ -77,7 +82,7 @@ export function Games() {
         </tbody>
       </table>
 
-    </div>
+    </>
   )
 
 }

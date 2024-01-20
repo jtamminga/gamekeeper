@@ -2,7 +2,7 @@ import { ApiPlaythroughDto, toPlaythroughData, toPlaythroughQueryOptions } from 
 import { config } from './config'
 import { DbServices } from '@gamekeeper/db-services'
 import { toStatsQuery } from './stats'
-import { type GameId, Route } from '@gamekeeper/core'
+import { type GameId, Route, NewGameData, NewPlayerData } from '@gamekeeper/core'
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 import { InvalidParamsError } from './InvalidParamsError'
@@ -23,6 +23,11 @@ const {
 } = new DbServices(config.dbPath)
 
 
+//
+// games
+// =====
+
+
 // get all games
 app.get(Route.GAMES, async function (_, res) {
   const games = await gameService.getGames()
@@ -35,11 +40,37 @@ app.get(`${Route.GAMES}/:id`, async function (req, res) {
   res.json({ data: game })
 })
 
+// create game
+app.post(Route.GAMES, async function (req, res) {
+  const data = req.body as NewGameData
+  const game = await gameService.addGame(data)
+  res.json({ data: game })
+})
+
+
+//
+// players
+// =======
+
+
 // get all players
 app.get(Route.PLAYERS, async function (_, res) {
   const players = await playerService.getPlayers()
   res.json({ data: players })
 })
+
+// create player
+app.post(Route.PLAYERS, async function (req, res) {
+  const data = req.body as NewPlayerData
+  const player = await playerService.addPlayer(data)
+  res.json({ data: player })
+})
+
+
+//
+// playthroughs
+// ============
+
 
 // get playthroughs
 app.get(Route.PLAYTHROUGHS, async function (req, res) {
@@ -57,7 +88,12 @@ app.post(Route.PLAYTHROUGHS, async function (req, res) {
   res.json({ data: playthrough })
 })
 
+
+//
 // stats
+// =====
+
+
 app.get(Route.STATS.LAST_PLAYTHROUGHS, async function (req, res) {
   const query = toStatsQuery(req)
   const stats = await statsService.getLastPlayed(query)

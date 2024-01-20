@@ -1,4 +1,4 @@
-import type { PlayerData, PlayerDto, PlayerId, PlayerService } from '@gamekeeper/core'
+import type { NewPlayerData, PlayerData, PlayerDto, PlayerId, PlayerService } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { Route } from '@gamekeeper/core'
 
@@ -13,8 +13,9 @@ export interface ApiPlayerDto {
 // player service
 export class ApiPlayerService extends ApiService implements PlayerService {
 
-  public async addPlayer(player: PlayerData): Promise<PlayerDto> {
-    throw new Error('Method not implemented.')
+  public async addPlayer(data: NewPlayerData): Promise<PlayerDto> {
+    const newPlayer = await this.apiClient.post<ApiPlayerDto>(Route.PLAYERS, data)
+    return transform(newPlayer)
   }
 
   public async getPlayers(): Promise<readonly PlayerDto[]> {
