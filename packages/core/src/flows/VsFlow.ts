@@ -6,7 +6,7 @@ import { GameKeeperDeps } from '@core'
 export class VsFlow {
 
   private scores?: Scores
-  private winnerId?: PlayerId
+  private winnerId?: PlayerId | null
   private implicitWinner?: boolean
 
   public constructor(
@@ -53,7 +53,7 @@ export class VsFlow {
     return this
   }
 
-  public setWinner(winner: PlayerId): VsFlow {
+  public setWinner(winner: PlayerId | null): VsFlow {
     this.winnerId = winner
     this.implicitWinner = false
     return this

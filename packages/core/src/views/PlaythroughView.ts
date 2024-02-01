@@ -70,7 +70,9 @@ export class PlaythroughView {
 
   protected winnerNameFor(playthrough: Playthrough): string {
     if (playthrough instanceof VsPlaythrough) {
-      return playthrough.winner.name
+      return playthrough.winner === undefined
+        ? 'tied'
+        : playthrough.winner.name
     }
   
     else if (playthrough instanceof CoopPlaythrough) {

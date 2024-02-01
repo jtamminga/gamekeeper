@@ -10,7 +10,7 @@ export interface PlaythroughDto {
   gameId: GameId
   gameType: GameType
   playedOn: Date
-  result: PlayerId | boolean // player id or true for win
+  result: PlayerId | boolean | null // player id or true for win
   players: ReadonlyArray<PlayerId>
   scores?: ReadonlyArray<ScoreDto> | number
 }

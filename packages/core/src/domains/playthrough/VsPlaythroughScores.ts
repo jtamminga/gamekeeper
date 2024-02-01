@@ -13,6 +13,10 @@ export class VsPlaythroughScores implements Serializable<ReadonlyArray<ScoreData
     )
   }
 
+  public get empty(): boolean {
+    return this._scores.length === 0
+  }
+
   public get all(): ReadonlyArray<VsPlaythroughScore> {
     return this._scores
   }

@@ -1,7 +1,7 @@
 import { GameKeeperDeps } from '@core'
 import { VsGame } from '../game'
 import { Playthrough, BasePlaythroughData } from './Playthrough'
-import { ScoreData, Scores } from './Scores'
+import { ScoreData } from './Scores'
 import { PlayerId } from '@services'
 import { Player, type NewData } from '@domains'
 import { VsPlaythroughScores } from './VsPlaythroughScores'
@@ -9,7 +9,7 @@ import { VsPlaythroughScores } from './VsPlaythroughScores'
 
 // types
 export interface VsPlaythroughData extends BasePlaythroughData {
-  winnerId: PlayerId
+  winnerId: PlayerId | null
   scores?: ReadonlyArray<ScoreData>
 }
 export type NewVsPlaythroughData = NewData<VsPlaythroughData>
@@ -23,7 +23,7 @@ export namespace VsPlaythroughData {
 // class
 export class VsPlaythrough extends Playthrough {
 
-  public readonly winnerId: PlayerId
+  public readonly winnerId: PlayerId | null
   public readonly scores: VsPlaythroughScores
 
   public constructor(deps: GameKeeperDeps, data: VsPlaythroughData) {
@@ -36,8 +36,10 @@ export class VsPlaythrough extends Playthrough {
     return super.game as VsGame
   }
 
-  public get winner(): Player {
-    return this._deps.store.getPlayer(this.winnerId)
+  public get winner(): Player | undefined {
+    return this.winnerId === null
+      ? undefined
+      : this._deps.store.getPlayer(this.winnerId)
   }
 
   public override toData(): VsPlaythroughData {
@@ -45,7 +47,7 @@ export class VsPlaythrough extends Playthrough {
       ...super.toData(),
       winnerId: this.winnerId
     }
-    if (this.scores.all.length > 0) {
+    if (!this.scores.empty) {
       data.scores = this.scores.toData()
     }
     return data

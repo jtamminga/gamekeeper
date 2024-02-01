@@ -1,7 +1,6 @@
 import { GameKeeperDeps } from '@core'
 import { CoopGame } from '../game'
 import { Playthrough, BasePlaythroughData } from './Playthrough'
-import { PlayerId } from '@services'
 import { NewData } from '@domains'
 
 

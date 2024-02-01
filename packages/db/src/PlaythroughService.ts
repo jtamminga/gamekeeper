@@ -8,7 +8,7 @@ export interface DbPlaythroughDto {
   gameId: number
   gameType: number
   playedOn: string
-  result: number // player id or 1 for win 
+  result: number | null // player id or 1 for win 
   players: string // json
   scores?: string // json
 }
@@ -110,7 +110,9 @@ function toPlaythroughDto(playthrough: DbPlaythroughDto): PlaythroughDto {
     gameType: playthrough.gameType as GameType,
     playedOn: new Date(playthrough.playedOn),
     result: isVsPlaythrough
-      ? playthrough.result.toString() as PlayerId
+      ? playthrough.result === null
+        ? null
+        : playthrough.result.toString() as PlayerId
       : playthrough.result === 1,
     players: JSON.parse(playthrough.players) as PlayerId[],
     scores: playthrough.scores
@@ -137,7 +139,9 @@ function toDto(playthrough: VsPlaythroughData | CoopPlaythroughData): Omit<DbPla
     return {
       ...base,
       gameType: GameType.VS,
-      result: Number(playthrough.winnerId),
+      result: playthrough.winnerId === null
+        ? null
+        : parseInt(playthrough.winnerId),
       scores: playthrough.scores
         ? serializeScores(playthrough.scores)
         : undefined
