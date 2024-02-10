@@ -40,7 +40,7 @@ export class StatsView {
       numPlaysThisYear: totalPlays(numPlaysThisYear),
       numPlaysLastYear: totalPlays(numPlaysLastYear),
       numPlaysAllTime: totalPlays(numPlaysAllTime),
-      latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS)),
+      latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), true),
       daysSinceLastPlaythrough: latestPlaythrough
         ? differenceInDays(Date.now(), latestPlaythrough.playedOn)
         : -1
