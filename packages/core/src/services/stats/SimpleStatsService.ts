@@ -42,13 +42,15 @@ export class SimpleStatsService implements StatsService {
         })
 
         // b. update wins count based on playthrough result
-        if (playthrough.gameType === GameType.VS) {
-          const playerId = playthrough.result as PlayerId
+        // make sure to check if result is a string (it can be null which means a tie)
+        if (playthrough.gameType === GameType.VS && typeof playthrough.result === 'string') {
+          const playerId = playthrough.result
           const stats = allStats.get(playerId)!
           stats.wins++
         }
+        // make sure to check if result equal to true (it can be null which means a tie)
         else if (playthrough.gameType === GameType.COOP) {
-          const playersWon = playthrough.result as boolean
+          const playersWon = playthrough.result === true
           if (playersWon) {
             playthrough.players.forEach(playerId => {
               allStats.get(playerId)!.wins++

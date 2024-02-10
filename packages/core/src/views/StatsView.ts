@@ -1,11 +1,20 @@
 import { GameKeeper, StatsResult } from '@domains'
+import { FormattedPlaythrough, formatPlaythroughs } from './PlaythroughPreview'
+import { differenceInDays } from 'date-fns'
 
 
-type HydratedData = {
-  numPlaysThisYear: number
-  numPlaysLastYear: number
-  numPlaysAllTime: number
+// types
+export interface HydratedStatsView {
+  readonly numPlaysThisYear: number
+  readonly numPlaysLastYear: number
+  readonly numPlaysAllTime: number
+  readonly latestPlaythroughs: ReadonlyArray<FormattedPlaythrough>
+  readonly daysSinceLastPlaythrough: number
 }
+
+
+// constants
+const NUM_LATEST_PLAYTHROUGHTS = 10
 
 
 export class StatsView {
@@ -21,28 +30,21 @@ export class StatsView {
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
       stats.numPlaythroughs({ year: year - 1 }),
-      stats.numPlaythroughs({})
+      stats.numPlaythroughs({}),
+      gamekeeper.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
     ])
 
-    return new HydratedStatsView({
+    const latestPlaythrough = gamekeeper.playthroughs.all()[0]
+
+    return {
       numPlaysThisYear: totalPlays(numPlaysThisYear),
       numPlaysLastYear: totalPlays(numPlaysLastYear),
-      numPlaysAllTime: totalPlays(numPlaysAllTime)
-    })
-  }
-
-}
-
-export class HydratedStatsView {
-
-  public readonly numPlaysThisYear: number
-  public readonly numPlaysLastYear: number
-  public readonly numPlaysAllTime: number
-
-  public constructor(private _data: HydratedData) {
-    this.numPlaysThisYear = _data.numPlaysThisYear
-    this.numPlaysLastYear = _data.numPlaysLastYear
-    this.numPlaysAllTime = _data.numPlaysAllTime
+      numPlaysAllTime: totalPlays(numPlaysAllTime),
+      latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS)),
+      daysSinceLastPlaythrough: latestPlaythrough
+        ? differenceInDays(Date.now(), latestPlaythrough.playedOn)
+        : -1
+    }
   }
 
 }

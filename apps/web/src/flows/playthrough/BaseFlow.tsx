@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Callback, CoopFlow, GameId, PlayerId, VsFlow } from '@gamekeeper/core'
+import type { Callback, GameId, PlayerId, PlaythroughFlow } from '@gamekeeper/core'
 import { DateSelect, GameSelect, PlayerSelect } from '@app/components'
 import { useGamekeeper } from '@app/hooks'
 
 
 type Props = {
-  onComplete: Callback<VsFlow | CoopFlow>
+  onComplete: Callback<PlaythroughFlow>
 }
 
 

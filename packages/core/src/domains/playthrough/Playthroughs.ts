@@ -1,5 +1,5 @@
 import { PlaythroughFlowFactory } from '@factories'
-import type { CoopFlow, VsFlow } from '@flows'
+import type { PlaythroughFlow } from '@flows'
 import type { GameKeeperDeps } from '@core'
 import type { NewBasePlaythroughData, Playthrough } from './Playthrough'
 import type { GameId, PlaythroughQueryOptions } from '@services'
@@ -42,7 +42,7 @@ export class Playthroughs {
     return this._deps.store.bindPlaythrough(dto)
   }
 
-  public startFlow(data: NewBasePlaythroughData): VsFlow | CoopFlow {
+  public startFlow(data: NewBasePlaythroughData): PlaythroughFlow {
     return PlaythroughFlowFactory.create(this._deps, data)
   }
 

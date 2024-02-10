@@ -25,14 +25,14 @@ export function VsFlowPartial({ flow, onComplete }: Props) {
     }
   }
 
-  function onWinnerComplete(winnerId: PlayerId) {
+  function onWinnerComplete(winnerId: PlayerId | null) {
     flow.setWinner(winnerId)
     onComplete()
   }
 
   let content: ReactNode = null
 
-  if (!flow.game.hasScoring || flow.needsExplicitWinner) {
+  if (flow.needsExplicitWinner) {
     content = (
       <VsWinnerFlow
         flow={flow}

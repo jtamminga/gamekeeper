@@ -1,4 +1,4 @@
-import { GameKeeper, StatsResult, VsGame } from '@domains'
+import { GameKeeper, VsGame } from '@domains'
 import { GameId, GameType } from '@services'
 import { formatDate } from './utils'
 
@@ -24,6 +24,9 @@ const DEFAULT_GAMES_OPTIONS: Required<GetGamesOptions> = {
   sortBy: 'name',
   order: 'asc'
 }
+export interface HydratedGamesView {
+  all: (options?: GetGamesOptions) => ReadonlyArray<GameWithStats>
+}
 
 
 export class GamesView {
@@ -36,25 +39,7 @@ export class GamesView {
       gamekeeper.stats.lastPlayed({})
     ])
 
-    return new HydratedGamesView(
-      gamekeeper,
-      numPlays,
-      lastPlayed
-    )
-  }
-}
-
-
-export class HydratedGamesView {
-
-  private _games: GameWithStats[]
-
-  public constructor(
-    gamekeeper: GameKeeper,
-    numPlays: StatsResult<number>,
-    lastPlayed: StatsResult<Date | undefined>
-  ) {
-    this._games = gamekeeper.games.all().map(game => {
+    const games = gamekeeper.games.all().map(game => {
       const lastPlayedDate = lastPlayed.get(game)
 
       return {
@@ -66,15 +51,14 @@ export class HydratedGamesView {
         lastPlayedFormatted: lastPlayedDate ? formatDate(lastPlayedDate, true) : undefined
       }
     })
-  }
 
-  public all(options?: GetGamesOptions): ReadonlyArray<GameWithStats> {
-    return this._games.sort(sort({
-      ...DEFAULT_GAMES_OPTIONS,
-      ...options
-    }))
+    return {
+      all: (options?: GetGamesOptions) => games.sort(gamesComparer({
+        ...DEFAULT_GAMES_OPTIONS,
+        ...options
+      }))
+    }
   }
-
 }
 
 
@@ -89,7 +73,7 @@ function getSortableValue(game: GameWithStats, sortBy: GameSortBy): string | num
       return game.numPlays
   }
 }
-function sort({ sortBy, order }: Required<GetGamesOptions>): (a: GameWithStats, b: GameWithStats) => number {
+function gamesComparer({ sortBy, order }: Required<GetGamesOptions>): (a: GameWithStats, b: GameWithStats) => number {
   return (a: GameWithStats, b: GameWithStats) => {
     const aValue = getSortableValue(a, sortBy)
     const bValue = getSortableValue(b, sortBy)

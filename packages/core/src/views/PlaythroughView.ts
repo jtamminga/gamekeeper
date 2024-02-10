@@ -1,25 +1,19 @@
-import { CoopPlaythrough, GameKeeper, Playthrough, VsPlaythrough, Winrates } from '@domains'
-import { formatDate } from './utils'
+import { GameKeeper, Playthrough, VsPlaythrough } from '@domains'
+import { formatPercent } from './utils'
+import { FormattedPlaythrough, formatPlaythroughs, formatWinner } from './PlaythroughPreview'
 
 
 // types
-type FormattedScore = { name: string, score: string }
-type FormattedPlaythrough = {
-  id: string
-  playedOn: string
-  winner: string
-  scores: FormattedScore[]
-}
 type FormattedStat = {
   name: string
   valueAllTime: string,
   valueThisYear: string
 }
-type HydratedData = {
-  numPlaysAllTime: number
-  numPlaysThisYear: number
-  winratesAllTime: Winrates,
-  winratesThisYear: Winrates
+export interface HydratedPlaythroughView {
+  readonly numPlaythroughs: FormattedStat
+  readonly winrates: ReadonlyArray<FormattedStat>
+  readonly stats: ReadonlyArray<FormattedStat>
+  readonly latestPlaythroughs: ReadonlyArray<FormattedPlaythrough>
 }
 
 
@@ -52,120 +46,40 @@ export class PlaythroughView {
       })
     ])
 
-    return new HydratedPlaythroughView(
-      gamekeeper,
-      this.playthrough,
-      {
-        numPlaysAllTime,
-        numPlaysThisYear,
-        winratesAllTime,
-        winratesThisYear
-      }
-    )
-  }
-
-  public get winner(): string {
-    return this.winnerNameFor(this.playthrough)
-  }
-
-  protected winnerNameFor(playthrough: Playthrough): string {
-    if (playthrough instanceof VsPlaythrough) {
-      return playthrough.winner === undefined
-        ? 'tied'
-        : playthrough.winner.name
-    }
-  
-    else if (playthrough instanceof CoopPlaythrough) {
-      return playthrough.playersWon
-        ? 'players'
-        : 'game'
-    }
-  
-    else {
-      throw new Error('unsupported playthrough type')
-    }
-  }
-
-}
-
-export class HydratedPlaythroughView extends PlaythroughView {
-
-  private readonly _latestPlaythroughs: ReadonlyArray<Playthrough>
-
-  public constructor(
-    gamekeeper: GameKeeper,
-    playthrough: Playthrough,
-    private _data: HydratedData
-  ) {
-    super(playthrough)
-
-    this._latestPlaythroughs = gamekeeper.playthroughs
-      .latest(NUM_HISTORICAL_PLAYTHROUGHS, playthrough.gameId)
-  }
-
-  public get numPlaythroughs(): FormattedStat {
-    const {
-      numPlaysAllTime,
-      numPlaysThisYear,
-    } = this._data
-
-    return {
+    const numPlaythroughs: FormattedStat = {
       name: 'Plays',
       valueThisYear: numPlaysThisYear.toString(),
       valueAllTime: numPlaysAllTime.toString()
     }
-  }
 
-  public get winrates(): FormattedStat[] {
-    const {
-      winratesAllTime,
-      winratesThisYear
-    } = this._data
-
-    return this.playthrough.players.map(player => ({
+    const winrates: FormattedStat[] = this.playthrough.players.map(player => ({
       name: player.name,
       valueAllTime: formatPercent(winratesAllTime.winrates.find(wr => wr.player === player)?.winrate),
       valueThisYear: formatPercent(winratesThisYear.winrates.find(wr => wr.player === player)?.winrate)
     }))
+
+    return {
+      numPlaythroughs,
+      winrates,
+      stats: [numPlaythroughs, ...winrates],
+      latestPlaythroughs: formatPlaythroughs(
+        gamekeeper
+          .playthroughs
+          .latest(NUM_HISTORICAL_PLAYTHROUGHS, this.playthrough.gameId)
+      )
+    }
   }
 
-  public get stats(): FormattedStat[] {
-    return [
-      this.numPlaythroughs,
-      ...this.winrates
-    ]
+  public get winner(): string {
+    return formatWinner(this.playthrough)
   }
 
-  public get latestPlaythroughs(): FormattedPlaythrough[] {
-    return this._latestPlaythroughs.map(playthrough => ({
-      id: playthrough.id,
-      playedOn: formatDate(playthrough.playedOn),
-      winner: this.winnerNameFor(playthrough),
-      scores: scoresFor(playthrough)
-    }))
+  public get tied(): boolean {
+    if (this.playthrough instanceof VsPlaythrough) {
+      return this.playthrough.tied
+    }
+
+    return false
   }
 
-  
-}
-
-
-// helpers
-function formatPercent(value: number | undefined): string {
-  return value?.toLocaleString('en-US', { style: 'percent' }) ?? ''
-}
-function scoresFor(playthrough: Playthrough): FormattedScore[] {
-  if (playthrough instanceof VsPlaythrough) {
-    return playthrough.scores.all.map(score => ({
-      name: score.player.name,
-      score: score.value.toString()
-    }))
-  }
-  else if (playthrough instanceof CoopPlaythrough) {
-    return playthrough.score === undefined
-      ? []
-      : [{ name: 'players', score: playthrough.score.toString() }]
-  }
-  else {
-    throw new Error('unsupported playthrough type')
-  }
 }

@@ -19,8 +19,8 @@ export namespace Route {
     LAST_PLAYTHROUGHS: `${_stats}/last-plays`
   }
 
-  export function forGame(id: GameId): string {
-    return `${GAMES}/${id}`
+  export function forGame(id: GameId) {
+    return `${GAMES}/${id}` as const
   }
 
 }

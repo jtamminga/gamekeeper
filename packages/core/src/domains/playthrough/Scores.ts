@@ -27,6 +27,11 @@ export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
     return this._scores.size
   }
 
+  public get tied(): boolean {
+    const scores = Array.from(this._scores.values())
+    return scores.every(score => score === scores[0])
+  }
+
   public set(playerId: PlayerId, score: number) {
     this._scores.set(playerId, score)
   }

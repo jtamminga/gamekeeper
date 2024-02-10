@@ -5,13 +5,13 @@ import { VsWinnerSelect } from './VsWinnerSelect'
 
 type Props = {
   flow: VsFlow
-  onComplete: Callback<PlayerId>
+  onComplete: Callback<PlayerId | null>
 }
 
 
 export function VsWinnerFlow({ flow, onComplete }: Props) {
 
-  const [winnerId, setWinnerId] = useState<PlayerId>()
+  const [winnerId, setWinnerId] = useState<PlayerId | null>()
 
   function onNext() {
     if (winnerId === undefined) {

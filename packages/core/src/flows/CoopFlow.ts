@@ -1,19 +1,12 @@
-import { GameKeeperDeps } from '@core'
-import { CoopGame, CoopPlaythroughData, NewBasePlaythroughData, Player } from '@domains'
+import type { CoopGame, NewCoopPlaythroughData } from '@domains'
 import { ScoringType } from '@services'
+import { PlaythroughFlow } from './PlaythroughFlow'
 
 
-export class CoopFlow {
+export class CoopFlow extends PlaythroughFlow<CoopGame> {
   
   private playersWon?: boolean
   private score?: number
-
-  public constructor(
-    private deps: GameKeeperDeps,
-    private data: NewBasePlaythroughData,
-    public readonly game: CoopGame,
-    public readonly players: ReadonlyArray<Player>
-  ) { }
 
   public setScore(score: number): CoopFlow {
     if (this.game.scoring === ScoringType.NO_SCORE) {
@@ -29,7 +22,7 @@ export class CoopFlow {
     return this
   }
 
-  public build(): Omit<CoopPlaythroughData, 'id'> {
+  public build(): NewCoopPlaythroughData {
     if (this.playersWon === undefined) {
       throw new Error('winner must be specified')
     }

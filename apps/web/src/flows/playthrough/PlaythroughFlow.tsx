@@ -1,22 +1,49 @@
 import { ReactNode, useState } from 'react'
-import { Callback, CoopFlow, VsFlow } from '@gamekeeper/core'
+import { CoopFlow, Playthrough, PlaythroughFlow as PlaythroughFlowModel, VsFlow, formatDate } from '@gamekeeper/core'
 import { VsFlowPartial } from './VsFlow'
 import { BaseFlow } from './BaseFlow'
 import { CoopFlowPartial } from './CoopFlow'
+import { useGamekeeper } from '@app/hooks'
+import { PlaythroughResult } from './PlaythroughResult'
+import { Loading } from '@app/components'
 
 
-type Props = {
-  onComplete: Callback<VsFlow | CoopFlow>
-}
+export function PlaythroughFlow() {
+
+  const gamekeeper = useGamekeeper()
+  const [flow, setFlow] = useState<PlaythroughFlowModel>()
+  const [completed, setCompleted] = useState(false)
+  const [playthrough, setPlaythrough] = useState<Playthrough>()
 
 
-export function PlaythroughFlow({ onComplete }: Props) {
+  async function onComplete(flow: PlaythroughFlowModel) {
+    setCompleted(true)
 
-  const [flow, setFlow] = useState<VsFlow | CoopFlow>()
+    const playthroughData = flow.build()
+    const playthrough = await gamekeeper.playthroughs.create(playthroughData)
+    setPlaythrough(playthrough)
+  }
+
+  function onReset() {
+    setFlow(undefined)
+    setCompleted(false)
+    setPlaythrough(undefined)
+  }
 
   let contents: ReactNode = null
 
-  if (flow === undefined) {
+  // when completed show result screen
+  // we return in this case so we don't render the layout below
+  if (completed) {
+    return playthrough
+      ? <PlaythroughResult
+          playthrough={playthrough}
+          onReset={onReset}
+        />
+      : <Loading />
+  }
+ 
+  else if (flow === undefined) {
     contents = (
       <BaseFlow
         onComplete={flow => setFlow(flow)}
@@ -42,9 +69,13 @@ export function PlaythroughFlow({ onComplete }: Props) {
     )
   }
 
+  // render title with contents
   return (
     <>
       <h1>Record</h1>
+      {flow &&
+        <h3>for {flow.game.name} on {formatDate(flow.playedOn)}</h3>
+      }
       
       {contents}
     </>

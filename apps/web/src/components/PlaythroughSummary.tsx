@@ -1,4 +1,5 @@
 import { HydratedPlaythroughView } from '@gamekeeper/core'
+import { PlaythroughsList } from './PlaythroughsList'
 
 
 export type Props = {
@@ -14,7 +15,7 @@ export function PlaythroughSummary({ view }: Props) {
       {renderYearVsTotalStats(view)}
 
       <h3>Last playthroughs</h3>
-      {renderLatestPlaythroughs(view)}
+      <PlaythroughsList playthroughs={view.latestPlaythroughs} />
     </>
   )
 
@@ -37,29 +38,6 @@ function renderYearVsTotalStats({stats}: HydratedPlaythroughView) {
             <td className="num">{stat.valueThisYear}</td>
             <td className="num">{stat.valueAllTime}</td>
           </tr>
-        )}
-      </tbody>
-    </table>
-  )
-}
-
-function renderLatestPlaythroughs({latestPlaythroughs}: HydratedPlaythroughView) {
-  return (
-    <table>
-      <thead>
-        <tr>
-          <th className="num">Date</th>
-          <th>Winner</th>
-          <th>Scores</th>
-        </tr>
-      </thead>
-      <tbody>
-        {latestPlaythroughs.map(playthrough =>
-          <tr key={playthrough.id}>
-            <td className="num">{playthrough.playedOn}</td>
-            <td>{playthrough.winner}</td>
-            <td>{playthrough.scores.map(score => `${score.name}: ${score.score}`).join(', ')}</td>
-          </tr>  
         )}
       </tbody>
     </table>

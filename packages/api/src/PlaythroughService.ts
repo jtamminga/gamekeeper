@@ -9,7 +9,7 @@ interface ApiPlaythroughDto {
   gameId: string
   gameType: number
   playedOn: string
-  result: number
+  result: string | boolean | null
   players: string[]
   scores: ScoreDto[]
 }
@@ -38,10 +38,16 @@ function transform(dto: ApiPlaythroughDto): PlaythroughDto {
     gameId: dto.gameId as GameId,
     gameType: dto.gameType as GameType,
     playedOn: new Date(dto.playedOn),
-    result: dto.gameType === GameType.VS
-      ? dto.result.toString() as PlayerId
-      : dto.result === 1,
+    result: transformResult(dto.result),
     players: dto.players as PlayerId[],
     scores: dto.scores
   }
+}
+
+function transformResult(result: ApiPlaythroughDto['result']): PlaythroughDto['result'] {
+  if (typeof result === 'string') {
+    return result as PlayerId
+  }
+
+  return result
 }

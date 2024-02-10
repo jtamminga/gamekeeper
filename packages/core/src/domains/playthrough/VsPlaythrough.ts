@@ -42,6 +42,10 @@ export class VsPlaythrough extends Playthrough {
       : this._deps.store.getPlayer(this.winnerId)
   }
 
+  public get tied(): boolean {
+    return this.winnerId === null
+  }
+
   public override toData(): VsPlaythroughData {
     const data: VsPlaythroughData = {
       ...super.toData(),

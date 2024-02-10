@@ -1,20 +1,13 @@
-import { PlayerId, ScoringType } from '@services'
-import { NewBasePlaythroughData, Player, Scores, VsGame, VsPlaythroughData } from '@domains'
-import { GameKeeperDeps } from '@core'
+import { type PlayerId, ScoringType } from '@services'
+import type { NewVsPlaythroughData, Player, Scores, VsGame } from '@domains'
+import { PlaythroughFlow } from './PlaythroughFlow'
 
 
-export class VsFlow {
+export class VsFlow extends PlaythroughFlow<VsGame> {
 
   private scores?: Scores
   private winnerId?: PlayerId | null
   private implicitWinner?: boolean
-
-  public constructor(
-    private deps: GameKeeperDeps,
-    private data: NewBasePlaythroughData,
-    public readonly game: VsGame,
-    public readonly players: ReadonlyArray<Player>
-  ) { }
 
   public get winner(): Player | undefined {
     return this.winnerId
@@ -23,11 +16,11 @@ export class VsFlow {
   }
 
   public get hasWinner(): boolean {
-    return this.winnerId !== undefined
+    return this.winnerId !== undefined && this.winnerId !== null
   }
 
   public get needsExplicitWinner(): boolean {
-    return this.scores !== undefined && this.winnerId === undefined
+    return this.scores !== undefined && !this.hasWinner
   }
 
   public get isImplicitWinner(): boolean {
@@ -59,7 +52,7 @@ export class VsFlow {
     return this
   }
 
-  public build(): Omit<VsPlaythroughData, 'id'> {
+  public build(): NewVsPlaythroughData {
     if (this.winnerId === undefined) {
       throw new Error('winner must be specified')
     }
@@ -80,7 +73,13 @@ export class VsFlow {
 
 
 // helper
-function determineWinner(type: ScoringType, scores: Scores): PlayerId | undefined {
+function determineWinner(type: ScoringType, scores: Scores): PlayerId | null {
+  // first check if there is a tie
+  if (scores.tied) {
+    return null
+  }
+
+  // otherwise determine winner
   switch (type) {
     case ScoringType.HIGHEST_WINS:
       return scores.highest().playerId
