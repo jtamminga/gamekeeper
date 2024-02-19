@@ -4,10 +4,13 @@ import { VsFlowPartial } from './VsFlow'
 import { BaseFlow } from './BaseFlow'
 import { CoopFlowPartial } from './CoopFlow'
 import { useGamekeeper } from '@app/hooks'
-import { PlaythroughResult } from './PlaythroughResult'
+import { PlaythroughAdded } from './PlaythroughAdded'
 import { Loading } from '@app/components'
 
 
+/**
+ * Flow for adding a new playthrough
+ */
 export function PlaythroughFlow() {
 
   const gamekeeper = useGamekeeper()
@@ -36,7 +39,7 @@ export function PlaythroughFlow() {
   // we return in this case so we don't render the layout below
   if (completed) {
     return playthrough
-      ? <PlaythroughResult
+      ? <PlaythroughAdded
           playthrough={playthrough}
           onReset={onReset}
         />

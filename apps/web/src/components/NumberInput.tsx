@@ -1,21 +1,16 @@
 import { Callback } from '@gamekeeper/core'
-import { useState } from 'react'
 
 
 type Props = {
-  initialValue?: number
+  value?: number
   onChange: Callback<number | undefined>
 }
 
 
 // component
-export function NumberInput({ initialValue, onChange }: Props) {
-
-  const [value, setValue] = useState(typeof initialValue === 'number' ? initialValue.toString() : '')
+export function NumberInput({ value, onChange }: Props) {
 
   function updateValue(value: string) {
-    setValue(value)
-
     const valueAsNum = parseInt(value)
     if (isNaN(valueAsNum)) {
       onChange(undefined)
@@ -28,8 +23,7 @@ export function NumberInput({ initialValue, onChange }: Props) {
   return (
     <input
       type="number"
-      pattern="\d*"
-      value={value}
+      value={typeof value === 'number' ? value.toString() : ''}
       onChange={e => updateValue(e.target.value)}
     />
   )

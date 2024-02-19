@@ -4,11 +4,12 @@ import { FormattedPlaythrough } from '@gamekeeper/core'
 // types
 type Props = {
   playthroughs: ReadonlyArray<FormattedPlaythrough>
+  hideScores?: boolean
 }
 
 
 // component
-export function PlaythroughsList({ playthroughs }: Props) {
+export function PlaythroughsList({ playthroughs, hideScores }: Props) {
   const showGameNames = playthroughs[0].game !== undefined
 
   return (
@@ -18,7 +19,7 @@ export function PlaythroughsList({ playthroughs }: Props) {
           <th className="num">Date</th>
           {showGameNames && <th>Game</th>}
           <th>Winner</th>
-          <th>Scores</th>
+          {!hideScores && <th>Scores</th>}
         </tr>
       </thead>
       <tbody>
@@ -27,7 +28,9 @@ export function PlaythroughsList({ playthroughs }: Props) {
             <td className="num">{playthrough.playedOn}</td>
             {showGameNames && <td>{playthrough.game}</td>}
             <td>{playthrough.winner}</td>
-            <td>{playthrough.scores.map(score => `${score.name}: ${score.score}`).join(', ')}</td>
+            {!hideScores &&
+              <td>{playthrough.scores.map(score => `${score.name}: ${score.score}`).join(', ')}</td>
+            }
           </tr>  
         )}
       </tbody>

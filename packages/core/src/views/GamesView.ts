@@ -1,6 +1,7 @@
 import { GameKeeper, VsGame } from '@domains'
 import { GameId, GameType } from '@services'
 import { formatDate } from './utils'
+import { HydratableView } from './HydratableView'
 
 
 type GameWithStats = {
@@ -29,7 +30,7 @@ export interface HydratedGamesView {
 }
 
 
-export class GamesView {
+export class GamesView implements HydratableView<HydratedGamesView> {
   public async hydrate(gamekeeper: GameKeeper): Promise<HydratedGamesView> {
     const [
       numPlays,

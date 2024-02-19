@@ -1,24 +1,14 @@
 import { Loading, PlaythroughsList } from '@app/components'
-import { useGamekeeper } from '@app/hooks'
-import { HydratedStatsView, StatsView } from '@gamekeeper/core'
-import { useEffect, useState } from 'react'
+import { useView } from '@app/hooks'
+import { StatsView } from '@gamekeeper/core'
+
 
 export function Stats() {
 
-  const gamekeeper = useGamekeeper()
-  const [view, setView] = useState<HydratedStatsView>()
-
-  // fetch data
-  useEffect(() => {
-    async function fetchData() {
-      const view = await new StatsView().hydrate(gamekeeper)
-      setView(view)
-    }
-    fetchData()
-  }, [gamekeeper])
+  const {hydratedView} = useView(() => new StatsView())
 
   // render loading while waiting
-  if (!view) {
+  if (!hydratedView) {
     return <Loading />
   }
 
@@ -26,11 +16,11 @@ export function Stats() {
     <>
       <h1>Stats</h1>
 
-      <h2>{view.daysSinceLastPlaythrough} days since last game</h2>
+      <h2>{hydratedView.daysSinceLastPlaythrough} days since last game</h2>
 
-      <h3>{view.numPlaysThisYear} games played this year</h3>
+      <h3>{hydratedView.numPlaysThisYear} games played this year</h3>
 
-      <PlaythroughsList playthroughs={view.latestPlaythroughs} />
+      <PlaythroughsList playthroughs={hydratedView.latestPlaythroughs} hideScores />
     </>
   )
 }

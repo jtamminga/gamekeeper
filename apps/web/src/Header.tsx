@@ -1,5 +1,5 @@
-import { Callback } from '@gamekeeper/core'
-import { Page } from './routing'
+import type { Callback } from '@gamekeeper/core'
+import type { Page } from './routing'
 
 
 type Props = {
@@ -13,18 +13,18 @@ export function Header({ page, navTo }: Props) {
     <header>
       <nav>
         <a
-          className={page === 'Stats' ? 'active' : undefined}
-          onClick={() => navTo('Stats')}
+          className={page.name === 'Stats' ? 'active' : undefined}
+          onClick={() => navTo({ name: 'Stats' })}
         >stats</a>
 
         <a
-          className={page === 'Games' ? 'active' : undefined}
-          onClick={() => navTo('Games')}
+          className={page.name === 'Games' ? 'active' : undefined}
+          onClick={() => navTo({ name: 'Games' })}
         >games</a>
 
         <a
-          className={page === 'AddPlaythrough' ? 'active' : undefined}
-          onClick={() => navTo('AddPlaythrough')}
+          className={page.name === 'AddPlaythrough' ? 'active' : undefined}
+          onClick={() => navTo({ name: 'AddPlaythrough' })}
         >record</a>
       </nav>
     </header>

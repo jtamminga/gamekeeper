@@ -1,6 +1,6 @@
 import { RouterContext } from '@app/Router'
-import { Page } from '@app/routing'
 import { useContext } from 'react'
+import type { Page } from '@app/routing'
 
 
 // hook
@@ -9,8 +9,7 @@ export function useRouter() {
 
   return {
     context,
-    page: context.page,
-    props: context.props,
-    setPage: (page: Page, props?: unknown) => setContext({ page, props })
+    page: context,
+    setPage: (page: Page) => setContext(page)
   }
 }

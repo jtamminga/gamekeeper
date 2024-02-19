@@ -1,13 +1,13 @@
-import { HydratedPlaythroughView } from '@gamekeeper/core'
+import { HydratedGameView } from '@gamekeeper/core'
 import { PlaythroughsList } from './PlaythroughsList'
 
 
 export type Props = {
-  view: HydratedPlaythroughView
+  view: HydratedGameView
 }
 
 
-export function PlaythroughSummary({ view }: Props) {
+export function GameSummary({ view }: Props) {
 
   return (
     <>
@@ -21,7 +21,7 @@ export function PlaythroughSummary({ view }: Props) {
 
 }
 
-function renderYearVsTotalStats({stats}: HydratedPlaythroughView) {
+function renderYearVsTotalStats({stats}: HydratedGameView) {
   return (
     <table>
       <thead>

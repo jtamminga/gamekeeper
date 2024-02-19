@@ -1,9 +1,10 @@
+import { GameSortBy, GamesView } from '@gamekeeper/core'
 import { Link, Loading } from '@app/components'
-import { useGamekeeper } from '@app/hooks'
-import { GameSortBy, GamesView, HydratedGamesView } from '@gamekeeper/core'
-import { useEffect, useState } from 'react'
+import { useRouter, useView } from '@app/hooks'
+import { useState } from 'react'
 
 
+// types
 type SortByOption = {
   label: string
   sortBy: GameSortBy
@@ -11,34 +12,26 @@ type SortByOption = {
 }
 type SortByOptionRecord = Record<string, SortByOption>
 const sortByOptions: SortByOptionRecord = {
-  '1': { label: 'Name (asc)', sortBy: 'name', order: 'asc' },
-  '2':{ label: 'Name (desc)', sortBy: 'name', order: 'desc' },
-  '3':{ label: 'Plays (asc)', sortBy: 'numPlays', order: 'asc' },
-  '4':{ label: 'Plays (desc)', sortBy: 'numPlays', order: 'desc' },
-  '5':{ label: 'Last Played (asc)', sortBy: 'lastPlayed', order: 'asc' },
-  '6':{ label: 'Last Played (desc)', sortBy: 'lastPlayed', order: 'desc' },
+  'name_asc': { label: 'Name (asc)', sortBy: 'name', order: 'asc' },
+  'name_desc': { label: 'Name (desc)', sortBy: 'name', order: 'desc' },
+  'plays_asc': { label: 'Plays (least first)', sortBy: 'numPlays', order: 'asc' },
+  'plays_dec': { label: 'Plays (most first)', sortBy: 'numPlays', order: 'desc' },
+  'played_asc': { label: 'Last Played (least recent first)', sortBy: 'lastPlayed', order: 'asc' },
+  'played_desc': { label: 'Last Played (most recent first)', sortBy: 'lastPlayed', order: 'desc' },
 }
 
 
+// component
 export function Games() {
   
   // hooks
-  const gamekeeper = useGamekeeper()
-  const [view, setView] = useState<HydratedGamesView>()
-  const [sortBy, setSortBy] = useState('1')
+  const [sortBy, setSortBy] = useState('name_asc')
   const gameOptions = sortByOptions[sortBy]
-
-  // fetch data
-  useEffect(() => {
-    async function fetchData() {
-      const view = await new GamesView().hydrate(gamekeeper)
-      setView(view)
-    }
-    fetchData()
-  }, [gamekeeper])
+  const { setPage } = useRouter()
+  const { hydratedView } = useView(() => new GamesView())
 
   // render loading while waiting
-  if (!view) {
+  if (!hydratedView) {
     return <Loading />
   }
 
@@ -58,7 +51,7 @@ export function Games() {
           </select>
         </div>
 
-        <Link page="AddGame">
+        <Link page={{ name: 'AddGame' }}>
           Add game
         </Link>
       </div>
@@ -72,8 +65,8 @@ export function Games() {
           </tr>
         </thead>
         <tbody>
-          {view.all(gameOptions).map(game =>
-            <tr key={game.id}>
+          {hydratedView.all(gameOptions).map(game =>
+            <tr key={game.id} onClick={() => setPage({ name: 'GameDetails', props: { gameId: game.id } })}>
               <td>{game.name}</td>
               <td className="num">{game.numPlays}</td>
               <td className="num">{game.lastPlayedFormatted ?? <span>never played</span>}</td>

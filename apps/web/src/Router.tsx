@@ -4,13 +4,9 @@ import type { Page } from './routing'
 
 
 // types
-export type PageContext = {
-  page: Page
-  props?: unknown
-}
 type RouterContextType = {
-  context: PageContext
-  setContext: Callback<PageContext>
+  context: Page
+  setContext: Callback<Page>
 }
 type RouterContainerProps = {
   children: ReactNode
@@ -18,13 +14,13 @@ type RouterContainerProps = {
 
 
 // context
-export const RouterContext = createContext<RouterContextType>({ context: { page: 'Stats' }, setContext: () => {} })
+export const RouterContext = createContext<RouterContextType>({ context: { name: 'Stats' }, setContext: () => {} })
 
 
 // provider
 export function RouterContainer({ children }: RouterContainerProps) {
 
-  const [context, setContext] = useState<PageContext>({ page: 'Stats' })
+  const [context, setContext] = useState<Page>({ name: 'Stats' })
 
   return (
     <RouterContext.Provider value={{ context, setContext }}>

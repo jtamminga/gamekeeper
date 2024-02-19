@@ -1,5 +1,5 @@
 import { NumberInput } from '@app/components'
-import { Callback, PlayerId, Scores, VsFlow } from '@gamekeeper/core'
+import { Callback, Player, ScoreData, Scores, VsFlow } from '@gamekeeper/core'
 import { Fragment, useState } from 'react'
 
 
@@ -7,26 +7,32 @@ type Props = {
   flow: VsFlow
   onComplete: Callback<Scores>
 }
+type PlayerScore = {
+  player: Player
+  score?: number
+}
 
 
 export function VsScoresFlow({ flow, onComplete }: Props) {
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, setUpdatedAt] = useState(0)
-  const [scores] = useState(new Scores())
+  const [playerScores, setPlayerScores] = useState<PlayerScore[]>(
+    flow.players.map(player => ({ player }))
+  )
   
-  function updateScore(playerId: PlayerId, score: number | undefined) {
-    if (score === undefined) {
-      scores.remove(playerId)
-    } else {
-      scores.set(playerId, score)
-    }
-    
-    setUpdatedAt(Date.now())
+  function updateScore(player: Player, score: number | undefined) {
+    setPlayerScores(playerScores.map(playerScore =>
+      playerScore.player === player
+        ? { player, score }
+        : playerScore
+    ))
   }
 
+  const scoreData = playerScores
+    .map(playerScore => ({ playerId: playerScore.player.id, score: playerScore.score }))
+    .filter(playerScore => playerScore.score !== undefined) as  ScoreData[]
+
   function onNext() {
-    onComplete(scores)
+    onComplete(new Scores(scoreData))
   }
 
   return (
@@ -34,12 +40,12 @@ export function VsScoresFlow({ flow, onComplete }: Props) {
       <div className="form-control">
         <label>Scores</label>
         <div className="player-score-inputs">
-          {flow.players.map(player =>
+          {playerScores.map(({ player, score }) =>
             <Fragment key={player.id}>
               <label>{player.name}</label>
               <NumberInput
-                initialValue={scores.for(player.id)}
-                onChange={num => updateScore(player.id, num)}
+                value={score}
+                onChange={num => updateScore(player, num)}
               />
             </Fragment>
           )}
@@ -49,7 +55,7 @@ export function VsScoresFlow({ flow, onComplete }: Props) {
       <button
         onClick={onNext}
       >
-        {scores.size === 0 ? 'Skip' : 'Next'}
+        {scoreData.length === 0 ? 'Skip' : 'Next'}
       </button>
     </>
   )

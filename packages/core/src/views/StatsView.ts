@@ -1,6 +1,7 @@
 import { GameKeeper, StatsResult } from '@domains'
 import { FormattedPlaythrough, formatPlaythroughs } from './PlaythroughPreview'
 import { differenceInDays } from 'date-fns'
+import { HydratableView } from './HydratableView'
 
 
 // types
@@ -17,7 +18,7 @@ export interface HydratedStatsView {
 const NUM_LATEST_PLAYTHROUGHTS = 10
 
 
-export class StatsView {
+export class StatsView implements HydratableView<HydratedStatsView> {
   
   public async hydrate(gamekeeper: GameKeeper): Promise<HydratedStatsView> {
     const {stats} = gamekeeper
