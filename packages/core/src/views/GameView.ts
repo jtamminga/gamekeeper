@@ -2,17 +2,21 @@ import { Game, GameKeeper, Player } from '@domains'
 import { formatPercent } from './utils'
 import { FormattedPlaythrough, formatPlaythroughs } from './PlaythroughPreview'
 import { HydratableView } from './HydratableView'
+import type { PlayerId } from '@services'
 
 
 // types
-type FormattedStat = {
+interface FormattedStat {
   name: string
   valueAllTime: string,
   valueThisYear: string
 }
+interface FormattedPlayerStat extends FormattedStat {
+  playerId: PlayerId
+} 
 export interface HydratedGameView {
   readonly numPlaythroughs: FormattedStat
-  readonly winrates: ReadonlyArray<FormattedStat>
+  readonly winrates: ReadonlyArray<FormattedPlayerStat>
   readonly stats: ReadonlyArray<FormattedStat>
   readonly latestPlaythroughs: ReadonlyArray<FormattedPlaythrough>
 }
@@ -57,8 +61,9 @@ export class GameView implements HydratableView<HydratedGameView> {
       ? this.players
       : gamekeeper.players.all()
 
-    const winrates: FormattedStat[] = players.map(player => ({
+    const winrates: FormattedPlayerStat[] = players.map(player => ({
       name: player.name,
+      playerId: player.id,
       valueAllTime: formatPercent(winratesAllTime.winrates.find(wr => wr.player === player)?.winrate),
       valueThisYear: formatPercent(winratesThisYear.winrates.find(wr => wr.player === player)?.winrate)
     }))

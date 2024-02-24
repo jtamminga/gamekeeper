@@ -17,6 +17,10 @@ type LastPlayPerGameDto = {
   gameId: number
   lastPlay: string
 }
+type NumPlaysPerMonthDto = {
+  month: string
+  numPlays: number
+}
 
 
 // stats service
@@ -119,18 +123,36 @@ export class DbStatsService extends SimpleStatsService {
     return result
   }
 
+  public override async getNumPlaysByMonth({ gameId, year }: StatsQuery = {}): Promise<number[]> {
+    let query = `
+      SELECT
+        strftime('%m', p.played_on) AS month,
+        COUNT(p.id) AS numPlays
+      FROM playthroughs p
+      JOIN games g ON p.game_id = g.id
+    `
+
+    // add to query based on params
+    const conditions: string[] = []
+    if (gameId) {
+      conditions.push('p.game_id = :game_id')
+    }
+    if (year) {
+      conditions.push(`strftime('%Y', p.played_on) = :year`)
+    }
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ')
+    }
+
+    query += ' GROUP BY month'
+
+    // run query and store result
+    const dtos = await this._dataService.all<NumPlaysPerMonthDto>(query, {
+      ':game_id': gameId,
+      ':year': year?.toString(),
+    })
+
+    return []
+  }
+
 }
-
-
-/**
- * 
- * select play count by month and game
- * 
-SELECT
-    p.game_id as gameId,
-    count(*) as numPlays,
-    strftime("%m", p.played_on) as month
-FROM playthroughs p
-group by strftime("%m", p.played_on), p.game_id
-order by p.game_id
- */

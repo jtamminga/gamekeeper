@@ -1,4 +1,6 @@
-import { FormattedPlaythrough } from '@gamekeeper/core'
+import { FormattedPlaythrough, FormattedScore } from '@gamekeeper/core'
+import { PlayerColor } from './PlayerColor'
+import { ReactNode } from 'react'
 
 
 // types
@@ -8,7 +10,9 @@ type Props = {
 }
 
 
-// component
+/**
+ * List of playthroughs
+ */
 export function PlaythroughsList({ playthroughs, hideScores }: Props) {
   const showGameNames = playthroughs[0].game !== undefined
 
@@ -25,15 +29,55 @@ export function PlaythroughsList({ playthroughs, hideScores }: Props) {
       <tbody>
         {playthroughs.map(playthrough =>
           <tr key={playthrough.id}>
-            <td className="num">{playthrough.playedOn}</td>
-            {showGameNames && <td>{playthrough.game}</td>}
-            <td>{playthrough.winner}</td>
-            {!hideScores &&
-              <td>{playthrough.scores.map(score => `${score.name}: ${score.score}`).join(', ')}</td>
+
+            {/* played on */}
+            <td className="num">
+              {playthrough.playedOn}
+            </td>
+
+            {/* game */}
+            {showGameNames &&
+              <td>{playthrough.game}</td>
             }
+
+            {/* winner */}
+            <td>
+              <PlayerColor playerId={playthrough.winnerId}>
+                {playthrough.winner}
+              </PlayerColor>
+            </td>
+
+            {/* scores */}
+            {!hideScores &&
+              <td>{renderScores(playthrough.scores)}</td>
+            }
+
           </tr>  
         )}
       </tbody>
     </table>
+  )
+}
+
+
+function renderScores(scores: FormattedScore[]) {
+  if (scores.length === 0) {
+    return null
+  }
+
+  const colorizedScores = scores
+    .map<ReactNode>(({ playerId, score }) =>
+      <PlayerColor key={playerId} playerId={playerId}>
+        {score}
+      </PlayerColor>
+    )
+    .reduce((pre, cur) =>
+      [pre, <span key="dash" className="dash">:</span>, cur]
+    )
+
+  return (
+    <div className="player-scores">
+      {colorizedScores}
+    </div>
   )
 }

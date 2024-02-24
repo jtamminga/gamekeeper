@@ -18,7 +18,6 @@ export function PlaythroughFlow() {
   const [completed, setCompleted] = useState(false)
   const [playthrough, setPlaythrough] = useState<Playthrough>()
 
-
   async function onComplete(flow: PlaythroughFlowModel) {
     setCompleted(true)
 
@@ -35,9 +34,10 @@ export function PlaythroughFlow() {
 
   let contents: ReactNode = null
 
-  // when completed show result screen
+  // if completed show result screen
   // we return in this case so we don't render the layout below
   if (completed) {
+    // while waiting for the playthrough show loader
     return playthrough
       ? <PlaythroughAdded
           playthrough={playthrough}

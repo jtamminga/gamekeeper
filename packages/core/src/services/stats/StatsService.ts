@@ -17,10 +17,10 @@ export interface StatsService {
 
   getNumPlays(query?: StatsQuery): Promise<StatsResultData<number>>
 
-  // getNumPlaysByMonth(year: number): Promise<StatsResultData<number[]>>
-
   getWinrates(query?: StatsQuery): Promise<StatsResultData<WinrateDto[]>>
 
   getLastPlayed(query?: StatsQuery): Promise<StatsResultData<Date | undefined>>
+
+  getNumPlaysByMonth(query?: StatsQuery): Promise<number[]>
 
 }

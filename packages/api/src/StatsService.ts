@@ -30,4 +30,8 @@ export class ApiStatsService extends ApiService implements StatsService {
     return lastPlayed
   }
 
+  public async getNumPlaysByMonth(query?: StatsQuery | undefined): Promise<number[]> {
+    throw new Error('Method not implemented.')
+  }
+
 }

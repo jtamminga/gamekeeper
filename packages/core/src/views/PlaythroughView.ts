@@ -1,5 +1,5 @@
 import { Playthrough, VsPlaythrough } from '@domains'
-import { formatWinner } from './PlaythroughPreview'
+import { toWinnerName } from './PlaythroughPreview'
 import { GameView } from './GameView'
 
 
@@ -10,7 +10,7 @@ export class PlaythroughView extends GameView {
   }
 
   public get winner(): string {
-    return formatWinner(this.playthrough)
+    return toWinnerName(this.playthrough)
   }
 
   public get tied(): boolean {

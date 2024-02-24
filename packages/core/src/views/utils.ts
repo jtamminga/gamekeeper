@@ -6,5 +6,5 @@ export function formatDate(date: Date, includeYear = true): string {
 }
 
 export function formatPercent(value: number | undefined): string {
-  return value?.toLocaleString('en-US', { style: 'percent' }) ?? ''
+  return value?.toLocaleString('en-US', { style: 'percent' }) ?? '—'
 }

@@ -75,6 +75,22 @@ export class SimpleStatsService implements StatsService {
     return this.forEachGroup(grouped, playthroughs => playthroughs[0]?.playedOn)
   }
 
+  public async getNumPlaysByMonth(query: StatsQuery = {}): Promise<number[]> {
+    const playthroughs = await this.getPlaythroughs(query)
+    const groupedByMonth: number[] = []
+    for (const playthrough of playthroughs) {
+      const monthPlayed = playthrough.playedOn.getMonth()
+      groupedByMonth[monthPlayed] = (groupedByMonth[monthPlayed] ?? 0) + 1
+    }
+    return groupedByMonth
+  }
+
+
+  //
+  // protected and private
+  // =====================
+
+
   protected getDateRangeFromYear(year: number): { fromDate: Date, toDate: Date } {
     const fromDate = new Date(year, 0, 1)
     return {

@@ -1,13 +1,15 @@
 import { CoopPlaythrough, Playthrough, VsPlaythrough } from '@domains'
 import { formatDate } from './utils'
+import type { PlayerId } from '@services'
 
-type FormattedScore = { name: string, score: string }
 
+export type FormattedScore = { name: string, score: string, playerId?: PlayerId }
 export type FormattedPlaythrough = {
   id: string
   game?: string
   playedOn: string
   winner: string
+  winnerId?: PlayerId
   scores: FormattedScore[]
 }
 
@@ -17,7 +19,8 @@ export function formatPlaythroughs(playthroughs: ReadonlyArray<Playthrough>, inc
     const formatted: FormattedPlaythrough = {
       id: playthrough.id,
       playedOn: formatDate(playthrough.playedOn),
-      winner: formatWinner(playthrough),
+      winner: toWinnerName(playthrough),
+      winnerId: toWinnerId(playthrough),
       scores: formatScores(playthrough)
     }
 
@@ -29,7 +32,7 @@ export function formatPlaythroughs(playthroughs: ReadonlyArray<Playthrough>, inc
   })
 }
 
-export function formatWinner(playthrough: Playthrough): string {
+export function toWinnerName(playthrough: Playthrough): string {
   if (playthrough instanceof VsPlaythrough) {
     return playthrough.winner === undefined
       ? 'tied'
@@ -47,11 +50,18 @@ export function formatWinner(playthrough: Playthrough): string {
   }
 }
 
+function toWinnerId(playthrough: Playthrough): PlayerId | undefined {
+  return playthrough instanceof VsPlaythrough
+    ? playthrough.winnerId ?? undefined
+    : undefined
+}
+
 function formatScores(playthrough: Playthrough): FormattedScore[] {
   if (playthrough instanceof VsPlaythrough) {
     return playthrough.scores.all.map(score => ({
       name: score.player.name,
-      score: score.value.toString()
+      score: score.value.toString(),
+      playerId: score.player.id
     }))
   }
   else if (playthrough instanceof CoopPlaythrough) {

@@ -1,5 +1,7 @@
 import { HydratedGameView } from '@gamekeeper/core'
 import { PlaythroughsList } from './PlaythroughsList'
+import { PlayerColor } from '.'
+import { playerColorClass } from '@app/helpers'
 
 
 export type Props = {
@@ -21,7 +23,7 @@ export function GameSummary({ view }: Props) {
 
 }
 
-function renderYearVsTotalStats({stats}: HydratedGameView) {
+function renderYearVsTotalStats({numPlaythroughs, winrates}: HydratedGameView) {
   return (
     <table>
       <thead>
@@ -32,9 +34,14 @@ function renderYearVsTotalStats({stats}: HydratedGameView) {
         </tr>
       </thead>
       <tbody>
-        {stats.map((stat, index) =>
-          <tr key={`stat-${index}`}>
-            <td>{stat.name}</td>
+        <tr>
+          <td>{numPlaythroughs.name}</td>
+          <td className="num">{numPlaythroughs.valueThisYear}</td>
+          <td className="num">{numPlaythroughs.valueAllTime}</td>
+        </tr>
+        {winrates.map((stat, index) =>
+          <tr key={`stat-${index}`} className={playerColorClass(stat.playerId)}>
+            <td><PlayerColor playerId={stat.playerId}>{stat.name}</PlayerColor></td>
             <td className="num">{stat.valueThisYear}</td>
             <td className="num">{stat.valueAllTime}</td>
           </tr>

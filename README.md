@@ -6,6 +6,12 @@ Easily keep track of game wins!
 
 Project to play around with domain driven development, npm packages, and mono repos
 
+## todos
+
+- [x] (web) support negative scores
+- [x] support ties
+- [x] add games
+- [ ] add players
 
 # Stats
 
@@ -17,10 +23,9 @@ Project to play around with domain driven development, npm packages, and mono re
 - latest winrates
 - number of plays
 
+## overall stats
 
-## todos
-
-- [x] (web) support negative scores
-- [ ] support ties
-- [ ] add games
-- [ ] add players
+- total games played this year
+- total unique games played this year
+- games played per month
+- winrates this year

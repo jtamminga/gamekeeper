@@ -1,0 +1,17 @@
+.player-1 {
+  color: #3d4ff1;
+}
+
+.player-2 {
+  color: #bd760b;
+}
+
+.player-none {
+  color: #5f5f5f;
+}
+
+.player-scores > .dash {
+  color: var(--color-gray);
+  margin-left: var(--space-sm);
+  margin-right: var(--space-sm);
+}

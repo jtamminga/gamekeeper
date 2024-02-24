@@ -6,4 +6,4 @@ export * from './Route'
 export * from './StatsView'
 
 export {formatDate} from './utils'
-export type {FormattedPlaythrough} from './PlaythroughPreview'
+export type {FormattedPlaythrough, FormattedScore} from './PlaythroughPreview'

@@ -5,3 +5,7 @@
 .space-between {
   justify-content: space-between;
 }
+
+.text-muted {
+  color: var(--color-gray)
+}

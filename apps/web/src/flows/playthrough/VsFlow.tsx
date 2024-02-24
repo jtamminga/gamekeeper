@@ -1,7 +1,7 @@
-import { Action, PlayerId, Scores, VsFlow } from '@gamekeeper/core'
-import { ReactNode, useState } from 'react'
-import { VsWinnerFlow } from './VsWinnerFlow'
+import { useState } from 'react'
 import { VsScoresFlow } from './VsScoresFlow'
+import { VsWinnerFlow } from './VsWinnerFlow'
+import type { Action, PlayerId, Scores, VsFlow } from '@gamekeeper/core'
 
 
 type Props = {
@@ -12,8 +12,7 @@ type Props = {
 
 export function VsFlowPartial({ flow, onComplete }: Props) {
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, setUpdatedAt] = useState(0)
+  const [, setUpdatedAt] = useState(0)
 
   function onScoresComplete(scores: Scores) {
     flow.setScores(scores)
@@ -30,10 +29,8 @@ export function VsFlowPartial({ flow, onComplete }: Props) {
     onComplete()
   }
 
-  let content: ReactNode = null
-
-  if (flow.needsExplicitWinner) {
-    content = (
+  if (!flow.game.hasScoring || flow.needsExplicitWinner) {
+    return (
       <VsWinnerFlow
         flow={flow}
         onComplete={onWinnerComplete}
@@ -42,13 +39,11 @@ export function VsFlowPartial({ flow, onComplete }: Props) {
   }
 
   else {
-    content = (
+    return (
       <VsScoresFlow
         flow={flow}
         onComplete={onScoresComplete}
       />
     )
   }
-
-  return content
 }
