@@ -1,4 +1,4 @@
-import { Loading, PlaythroughsList } from '@app/components'
+import { Loading, PlaysByMonth, PlaythroughsList } from '@app/components'
 import { useView } from '@app/hooks'
 import { StatsView } from '@gamekeeper/core'
 
@@ -20,7 +20,14 @@ export function Stats() {
 
       <h3>{hydratedView.numPlaysThisYear} games played this year</h3>
 
-      <PlaythroughsList playthroughs={hydratedView.latestPlaythroughs} hideScores />
+      <PlaysByMonth
+        data={hydratedView.numPlaysByMonth}
+      />
+
+      <PlaythroughsList
+        playthroughs={hydratedView.latestPlaythroughs}
+        hideScores
+      />
     </>
   )
 }

@@ -16,8 +16,8 @@ const sortByOptions: SortByOptionRecord = {
   'name_desc': { label: 'Name (desc)', sortBy: 'name', order: 'desc' },
   'plays_asc': { label: 'Plays (least first)', sortBy: 'numPlays', order: 'asc' },
   'plays_dec': { label: 'Plays (most first)', sortBy: 'numPlays', order: 'desc' },
-  'played_asc': { label: 'Last Played (least recent first)', sortBy: 'lastPlayed', order: 'asc' },
-  'played_desc': { label: 'Last Played (most recent first)', sortBy: 'lastPlayed', order: 'desc' },
+  'played_asc': { label: 'Last Played (oldest first)', sortBy: 'lastPlayed', order: 'asc' },
+  'played_desc': { label: 'Last Played (recent first)', sortBy: 'lastPlayed', order: 'desc' },
 }
 
 

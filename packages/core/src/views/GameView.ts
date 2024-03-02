@@ -41,10 +41,10 @@ export class GameView implements HydratableView<HydratedGameView> {
       winratesAllTime,
       winratesThisYear
     ] = await Promise.all([
-      stats.getNumPlaythroughs(),
-      stats.getNumPlaythroughs({ year }),
-      stats.getWinrates(),
-      stats.getWinrates({ year }),
+      stats.numPlaythroughs(),
+      stats.numPlaythroughs({ year }),
+      stats.winrates(),
+      stats.winrates({ year }),
       gamekeeper.playthroughs.hydrate({
         gameId: this.game.id,
         limit: NUM_HISTORICAL_PLAYTHROUGHS

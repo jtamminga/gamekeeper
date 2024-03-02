@@ -147,12 +147,29 @@ export class DbStatsService extends SimpleStatsService {
     query += ' GROUP BY month'
 
     // run query and store result
+    // example:
+    //   month | numPlays
+    //   '01'  | 10
+    //   '02'  | 2
     const dtos = await this._dataService.all<NumPlaysPerMonthDto>(query, {
       ':game_id': gameId,
       ':year': year?.toString(),
     })
 
-    return []
+    // change to map, key representing month (0 based), value representing num plays
+    const month = new Map<number, number>()
+    for (const dto of dtos) {
+      month.set(Number.parseInt(dto.month) - 1, dto.numPlays)
+    }
+
+    // result represents num plays, index representing months 0 based
+    // ex. [0, 10] means Jan has 0 plays, Feb has 10 plays
+    const playsByMonth: number[] = []
+    for (let i = 0; i < 12; i++) {
+      playsByMonth[i] = month.get(i) ?? 0
+    }
+
+    return playsByMonth
   }
 
 }

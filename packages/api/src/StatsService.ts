@@ -31,7 +31,7 @@ export class ApiStatsService extends ApiService implements StatsService {
   }
 
   public async getNumPlaysByMonth(query?: StatsQuery | undefined): Promise<number[]> {
-    throw new Error('Method not implemented.')
+    return await this.apiClient.get(Route.STATS.PLAYS_BY_MONTH, toCleanQuery(query))
   }
 
 }

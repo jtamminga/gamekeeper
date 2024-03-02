@@ -109,6 +109,11 @@ app.get(Route.STATS.WINRATES, async function (req, res) {
   const stats = await statsService.getWinrates(query)
   res.json({ data: stats })
 })
+app.get(Route.STATS.PLAYS_BY_MONTH, async function (req, res) {
+  const query = toStatsQuery(req)
+  const stats = await statsService.getNumPlaysByMonth(query)
+  res.json({ data: stats })
+})
 
 
 // set custom error handling

@@ -18,3 +18,8 @@
 .form-control > .checkbox-label > input {
   margin-right: var(--space-md);
 }
+
+input, select {
+  font-size: 1em;
+  padding: var(--space-sm)
+}

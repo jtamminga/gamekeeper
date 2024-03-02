@@ -5,10 +5,15 @@ import { HydratableView } from './HydratableView'
 
 
 // types
+export type BarChartData = {
+  thisYear: number[]
+  labels: string[]
+}
 export interface HydratedStatsView {
   readonly numPlaysThisYear: number
   readonly numPlaysLastYear: number
   readonly numPlaysAllTime: number
+  readonly numPlaysByMonth: BarChartData
   readonly latestPlaythroughs: ReadonlyArray<FormattedPlaythrough>
   readonly daysSinceLastPlaythrough: number
 }
@@ -27,11 +32,13 @@ export class StatsView implements HydratableView<HydratedStatsView> {
     const [
       numPlaysThisYear,
       numPlaysLastYear,
-      numPlaysAllTime
+      numPlaysAllTime,
+      numPlaysByMonthThisYear
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
       stats.numPlaythroughs({ year: year - 1 }),
       stats.numPlaythroughs({}),
+      stats.playsByMonth({ year }),
       gamekeeper.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
     ])
 
@@ -44,7 +51,11 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), true),
       daysSinceLastPlaythrough: latestPlaythrough
         ? differenceInDays(Date.now(), latestPlaythrough.playedOn)
-        : -1
+        : -1,
+      numPlaysByMonth: {
+        thisYear: numPlaysByMonthThisYear,
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      }
     }
   }
 
