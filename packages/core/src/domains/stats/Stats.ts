@@ -2,6 +2,7 @@ import { GameStats } from './GameStats'
 import type { Game } from '../game'
 import type { GameId, StatsQuery as ServiceStatsQuery } from '@services'
 import type { GameKeeperDeps } from '@core'
+import { Winrates } from './Winrates'
 
 
 
@@ -45,18 +46,29 @@ export class Stats {
     return map
   }
 
-  // TODO: add winrates which is a combination of all winrates
-  // public async winrates(query: DomainStatsQuery): Promise<Winrates> {
-  //   const result = await this._deps.services.statsService.getWinrates(query)
+  public async winrates(query: DomainStatsQuery): Promise<StatsResult<Winrates>> {
+    const result = await this._deps.services.statsService.getWinrates(query)
 
-  //   for (const id in result) {
-  //     const gameId = id as GameId
-  //     result[gameId]
-  //   }
-  // }
+    const map = new Map<Game, Winrates>()
+    for (const id in result) {
+      const gameId = id as GameId
+      map.set(this._deps.store.getGame(gameId), Winrates.from(result[gameId], this._deps))
+    }
+
+    return map
+  }
+
+  public async overallWinrates(year?: number): Promise<Winrates> {
+    const result = await this._deps.services.statsService.getOverallWinrates(year)
+    return Winrates.from(result, this._deps)
+  }
 
   public async playsByMonth(query: DomainStatsQuery): Promise<number[]> {
     return this._deps.services.statsService.getNumPlaysByMonth(query)
+  }
+
+  public async uniqueGamesPlayed(year?: number): Promise<number> {
+    return this._deps.services.statsService.getNumUniqueGamesPlayed(year)
   }
 
 }

@@ -1,31 +1,56 @@
-import { Loading, PlaysByMonth, PlaythroughsList } from '@app/components'
+import { Loading, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
 import { useView } from '@app/hooks'
 import { StatsView } from '@gamekeeper/core'
 
 
 export function Stats() {
 
-  const {hydratedView} = useView(() => new StatsView())
+  const { hydratedView } = useView(() => new StatsView())
 
   // render loading while waiting
   if (!hydratedView) {
     return <Loading />
   }
 
+  const {
+    daysSinceLastPlaythrough,
+    numPlaysThisYear,
+    winnerThisYear,
+    numUniqueGamesPlayed,
+    numPlaysByMonth,
+    latestPlaythroughs
+  } = hydratedView
+
   return (
     <>
       <h1>Stats</h1>
 
-      <h2>{hydratedView.daysSinceLastPlaythrough} days since last game</h2>
+      <StatCard
+        value={daysSinceLastPlaythrough}
+        description="days since last game"
+      />
 
-      <h3>{hydratedView.numPlaysThisYear} games played this year</h3>
+      <StatCard
+        value={numPlaysThisYear}
+        description="games played"
+      />
+
+      <StatCard
+        value={winnerThisYear.winrate}
+        description={`winner ${winnerThisYear.player}`}
+      />
+
+      <StatCard
+        value={numUniqueGamesPlayed}
+        description="unique games played"
+      />
 
       <PlaysByMonth
-        data={hydratedView.numPlaysByMonth}
+        data={numPlaysByMonth}
       />
 
       <PlaythroughsList
-        playthroughs={hydratedView.latestPlaythroughs}
+        playthroughs={latestPlaythroughs}
         hideScores
       />
     </>

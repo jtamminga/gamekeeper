@@ -1,7 +1,8 @@
-import { GameKeeper, StatsResult } from '@domains'
+import { GameKeeper, StatsResult, Winrate } from '@domains'
 import { FormattedPlaythrough, formatPlaythroughs } from './PlaythroughPreview'
 import { differenceInDays } from 'date-fns'
 import { HydratableView } from './HydratableView'
+import { formatPercent } from './utils'
 
 
 // types
@@ -16,6 +17,11 @@ export interface HydratedStatsView {
   readonly numPlaysByMonth: BarChartData
   readonly latestPlaythroughs: ReadonlyArray<FormattedPlaythrough>
   readonly daysSinceLastPlaythrough: number
+  readonly winnerThisYear: {
+    winrate: string
+    player: string
+  }
+  readonly numUniqueGamesPlayed: number
 }
 
 
@@ -33,16 +39,21 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       numPlaysThisYear,
       numPlaysLastYear,
       numPlaysAllTime,
-      numPlaysByMonthThisYear
+      numPlaysByMonthThisYear,
+      overallWinrates,
+      numUniqueGamesPlayed
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
       stats.numPlaythroughs({ year: year - 1 }),
       stats.numPlaythroughs({}),
       stats.playsByMonth({ year }),
+      stats.overallWinrates(year),
+      stats.uniqueGamesPlayed(year),
       gamekeeper.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
     ])
 
     const latestPlaythrough = gamekeeper.playthroughs.all()[0]
+    const winningWinrate = overallWinrates.highest
 
     return {
       numPlaysThisYear: totalPlays(numPlaysThisYear),
@@ -55,7 +66,12 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       numPlaysByMonth: {
         thisYear: numPlaysByMonthThisYear,
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-      }
+      },
+      winnerThisYear: {
+        winrate: formatPercent(winningWinrate.winrate),
+        player: winningWinrate.player.name
+      },
+      numUniqueGamesPlayed
     }
   }
 

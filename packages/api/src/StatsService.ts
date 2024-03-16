@@ -17,6 +17,10 @@ export class ApiStatsService extends ApiService implements StatsService {
     return this.apiClient.get(Route.STATS.WINRATES, toCleanQuery(query))
   }
 
+  public async getOverallWinrates(year?: number | undefined): Promise<WinrateDto[]> {
+    return this.apiClient.get(Route.STATS.OVERALL_WINRATES, toCleanQuery({ year }))
+  }
+
   public async getLastPlayed(query: StatsQuery = {}): Promise<StatsResultData<Date | undefined>> {
     const result = await this.apiClient.get<ApiLastPlayedDto>(Route.STATS.LAST_PLAYTHROUGHS, toCleanQuery(query))
 
@@ -32,6 +36,10 @@ export class ApiStatsService extends ApiService implements StatsService {
 
   public async getNumPlaysByMonth(query?: StatsQuery | undefined): Promise<number[]> {
     return await this.apiClient.get(Route.STATS.PLAYS_BY_MONTH, toCleanQuery(query))
+  }
+
+  public async getNumUniqueGamesPlayed(year?: number | undefined): Promise<number> {
+    return await this.apiClient.get(Route.STATS.NUM_UNIQUE_GAMES_PLAYED, toCleanQuery({ year }))
   }
 
 }

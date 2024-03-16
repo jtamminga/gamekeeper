@@ -3,10 +3,12 @@
   --space-sm: 5px;
   --space-md: 10px;
   --space-lg: 30px;
+  --border-radius: 10px;
 
   --brand-primary: #686fff;
   --color-gray: rgb(136, 136, 136);
   --dark-gray: #242424;
+  --dark-gray-accent: #383838;
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -70,7 +72,8 @@ h1 {
 }
 
 .bar-chart {
-  margin-bottom: var(--space-md);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-lg);
 }
 
 @media (prefers-color-scheme: light) {

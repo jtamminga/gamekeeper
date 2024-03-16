@@ -110,7 +110,7 @@ export class Store {
   public getPlayer(id: PlayerId): Player {
     const player = this._data.players.get(id)
     if (!player) {
-      throw new NotFoundError(`could not find game with id ${id}`)
+      throw new NotFoundError(`could not find player with id ${id}`)
     }
     return player
   }

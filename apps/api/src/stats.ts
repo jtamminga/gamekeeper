@@ -1,6 +1,5 @@
-import { GameId, StatsQuery } from '@gamekeeper/core'
-import { Request } from 'express'
-import { InvalidParamsError } from './InvalidParamsError'
+import type { GameId, StatsQuery } from '@gamekeeper/core'
+import type { Request } from 'express'
 
 
 export function toStatsQuery(req: Request): StatsQuery {

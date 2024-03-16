@@ -10,11 +10,15 @@ import { endOfYear } from 'date-fns'
  */
 export class SimpleStatsService implements StatsService {
 
-  // TODO: add some playthrough caching
-
   public constructor(
     private _playthroughService: PlaythroughService
   ) { }
+
+
+  //
+  // StatsService implementations
+  // ============================
+
 
   public async getNumPlays(query: StatsQuery = {}): Promise<StatsResultData<number>> {
     const playthroughs = await this.getPlaythroughs(query)
@@ -25,48 +29,12 @@ export class SimpleStatsService implements StatsService {
   public async getWinrates(query: StatsQuery = {}): Promise<StatsResultData<WinrateDto[]>> {
     const playthroughs = await this.getPlaythroughs(query)
     const grouped = this.groupedByGame(playthroughs)
-    return this.forEachGroup(grouped, playthroughs => {
+    return this.forEachGroup(grouped, playthroughs => this.calculateWinrates(playthroughs))
+  }
 
-      // 1. store for each player how many plays and wins they got
-      const allStats = new Map<PlayerId, {plays: number, wins: number}>()
-      for (const playthrough of playthroughs) {
-        
-        // a. set/update play for each player in this playthrough
-        playthrough.players.forEach(playerId => {
-          const playerStats = allStats.get(playerId)
-          if (playerStats) {
-            playerStats.plays++
-          } else {
-            allStats.set(playerId, {wins: 0, plays: 1})
-          }
-        })
-
-        // b. update wins count based on playthrough result
-        // make sure to check if result is a string (it can be null which means a tie)
-        if (playthrough.gameType === GameType.VS && typeof playthrough.result === 'string') {
-          const playerId = playthrough.result
-          const stats = allStats.get(playerId)!
-          stats.wins++
-        }
-        // make sure to check if result equal to true (it can be null which means a tie)
-        else if (playthrough.gameType === GameType.COOP) {
-          const playersWon = playthrough.result === true
-          if (playersWon) {
-            playthrough.players.forEach(playerId => {
-              allStats.get(playerId)!.wins++
-            })
-          }
-        }
-      }
-
-      // 2. once all plays and wins are counted then we calculate winrates for each player
-      const winrates: WinrateDto[] = []
-      for (const [playerId, stats] of allStats) {
-        winrates.push({ playerId, winrate: stats.wins / stats.plays })
-      }
-
-      return winrates
-    })
+  public async getOverallWinrates(year?: number): Promise<WinrateDto[]> {
+    const playthroughs = await this.getPlaythroughs({ year })
+    return this.calculateWinrates(playthroughs)
   }
 
   public async getLastPlayed(query: StatsQuery = {}): Promise<StatsResultData<Date | undefined>> {
@@ -83,6 +51,13 @@ export class SimpleStatsService implements StatsService {
       groupedByMonth[monthPlayed] = (groupedByMonth[monthPlayed] ?? 0) + 1
     }
     return groupedByMonth
+  }
+
+  public async getNumUniqueGamesPlayed(year?: number | undefined): Promise<number> {
+    const playthroughs = await this.getPlaythroughs({ year })
+    const uniqueGames = new Set<GameId>()
+    playthroughs.forEach(playthrough => uniqueGames.add(playthrough.gameId))
+    return uniqueGames.size
   }
 
 
@@ -142,6 +117,51 @@ export class SimpleStatsService implements StatsService {
     }
 
     return result
+  }
+
+  private calculateWinrates(playthroughs: ReadonlyArray<PlaythroughDto>): WinrateDto[] {
+    // 1. store for each player how many plays and wins they got
+    const allStats = new Map<PlayerId, {plays: number, wins: number}>()
+    for (const playthrough of playthroughs) {
+      
+      // a. set/update play for each player in this playthrough
+      // tied games are ignored
+      if (playthrough.result !== null) {
+        playthrough.players.forEach(playerId => {
+          const playerStats = allStats.get(playerId)
+          if (playerStats) {
+            playerStats.plays++
+          } else {
+            allStats.set(playerId, {wins: 0, plays: 1})
+          }
+        })
+      }
+
+      // b. update wins count based on playthrough result
+      // make sure to check if result is a string (it can be null which means a tie)
+      if (playthrough.gameType === GameType.VS && typeof playthrough.result === 'string') {
+        const playerId = playthrough.result
+        const stats = allStats.get(playerId)!
+        stats.wins++
+      }
+      // make sure to check if result equal to true (it can be null which means a tie)
+      else if (playthrough.gameType === GameType.COOP) {
+        const playersWon = playthrough.result === true
+        if (playersWon) {
+          playthrough.players.forEach(playerId => {
+            allStats.get(playerId)!.wins++
+          })
+        }
+      }
+    }
+
+    // 2. once all plays and wins are counted then we calculate winrates for each player
+    const winrates: WinrateDto[] = []
+    for (const [playerId, stats] of allStats) {
+      winrates.push({ playerId, winrate: stats.wins / stats.plays })
+    }
+
+    return winrates
   }
 
 }

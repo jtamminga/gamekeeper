@@ -19,8 +19,12 @@ export interface StatsService {
 
   getWinrates(query?: StatsQuery): Promise<StatsResultData<WinrateDto[]>>
 
+  getOverallWinrates(year?: number): Promise<WinrateDto[]>
+
   getLastPlayed(query?: StatsQuery): Promise<StatsResultData<Date | undefined>>
 
   getNumPlaysByMonth(query?: StatsQuery): Promise<number[]>
+
+  getNumUniqueGamesPlayed(year?: number): Promise<number>
 
 }

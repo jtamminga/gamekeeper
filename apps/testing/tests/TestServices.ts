@@ -1,12 +1,11 @@
 import { v4 as uuidv4 } from 'uuid'
 import { CoopPlaythroughData,
-  ExternalServices,
-  GameData,
   GameDto,
   GameId,
   GameService,
   GameType,
-  PlayerData,
+  NewGameData,
+  NewPlayerData,
   PlayerDto,
   PlayerId,
   PlayerService,
@@ -18,14 +17,13 @@ import { CoopPlaythroughData,
 } from '@gamekeeper/core'
 
 
-type MemoryDatabase = {
+export type MemoryDatabase = {
   games: GameDto[]
   players: PlayerDto[]
   playthroughs: PlaythroughDto[]
 }
 
-
-class TestGameService implements GameService {
+export class TestGameService implements GameService {
 
   public constructor(private _db: MemoryDatabase) { }
 
@@ -41,9 +39,9 @@ class TestGameService implements GameService {
     return game
   }
 
-  public async addGame(game: GameData): Promise<GameDto> {
+  public async addGame(game: NewGameData): Promise<GameDto> {
     const dto: GameDto = {
-      id: game.id ?? uuidv4() as GameId,
+      id: uuidv4() as GameId,
       ...game
     }
     this._db.games.push(dto)
@@ -52,13 +50,13 @@ class TestGameService implements GameService {
 
 }
 
-class TestPlayerService implements PlayerService {
+export class TestPlayerService implements PlayerService {
 
   public constructor(private _db: MemoryDatabase) { }
 
-  public async addPlayer(player: PlayerData): Promise<PlayerDto> {
+  public async addPlayer(player: NewPlayerData): Promise<PlayerDto> {
     const dto: PlayerDto = {
-      id: player.id ?? uuidv4() as PlayerId,
+      id: uuidv4() as PlayerId,
       ...player
     }
     this._db.players.push(dto)
@@ -66,20 +64,11 @@ class TestPlayerService implements PlayerService {
   }
 
   public async getPlayers(): Promise<readonly PlayerDto[]> {
-    return [
-      {
-        id: '1' as PlayerId,
-        name: 'john'
-      },
-      {
-        id: '2' as PlayerId,
-        name: 'alex'
-      }
-    ]
+    return this._db.players
   }
 }
 
-class TestPlaythroughService implements PlaythroughService {
+export class TestPlaythroughService implements PlaythroughService {
 
   public constructor(private _db: MemoryDatabase) { }
 
@@ -101,19 +90,4 @@ class TestPlaythroughService implements PlaythroughService {
     return dto
   }
 
-}
-
-
-export function createTestServices(): ExternalServices {
-  const db: MemoryDatabase = {
-    games: [],
-    players: [],
-    playthroughs: []
-  }
-
-  return {
-    gameService: new TestGameService(db),
-    playerService: new TestPlayerService(db),
-    playthroughService: new TestPlaythroughService(db)
-  }
 }

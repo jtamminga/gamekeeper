@@ -11,8 +11,10 @@ export namespace Route {
   export const STATS = {
     NUM_PLAYTHROUGHS: `${_stats}/num-plays`,
     WINRATES: `${_stats}/winrates`,
+    OVERALL_WINRATES: `${_stats}/overall-winrates`,
     LAST_PLAYTHROUGHS: `${_stats}/last-plays`,
-    PLAYS_BY_MONTH: `${_stats}/plays-by-month`
+    PLAYS_BY_MONTH: `${_stats}/plays-by-month`,
+    NUM_UNIQUE_GAMES_PLAYED: `${_stats}/num-unique-games-played`
   } as const
 
   export function forGame(id: GameId) {

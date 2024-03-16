@@ -37,7 +37,7 @@ export function PlaythroughsList({ playthroughs, hideScores }: Props) {
 
             {/* game */}
             {showGameNames &&
-              <td>{playthrough.game}</td>
+              <td className="long">{playthrough.game}</td>
             }
 
             {/* winner */}

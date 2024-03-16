@@ -1,4 +1,3 @@
-import { Winrate } from './Winrate'
 import { Winrates } from './Winrates'
 import type { Game } from '../game'
 import type { GameKeeperDeps } from '@core'
@@ -32,13 +31,7 @@ export class GameStats {
   public async winrates(query?: DomainStatsQuery): Promise<Winrates> {
     const result = await this._statsService.getWinrates({ ...this._query, ...query, gameId: this.game.id })
     const winrates = result[this.game.id] ?? []
-
-    return new Winrates(winrates.map(winrate =>
-      new Winrate(
-        winrate,
-        this._deps
-      )
-    ))
+    return Winrates.from(winrates, this._deps)
   }
 
   public async playsByMonth(query?: DomainStatsQuery): Promise<number[]> {

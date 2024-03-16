@@ -2,6 +2,7 @@
   "name": "@gamekeeper/testing",
   "private": true,
   "version": "0.0.1",
+  "type": "module",
   "dependencies": {
     "@gamekeeper/core": "1.0.85",
     "uuid": "^9.0.1"
@@ -13,6 +14,6 @@
     "ts-mocha": "^10.0.0"
   },
   "scripts": {
-    "test": "ts-mocha tests/**/*.test.ts"
+    "test": "NODE_ENV=production NODE_NO_WARNINGS=1 ts-mocha tests/**/*.test.ts"
   }
 }

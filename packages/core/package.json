@@ -9,8 +9,7 @@
   "author": "John Tamminga",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && tsc-alias",
-    "test": "mocha ./test/**/*.test.js"
+    "build": "tsc && tsc-alias"
   },
   "dependencies": {
     "date-fns": "^2.29.3"

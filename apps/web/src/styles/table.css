@@ -29,3 +29,9 @@ th {
 td.num, th.num {
   text-align: right;
 }
+td.long {
+  white-space: nowrap;
+  max-width: 30vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
