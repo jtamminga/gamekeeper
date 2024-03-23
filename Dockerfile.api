@@ -17,7 +17,8 @@ COPY packages/db ./packages/db
 COPY apps/api ./apps/api
 
 RUN yarn install
-# RUN yarn workspace @gamekeeper/api install
+RUN yarn workspace @gamekeeper/api install
+RUN yarn workspace @gamekeeper/core install
 RUN yarn workspaces foreach -Rpt --from 'apps/api' run build
 
 EXPOSE 3000
