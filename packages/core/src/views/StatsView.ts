@@ -1,5 +1,5 @@
-import { GameKeeper, StatsResult, Winrate } from '@domains'
-import { FormattedPlaythrough, formatPlaythroughs } from './PlaythroughPreview'
+import { GameKeeper, StatsResult } from '@domains'
+import { FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
 import { differenceInDays } from 'date-fns'
 import { HydratableView } from './HydratableView'
 import { formatPercent } from './utils'
@@ -15,7 +15,7 @@ export interface HydratedStatsView {
   readonly numPlaysLastYear: number
   readonly numPlaysAllTime: number
   readonly numPlaysByMonth: BarChartData
-  readonly latestPlaythroughs: ReadonlyArray<FormattedPlaythrough>
+  readonly latestPlaythroughs: FormattedPlaythroughs
   readonly daysSinceLastPlaythrough: number
   readonly winnerThisYear: {
     winrate: string
@@ -59,7 +59,7 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       numPlaysThisYear: totalPlays(numPlaysThisYear),
       numPlaysLastYear: totalPlays(numPlaysLastYear),
       numPlaysAllTime: totalPlays(numPlaysAllTime),
-      latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), true),
+      latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
       daysSinceLastPlaythrough: latestPlaythrough
         ? differenceInDays(Date.now(), latestPlaythrough.playedOn)
         : -1,

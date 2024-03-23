@@ -1,29 +1,28 @@
-import { FormattedPlaythrough, FormattedScore } from '@gamekeeper/core'
+import { FormattedPlaythroughs, FormattedScore } from '@gamekeeper/core'
 import { PlayerColor } from './PlayerColor'
 import { ReactNode } from 'react'
 
 
 // types
 type Props = {
-  playthroughs: ReadonlyArray<FormattedPlaythrough>
-  hideScores?: boolean
+  formattedPlaythroughs: FormattedPlaythroughs
 }
 
 
 /**
  * List of playthroughs
  */
-export function PlaythroughsList({ playthroughs, hideScores }: Props) {
-  const showGameNames = playthroughs[0].game !== undefined
+export function PlaythroughsList({ formattedPlaythroughs }: Props) {
+  const { playthroughs, options: { gameNames, scores } } = formattedPlaythroughs
 
   return (
     <table>
       <thead>
         <tr>
           <th className="num">Date</th>
-          {showGameNames && <th>Game</th>}
+          {gameNames && <th>Game</th>}
           <th>Winner</th>
-          {!hideScores && <th>Scores</th>}
+          {scores && <th>Scores</th>}
         </tr>
       </thead>
       <tbody>
@@ -36,7 +35,7 @@ export function PlaythroughsList({ playthroughs, hideScores }: Props) {
             </td>
 
             {/* game */}
-            {showGameNames &&
+            {gameNames &&
               <td className="long">{playthrough.game}</td>
             }
 
@@ -48,8 +47,8 @@ export function PlaythroughsList({ playthroughs, hideScores }: Props) {
             </td>
 
             {/* scores */}
-            {!hideScores &&
-              <td>{renderScores(playthrough.scores)}</td>
+            {scores &&
+              <td>{renderScores(playthrough.scores!)}</td>
             }
 
           </tr>  

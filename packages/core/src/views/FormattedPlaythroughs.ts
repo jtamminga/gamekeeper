@@ -1,52 +1,56 @@
 import { CoopPlaythrough, Playthrough, VsPlaythrough } from '@domains'
-import { formatDate } from './utils'
+import { formatDate, toWinnerName } from './utils'
 import type { PlayerId } from '@services'
 
 
 export type FormattedScore = { name: string, score: string, playerId?: PlayerId }
 export type FormattedPlaythrough = {
   id: string
-  game?: string
   playedOn: string
   winner: string
+  game?: string
   winnerId?: PlayerId
-  scores: FormattedScore[]
+  scores?: FormattedScore[]
+}
+export type FormatPlaythroughOptions = {
+  gameNames?: boolean
+  scores?: boolean
+}
+export type FormattedPlaythroughs = {
+  readonly playthroughs: ReadonlyArray<FormattedPlaythrough>
+  readonly options: Readonly<Required<FormatPlaythroughOptions>>
 }
 
 
-export function formatPlaythroughs(playthroughs: ReadonlyArray<Playthrough>, includeGameNames = false): ReadonlyArray<FormattedPlaythrough> {
-  return playthroughs.map(playthrough => {
+export function formatPlaythroughs(
+  playthroughs: ReadonlyArray<Playthrough>,
+  options?: FormatPlaythroughOptions
+): FormattedPlaythroughs {
+  const formattedPlaythroughs = playthroughs.map(playthrough => {
     const formatted: FormattedPlaythrough = {
       id: playthrough.id,
       playedOn: formatDate(playthrough.playedOn),
       winner: toWinnerName(playthrough),
       winnerId: toWinnerId(playthrough),
-      scores: formatScores(playthrough)
     }
 
-    if (includeGameNames) {
+    if (options?.gameNames) {
       formatted.game = playthrough.game.name
+    }
+    if (options?.scores) {
+      formatted.scores = formatScores(playthrough)
     }
 
     return formatted
   })
-}
 
-export function toWinnerName(playthrough: Playthrough): string {
-  if (playthrough instanceof VsPlaythrough) {
-    return playthrough.winner === undefined
-      ? 'tied'
-      : playthrough.winner.name
-  }
-
-  else if (playthrough instanceof CoopPlaythrough) {
-    return playthrough.playersWon
-      ? 'players'
-      : 'game'
-  }
-
-  else {
-    throw new Error('unsupported playthrough type')
+  return {
+    playthroughs: formattedPlaythroughs,
+    options: {
+      gameNames: false,
+      scores: false,
+      ...options
+    }
   }
 }
 

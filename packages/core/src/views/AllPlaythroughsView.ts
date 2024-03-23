@@ -1,22 +1,29 @@
 import { Game, GameKeeper } from '@domains'
 import { HydratableView } from './HydratableView'
-import { FormattedPlaythrough, formatPlaythroughs } from './PlaythroughPreview'
+import { FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
 
 
 export interface HydratedAllPlaythroughsView {
-  readonly playthroughs: ReadonlyArray<FormattedPlaythrough>
+  readonly playthroughs: FormattedPlaythroughs
 }
+
+
+const MAX_PLAYTHROUGHS = 100
 
 
 export class AllPlaythroughsView implements HydratableView<HydratedAllPlaythroughsView> {
 
-  public constructor(public readonly game: Game) { }
+  public constructor(public readonly game?: Game) { }
   
   public async hydrate(gamekeeper: GameKeeper): Promise<HydratedAllPlaythroughsView> {
-    const playthroughs = await gamekeeper.playthroughs.hydrate({ limit: 100 })
+    const playthroughs = await gamekeeper.playthroughs
+      .hydrate({ limit: MAX_PLAYTHROUGHS, gameId: this.game?.id })
 
     return {
-      playthroughs: formatPlaythroughs(playthroughs.all(), false)
+      playthroughs: formatPlaythroughs(
+        playthroughs.latest(MAX_PLAYTHROUGHS, this.game?.id),
+        { gameNames: !this.game, scores: !!this.game }
+      )
     }
   }
 }

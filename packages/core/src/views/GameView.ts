@@ -1,6 +1,6 @@
 import { Game, GameKeeper, Player } from '@domains'
-import { formatPercent } from './utils'
-import { FormattedPlaythrough, formatPlaythroughs } from './PlaythroughPreview'
+import { formatNumber, formatPercent } from './utils'
+import { type FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
 import { HydratableView } from './HydratableView'
 import type { PlayerId } from '@services'
 
@@ -13,12 +13,19 @@ interface FormattedStat {
 }
 interface FormattedPlayerStat extends FormattedStat {
   playerId: PlayerId
-} 
+}
+export type FormattedScoreStats = {
+  average: string
+  best: { score: string, player?: string, playerId?: PlayerId }
+}
 export interface HydratedGameView {
+  readonly game: Game
   readonly numPlaythroughs: FormattedStat
   readonly winrates: ReadonlyArray<FormattedPlayerStat>
   readonly stats: ReadonlyArray<FormattedStat>
-  readonly latestPlaythroughs: ReadonlyArray<FormattedPlaythrough>
+  readonly scoreStats: FormattedScoreStats | undefined
+  readonly latestPlaythroughs: FormattedPlaythroughs
+  readonly hasMorePlaythroughs: boolean
 }
 
 
@@ -31,7 +38,7 @@ export class GameView implements HydratableView<HydratedGameView> {
   public constructor(public readonly game: Game, private players?: ReadonlyArray<Player>) { }
 
   public async hydrate(gamekeeper: GameKeeper): Promise<HydratedGameView> {
-    const stats = gamekeeper.stats.forGame(this.game)
+    const gameStats = gamekeeper.stats.forGame(this.game)
     const year = new Date().getFullYear()
 
     // fetch data
@@ -39,12 +46,14 @@ export class GameView implements HydratableView<HydratedGameView> {
       numPlaysAllTime,
       numPlaysThisYear,
       winratesAllTime,
-      winratesThisYear
+      winratesThisYear,
+      scoreStats
     ] = await Promise.all([
-      stats.numPlaythroughs(),
-      stats.numPlaythroughs({ year }),
-      stats.winrates(),
-      stats.winrates({ year }),
+      gameStats.numPlaythroughs(),
+      gameStats.numPlaythroughs({ year }),
+      gameStats.winrates(),
+      gameStats.winrates({ year }),
+      gameStats.scoreStats(),
       gamekeeper.playthroughs.hydrate({
         gameId: this.game.id,
         limit: NUM_HISTORICAL_PLAYTHROUGHS
@@ -68,15 +77,30 @@ export class GameView implements HydratableView<HydratedGameView> {
       valueThisYear: formatPercent(winratesThisYear.winrates.find(wr => wr.player === player)?.winrate)
     }))
 
+    let formattedScoreStats: FormattedScoreStats | undefined
+    if (scoreStats !== undefined) {
+      formattedScoreStats = {
+        average: formatNumber(scoreStats.averageScore),
+        best: {
+          score: formatNumber(scoreStats.bestScore.score),
+          playerId: scoreStats.bestScore.player?.id,
+          player: scoreStats.bestScore.player?.name
+        }
+      }
+    }
+
     return {
+      game: this.game,
       numPlaythroughs,
       winrates,
       stats: [numPlaythroughs, ...winrates],
+      scoreStats: formattedScoreStats,
+      hasMorePlaythroughs: numPlaysAllTime > NUM_HISTORICAL_PLAYTHROUGHS,
       latestPlaythroughs: formatPlaythroughs(
         gamekeeper
           .playthroughs
           .latest(NUM_HISTORICAL_PLAYTHROUGHS, this.game.id)
-      )
+      , { scores: true })
     }
   }
 

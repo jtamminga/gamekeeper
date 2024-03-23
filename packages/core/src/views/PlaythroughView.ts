@@ -1,5 +1,5 @@
 import { Playthrough, VsPlaythrough } from '@domains'
-import { toWinnerName } from './PlaythroughPreview'
+import { toWinnerName } from './utils'
 import { GameView } from './GameView'
 
 

@@ -1,7 +1,9 @@
-import { HydratedGameView } from '@gamekeeper/core'
-import { PlaythroughsList } from './PlaythroughsList'
-import { PlayerColor } from '.'
+import { PlayerColor } from './PlayerColor'
 import { playerColorClass } from '@app/helpers'
+import { PlaythroughsList } from './PlaythroughsList'
+import { StatCard } from './StatCard'
+import { useRouter } from '@app/hooks'
+import type { FormattedScoreStats, HydratedGameView } from '@gamekeeper/core'
 
 
 export type Props = {
@@ -11,19 +13,62 @@ export type Props = {
 
 export function GameSummary({ view }: Props) {
 
+  const router = useRouter()
+
   return (
     <>
       <h3>General stats</h3>
       {renderYearVsTotalStats(view)}
 
+      {view.scoreStats &&
+        <>
+          <h3>Score stats</h3>
+          {renderScoreStats(view.scoreStats)}
+        </>
+      }
+      
+      
+
       <h3>Last playthroughs</h3>
-      <PlaythroughsList playthroughs={view.latestPlaythroughs} />
+      <PlaythroughsList
+        formattedPlaythroughs={view.latestPlaythroughs}
+      />
+
+      {view.hasMorePlaythroughs &&
+        <button
+          type="button"
+          onClick={() => router.setPage({ name: 'GamePlaythroughs', props: { gameId: view.game.id } })}
+        >All Playthroughs</button>
+      }
     </>
   )
-
 }
 
-function renderYearVsTotalStats({numPlaythroughs, winrates}: HydratedGameView) {
+
+// helpers
+
+function renderScoreStats({ average, best }: FormattedScoreStats) {
+
+  const bestScoreText = (
+    <>best score {best.playerId && <PlayerColor playerId={best.playerId}>{best.player}</PlayerColor>}</>
+  )
+
+  return (
+    <>
+      <StatCard
+        value={average}
+        description="average score"
+      />
+
+      <StatCard
+        value={best.score}
+        description={bestScoreText}
+      />
+    </>
+  )
+}
+
+function renderYearVsTotalStats({ numPlaythroughs, winrates }: HydratedGameView) {
   return (
     <table>
       <thead>

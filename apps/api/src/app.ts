@@ -124,6 +124,11 @@ app.get(Route.STATS.NUM_UNIQUE_GAMES_PLAYED, async function (req, res) {
   const stats = await statsService.getNumUniqueGamesPlayed(query.year)
   res.json({ data: stats })
 })
+app.get(Route.STATS.SCORE_STATS, async function (req, res) {
+  const query = toStatsQuery(req)
+  const stats = await statsService.getScoreStats(query)
+  res.json({ data: stats })
+})
 
 
 // set custom error handling

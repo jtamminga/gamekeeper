@@ -1,6 +1,6 @@
 type Props = {
   value: string | number
-  description: string
+  description: JSX.Element | string
 }
 
 

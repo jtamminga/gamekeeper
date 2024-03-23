@@ -3,6 +3,7 @@ import {
   AddGame,
   AddPlaythrough,
   GameDetails,
+  GamePlaythroughs,
   Games,
   Stats
 } from './screens'
@@ -15,6 +16,7 @@ export type Page =
   | { name: 'Games' }
   | { name: 'AddGame' }
   | { name: 'GameDetails', props: { gameId: GameId } }
+  | { name: 'GamePlaythroughs', props: { gameId: GameId } }
 
 
 // router
@@ -30,5 +32,7 @@ export function router(page: Page) {
       return <AddGame />
     case 'GameDetails':
       return <GameDetails {...page.props} />
+    case 'GamePlaythroughs':
+      return <GamePlaythroughs {...page.props} />
   }
 }

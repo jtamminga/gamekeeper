@@ -8,7 +8,7 @@ type Props = {
 }
 
 
-export function AllPlaythroughs({ gameId }: Props) {
+export function GamePlaythroughs({ gameId }: Props) {
 
   const gamekeeper = useGamekeeper()
   const game = gamekeeper.games.get(gameId)
@@ -22,7 +22,7 @@ export function AllPlaythroughs({ gameId }: Props) {
 
       {hydratedView &&
         <PlaythroughsList
-          playthroughs={hydratedView.playthroughs}
+          formattedPlaythroughs={hydratedView.playthroughs}
         />
       }
     </>

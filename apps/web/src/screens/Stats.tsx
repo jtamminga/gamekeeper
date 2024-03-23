@@ -50,8 +50,7 @@ export function Stats() {
       />
 
       <PlaythroughsList
-        playthroughs={latestPlaythroughs}
-        hideScores
+        formattedPlaythroughs={latestPlaythroughs}
       />
     </>
   )
