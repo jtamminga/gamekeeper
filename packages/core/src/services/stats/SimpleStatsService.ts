@@ -1,8 +1,9 @@
 import type { PlayerId } from '../player'
 import { GameType, type GameId } from '../game'
-import type { PlaythroughDto, PlaythroughQueryOptions, PlaythroughService } from '../playthrough'
-import type { StatsQuery, StatsResultData, StatsService, WinrateDto } from './StatsService'
+import type { PlaythroughDto, PlaythroughQueryOptions, PlaythroughService, ScoreDto } from '../playthrough'
+import type { ScoreStatDto, ScoreStatsDto, StatsQuery, StatsResultData, StatsService, WinrateDto } from './StatsService'
 import { endOfYear } from 'date-fns'
+import { ArrayUtils } from '@core'
 
 
 /**
@@ -29,7 +30,7 @@ export class SimpleStatsService implements StatsService {
   public async getWinrates(query: StatsQuery = {}): Promise<StatsResultData<WinrateDto[]>> {
     const playthroughs = await this.getPlaythroughs(query)
     const grouped = this.groupedByGame(playthroughs)
-    return this.forEachGroup(grouped, playthroughs => this.calculateWinrates(playthroughs))
+    return this.forEachGroup(grouped, this.calculateWinrates)
   }
 
   public async getOverallWinrates(year?: number): Promise<WinrateDto[]> {
@@ -58,6 +59,12 @@ export class SimpleStatsService implements StatsService {
     const uniqueGames = new Set<GameId>()
     playthroughs.forEach(playthrough => uniqueGames.add(playthrough.gameId))
     return uniqueGames.size
+  }
+  
+  public async getScoreStats(query: StatsQuery = {}): Promise<StatsResultData<ScoreStatsDto | undefined>> {
+    const playthroughs = await this.getPlaythroughs(query)
+    const grouped = this.groupedByGame(playthroughs)
+    return this.forEachGroup(grouped, this.calculateScoreStats)
   }
 
 
@@ -162,6 +169,55 @@ export class SimpleStatsService implements StatsService {
     }
 
     return winrates
+  }
+
+  // assume all playthroughs are of the same game
+  private calculateScoreStats(playthroughs: ReadonlyArray<PlaythroughDto>): ScoreStatsDto | undefined {
+    if (playthroughs.length === 0) {
+      return undefined
+    }
+
+    const { gameType } = playthroughs[0]
+
+    if (gameType === GameType.COOP) {
+      const allScores = playthroughs.reduce((scores, playthrough) =>
+        typeof playthrough.scores === 'number'
+          ? [ ...scores, playthrough.scores ]
+          : scores
+      , [] as number[])
+
+      if (allScores.length === 0) {
+        return undefined
+      }
+
+      return {
+        highScore: { score: ArrayUtils.best(allScores, (a, b) => a > b ? a : b) },
+        lowScore: { score: ArrayUtils.best(allScores, (a, b) => a < b ? a : b) },
+        averageScore: ArrayUtils.average(allScores)
+      }
+    }
+
+    else if (gameType === GameType.VS) {
+      const allScores = playthroughs.reduce((scores, playthrough) =>
+        typeof playthrough.scores === 'object'
+          ? scores.concat(playthrough.scores)
+          : scores
+      , [] as ScoreDto[])
+
+      if (allScores.length === 0) {
+        return undefined
+      }
+
+      return {
+        highScore: ArrayUtils.best(allScores, (a, b) => a.score > b.score ? a : b),
+        lowScore: ArrayUtils.best(allScores, (a, b) => a.score < b.score ? a : b),
+        averageScore: ArrayUtils.average(allScores.map(s => s.score))
+      }
+    }
+
+    else {
+      throw new Error('calculateScoreStats does not support this game type')
+    }
   }
 
 }

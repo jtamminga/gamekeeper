@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { GameKeeper, GameType } from '@gamekeeper/core'
+import { GameKeeper, GameType, ScoringType } from '@gamekeeper/core'
 import { Factory } from './Factory'
 
 const alex = Factory.alex
@@ -146,6 +146,57 @@ describe('stats', async function () {
       assert.equal(overallWinrates.for(john.id), 0)
       assert.equal(overallWinrates.highest.player.id, alex.id)
       assert.equal(overallWinrates.highest.winrate, 1 / 2)
+    })
+  })
+
+  describe('calculating scoring', async function () {
+    it('no scores results in undefined score stats', async function () {
+      const game = await gamekeeper.games.create(Factory.createGame({ type: GameType.VS }))
+      await gamekeeper.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
+
+      const scoreStats = await gamekeeper.stats.forGame(game).scoreStats()
+      assert.equal(scoreStats, undefined)
+    })
+
+    it('game with no scoring type results in undefined score stats', async function () {
+      const game = await gamekeeper.games.create(Factory.createGame({ type: GameType.VS, scoring: ScoringType.NO_SCORE }))
+      await gamekeeper.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id, Factory.createScores(10, 20)))
+
+      const scoreStats = await gamekeeper.stats.forGame(game).scoreStats()
+      assert.equal(scoreStats, undefined)
+    })
+
+    it('single vs playthrough with all scores', async function () {
+      const game = await gamekeeper.games.create(Factory.createGame({ type: GameType.VS }))
+      await gamekeeper.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id, Factory.createScores(10, 20)))
+
+      const scoreStats = await gamekeeper.stats.forGame(game).scoreStats()
+      assert.equal(scoreStats!.averageScore, 15)
+      assert.equal(scoreStats!.bestScore.score, 20)
+      assert.equal(scoreStats!.bestScore.player!.id, alex.id)
+    })
+
+    it('single vs low score playthrough with all scores', async function () {
+      const game = await gamekeeper.games.create(Factory.createGame({ type: GameType.VS, scoring: ScoringType.LOWEST_WINS }))
+      await gamekeeper.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id, Factory.createScores(10, 20)))
+
+      const scoreStats = await gamekeeper.stats.forGame(game).scoreStats()
+      assert.equal(scoreStats!.averageScore, 15)
+      assert.equal(scoreStats!.bestScore.score, 10)
+      assert.equal(scoreStats!.bestScore.player!.id, john.id)
+    })
+
+    it('multiple coop playthroughs', async function () {
+      const game = await gamekeeper.games.create(Factory.createGame({ type: GameType.COOP, scoring: ScoringType.LOWEST_WINS }))
+      await gamekeeper.playthroughs.create(Factory.createCoopPlaythrough(game.id, true, 20))
+      await gamekeeper.playthroughs.create(Factory.createCoopPlaythrough(game.id, true, 10))
+      await gamekeeper.playthroughs.create(Factory.createCoopPlaythrough(game.id, false, 30))
+      await gamekeeper.playthroughs.create(Factory.createCoopPlaythrough(game.id, false))
+
+      const scoreStats = await gamekeeper.stats.forGame(game).scoreStats()
+      assert.equal(scoreStats!.averageScore, 20)
+      assert.equal(scoreStats!.bestScore.score, 10)
+      assert.equal(scoreStats!.bestScore.player, undefined)
     })
   })
 

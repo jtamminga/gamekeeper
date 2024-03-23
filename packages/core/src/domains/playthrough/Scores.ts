@@ -1,5 +1,5 @@
 import { Serializable } from '@core'
-import { PlayerId } from '@services'
+import { PlayerId, ScoringType } from '@services'
 
 
 // type
@@ -84,6 +84,23 @@ export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
       playerId: lowestPlayer!,
       score: lowestScore
     }
+  }
+
+  public best(scoringType: ScoringType.HIGHEST_WINS | ScoringType.LOWEST_WINS): ScoreData {
+    switch (scoringType) {
+      case ScoringType.HIGHEST_WINS:
+        return this.highest()
+      case ScoringType.LOWEST_WINS:
+        return this.lowest()
+    }
+  }
+
+  public winner(scoringType: ScoringType.HIGHEST_WINS | ScoringType.LOWEST_WINS): PlayerId | null {
+    if (this.tied) {
+      return null
+    }
+
+    return this.best(scoringType).playerId
   }
 
   public toData(): ReadonlyArray<ScoreData> {

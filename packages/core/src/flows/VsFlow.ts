@@ -39,7 +39,7 @@ export class VsFlow extends PlaythroughFlow<VsGame> {
 
     // make sure all players have scores
     if (scores.size === this.data.playerIds.length) {
-      this.winnerId = determineWinner(this.game.scoring, scores)
+      this.winnerId = scores.winner(this.game.scoring)
       this.implicitWinner = true
     }
 
@@ -68,24 +68,5 @@ export class VsFlow extends PlaythroughFlow<VsGame> {
         ? this.scores.toData()
         : undefined
     }
-  }
-}
-
-
-// helper
-function determineWinner(type: ScoringType, scores: Scores): PlayerId | null {
-  // first check if there is a tie
-  if (scores.tied) {
-    return null
-  }
-
-  // otherwise determine winner
-  switch (type) {
-    case ScoringType.HIGHEST_WINS:
-      return scores.highest().playerId
-    case ScoringType.LOWEST_WINS:
-      return scores.lowest().playerId
-    default:
-      throw new Error(`winner cannot be determined with no scoring type`)
   }
 }

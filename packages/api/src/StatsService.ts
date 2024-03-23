@@ -1,4 +1,4 @@
-import { GameId, StatsQuery, StatsResultData, StatsService, WinrateDto, Route } from '@gamekeeper/core'
+import { GameId, StatsQuery, StatsResultData, StatsService, WinrateDto, Route, ScoreStatsDto } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { toCleanQuery } from './utils'
 
@@ -40,6 +40,10 @@ export class ApiStatsService extends ApiService implements StatsService {
 
   public async getNumUniqueGamesPlayed(year?: number | undefined): Promise<number> {
     return await this.apiClient.get(Route.STATS.NUM_UNIQUE_GAMES_PLAYED, toCleanQuery({ year }))
+  }
+  
+  public async getScoreStats(query?: StatsQuery | undefined): Promise<StatsResultData<ScoreStatsDto | undefined>> {
+    return await this.apiClient.get(Route.STATS.SCORE_STATS, toCleanQuery(query))
   }
 
 }

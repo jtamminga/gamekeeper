@@ -2,7 +2,14 @@ import { Winrates } from './Winrates'
 import type { Game } from '../game'
 import type { GameKeeperDeps } from '@core'
 import type { DomainStatsQuery } from './Stats'
-import type { StatsService } from '@services'
+import { ScoringType, type StatsService } from '@services'
+import { Player } from '../player'
+
+
+type ScoreStats = {
+  bestScore: { score: number, player?: Player }
+  averageScore: number
+}
 
 
 // vs game stats
@@ -35,7 +42,33 @@ export class GameStats {
   }
 
   public async playsByMonth(query?: DomainStatsQuery): Promise<number[]> {
-    return this._deps.services.statsService.getNumPlaysByMonth({ ...query, gameId: this.game.id })
+    return this._deps.services.statsService.getNumPlaysByMonth({ ...this._query, ...query, gameId: this.game.id })
+  }
+
+  public async scoreStats(query?: DomainStatsQuery): Promise<ScoreStats | undefined> {
+    if (this.game.scoring === ScoringType.NO_SCORE) {
+      return undefined
+    }
+
+    const result = await this._statsService.getScoreStats({ ...this._query, ...query, gameId: this.game.id })
+    const gameResult = result[this.game.id]
+    if (gameResult === undefined) {
+      return undefined
+    }
+
+    const bestScore = this.game.scoring === ScoringType.HIGHEST_WINS
+      ? gameResult.highScore
+      : gameResult.lowScore
+    
+    return {
+      bestScore: {
+        score: bestScore.score,
+        player: bestScore.playerId === undefined
+          ? undefined
+          : this._deps.store.getPlayer(bestScore.playerId)
+      },
+      averageScore: gameResult.averageScore
+    }
   }
 
 }

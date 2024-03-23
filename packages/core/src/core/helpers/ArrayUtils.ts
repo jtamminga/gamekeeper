@@ -20,4 +20,13 @@ export namespace ArrayUtils {
     return low
   }
 
+  export function average(values: number[]): number {
+    const sum = values.reduce((sum, value) => sum + value)
+    return sum / values.length
+  }
+
+  export function best<T>(values: T[], comparer: (a: T, b: T) => T): T {
+    return values.reduce((best, value) => comparer(best, value))
+  }
+
 }

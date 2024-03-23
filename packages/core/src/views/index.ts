@@ -1,3 +1,4 @@
+export * from './AllPlaythroughsView'
 export * from './GamesView'
 export * from './GameView'
 export * from './HydratableView'

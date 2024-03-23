@@ -24,7 +24,6 @@ type NumPlaysPerMonthDto = {
 
 
 // stats service
-// TODO: implement winrates
 export class DbStatsService extends SimpleStatsService {
 
   public constructor(

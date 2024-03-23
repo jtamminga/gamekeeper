@@ -10,6 +10,13 @@ export type WinrateDto = {
   playerId: PlayerId
   winrate: number
 }
+export type ScoreStatDto = { score: number, playerId?: PlayerId }
+export type ScoreStatsDto = {
+  highScore: ScoreStatDto
+  lowScore: ScoreStatDto
+  averageScore: number
+}
+
 export type StatsResultData<TData> = Record<GameId, Readonly<TData>>
 
 
@@ -26,5 +33,7 @@ export interface StatsService {
   getNumPlaysByMonth(query?: StatsQuery): Promise<number[]>
 
   getNumUniqueGamesPlayed(year?: number): Promise<number>
+
+  getScoreStats(query?: StatsQuery): Promise<StatsResultData<ScoreStatsDto | undefined>>
 
 }
