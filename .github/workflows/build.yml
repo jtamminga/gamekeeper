@@ -14,3 +14,6 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4
 
+      - name: build docker image
+        run: docker build -t local/gamekeeper-web Dockerfile.web
+
