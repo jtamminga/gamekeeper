@@ -5,6 +5,8 @@ ARG VITE_API_URL=http://192.168.0.100:3000
 
 WORKDIR /usr/src/app
 
+RUN yarn set version berry
+
 # copy needed items only
 COPY package.json .
 COPY yarn.lock .yarnrc.yml ./

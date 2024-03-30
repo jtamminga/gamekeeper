@@ -1,18 +1,21 @@
+import 'express-async-errors'
 import { ApiPlaythroughDto, toPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
 import { config } from './config'
+import { dashboardImage } from './dashboardImage'
 import { DbServices } from '@gamekeeper/db-services'
+import { InvalidParamsError } from './InvalidParamsError'
 import { toStatsQuery } from './stats'
-import { type GameId, Route, NewGameData, NewPlayerData } from '@gamekeeper/core'
+import { type GameId, Route, NewGameData, NewPlayerData, NotFoundError } from '@gamekeeper/core'
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
-import { InvalidParamsError } from './InvalidParamsError'
-import 'express-async-errors'
 
 
 // setup express app
 const app = express()
 app.use(express.json())
 app.use(cors())
+app.use(cacheHandler)
+app.use(logging)
 
 // create and extract services
 const {
@@ -131,7 +134,25 @@ app.get(Route.STATS.SCORE_STATS, async function (req, res) {
 })
 
 
-// set custom error handling
+//
+// dashboard image
+// ===============
+
+
+app.get('/dashboard-image', async function (req, res) {
+  const imageBuffer = await dashboardImage()
+  res.set('Content-type', 'image/png')
+  res.set('Content-Disposition', 'inline; filename="dashboard.png"')
+  res.send(imageBuffer)
+})
+
+
+//
+// init
+// ====
+
+
+// note: error handling has to be after app.get
 app.use(errorHandler)
 
 // start listening
@@ -139,7 +160,11 @@ app.listen(config.port)
 console.info(`listening on ${config.port}`)
 
 
-// error handling
+//
+// custom middleware
+// =================
+
+
 function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
   if (res.headersSent) {
     return next(err)
@@ -149,10 +174,24 @@ function errorHandler(err: Error, req: Request, res: Response, next: NextFunctio
     res.status(400)
     res.json({ error: err.message })
   }
+  else if (err instanceof NotFoundError) {
+    res.status(404)
+    res.json({ error: 'could not find resource' })
+  }
   else {
     res.status(500)
     res.json({ error: 'Something went wrong' })
   }
 
   next(err)
+}
+
+function cacheHandler(req: Request, res: Response, next: NextFunction) {
+  res.setHeader('Cache-Control', 'public, max-age=60')
+  next()
+}
+
+function logging(req: Request, res: Response, next: NextFunction) {
+  console.info(`${req.method}: ${req.url}`)
+  next()
 }
