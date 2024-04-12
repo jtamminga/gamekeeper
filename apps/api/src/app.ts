@@ -5,7 +5,7 @@ import { dashboardImage } from './dashboardImage'
 import { DbServices } from '@gamekeeper/db-services'
 import { InvalidParamsError } from './InvalidParamsError'
 import { toStatsQuery } from './stats'
-import { type GameId, Route, NewGameData, NewPlayerData, NotFoundError } from '@gamekeeper/core'
+import { type GameId, Route, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, StatsView } from '@gamekeeper/core'
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 
@@ -18,12 +18,13 @@ app.use(cacheHandler)
 app.use(logging)
 
 // create and extract services
+const dbServices = new DbServices(config.dbPath)
 const {
   gameService,
   playerService,
   playthroughService,
   statsService
-} = new DbServices(config.dbPath)
+} = dbServices
 
 
 //
@@ -131,6 +132,18 @@ app.get(Route.STATS.SCORE_STATS, async function (req, res) {
   const query = toStatsQuery(req)
   const stats = await statsService.getScoreStats(query)
   res.json({ data: stats })
+})
+
+
+//
+// views
+// =====
+
+
+app.get('/stats', async function (req, res) {
+  const gamekeeper = GameKeeperFactory.create(dbServices)
+  const statsView = await new StatsView().hydrate(gamekeeper)
+  res.json({ data: statsView })
 })
 
 
