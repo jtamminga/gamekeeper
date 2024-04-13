@@ -142,7 +142,7 @@ app.get(Route.STATS.SCORE_STATS, async function (req, res) {
 
 app.get('/stats', async function (req, res) {
   const gamekeeper = GameKeeperFactory.create(dbServices)
-  await gamekeeper.hydrate({ limit: 1 })
+  await gamekeeper.hydrate()
   const statsView = await new StatsView().hydrate(gamekeeper)
   res.json({ data: statsView })
 })

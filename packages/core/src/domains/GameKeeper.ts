@@ -22,11 +22,16 @@ export class GameKeeper {
   }
 
   public async hydrate(options?: PlaythroughQueryOptions): Promise<void> {
-    await Promise.all([
+    const hydrations: Promise<any>[] = [
       this.players.hydrate(),
-      this.games.hydrate(),
-      this.playthroughs.hydrate(options)
-    ])
+      this.games.hydrate()
+    ]
+
+    if (options) {
+      hydrations.push(this.playthroughs.hydrate(options))
+    }
+
+    await Promise.all(hydrations)
   }
 
 }

@@ -1,4 +1,4 @@
-import { GameId, GameKeeper, GameKeeperFactory, GameType, NewCoopPlaythroughData, NewGameData, NewVsPlaythroughData, PlayerData, PlayerId, ScoreData, ScoringType, Services, SimpleStatsService } from '@gamekeeper/core'
+import { GameDto, GameId, GameKeeper, GameKeeperFactory, GameType, NewCoopPlaythroughData, NewGameData, NewVsPlaythroughData, PlayerData, PlayerId, PlaythroughDto, PlaythroughId, ScoreData, ScoringType, Services, SimpleStatsService } from '@gamekeeper/core'
 import { MemoryDatabase, TestGameService, TestPlayerService, TestPlaythroughService } from './TestServices'
 
 export namespace Factory {
@@ -12,13 +12,27 @@ export namespace Factory {
     name: 'alex'
   }
 
-  function createTestServices(): Services {
-    const db: MemoryDatabase = {
-      games: [],
-      players: [john, alex],
-      playthroughs: []
+  const games: GameDto[] = [
+    {
+      id: 'game1' as GameId,
+      name: 'Game 1',
+      scoring: ScoringType.HIGHEST_WINS,
+      type: GameType.VS
     }
-  
+  ]
+
+  const playthroughs: PlaythroughDto[] = [
+    {
+      id: '1' as PlaythroughId,
+      gameId: 'game1' as GameId,
+      gameType: GameType.VS,
+      playedOn: new Date(),
+      players: [john.id, alex.id],
+      result: alex.id,
+    }
+  ]
+
+  function createTestServices(db: MemoryDatabase): Services {
     const gameService = new TestGameService(db)
     const playerService = new TestPlayerService(db)
     const playthroughService = new TestPlaythroughService(db)
@@ -32,8 +46,19 @@ export namespace Factory {
     }
   }
 
-  export function createGamekeeper(): GameKeeper {
-    return GameKeeperFactory.create(createTestServices())
+  export function createGamekeeper(loadSomeStuff = false): GameKeeper {
+    const db = loadSomeStuff
+      ? {
+        games: [...games],
+        players: [john, alex],
+        playthroughs: [...playthroughs]
+      } : {
+        games: [],
+        players: [john, alex],
+        playthroughs: []
+      }
+
+    return GameKeeperFactory.create(createTestServices(db))
   }
 
   export function createGame({ name, scoring, type }: Partial<NewGameData> = {}): NewGameData {
