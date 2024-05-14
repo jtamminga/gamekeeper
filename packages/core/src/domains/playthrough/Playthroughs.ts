@@ -2,7 +2,7 @@ import { PlaythroughFlowFactory } from '@factories'
 import type { PlaythroughFlow } from '@flows'
 import type { GameKeeperDeps } from '@core'
 import type { NewBasePlaythroughData, Playthrough } from './Playthrough'
-import type { GameId, PlaythroughQueryOptions } from '@services'
+import type { GameId, PlaythroughId, PlaythroughQueryOptions } from '@services'
 import type { NewVsPlaythroughData } from './VsPlaythrough'
 import type { NewCoopPlaythroughData } from './CoopPlaythrough'
 
@@ -40,6 +40,22 @@ export class Playthroughs {
   public async create(data: NewPlaythroughData): Promise<Playthrough> {
     const dto = await this._deps.services.playthroughService.addPlaythrough(data)
     return this._deps.store.bindPlaythrough(dto)
+  }
+
+  public async get(id: PlaythroughId): Promise<Playthrough> {
+    const playthrough = this._deps.store.getPlaythrough(id)
+    if (playthrough) {
+      return playthrough
+    }
+    else {
+      const dto = await this._deps.services.playthroughService.getPlaythrough(id)
+      return this._deps.store.bindPlaythrough(dto)
+    }
+  }
+
+  public async remove(id: PlaythroughId): Promise<void> {
+    await this._deps.services.playthroughService.removePlaythrough(id)
+    this._deps.store.removePlaythrough(id)
   }
 
   public startFlow(data: NewBasePlaythroughData): PlaythroughFlow {

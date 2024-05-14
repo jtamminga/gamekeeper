@@ -25,10 +25,10 @@ const sortByOptions: SortByOptionRecord = {
 export function Games() {
   
   // hooks
-  const [sortBy, setSortBy] = useState('name_asc')
-  const gameOptions = sortByOptions[sortBy]
-  const { setPage } = useRouter()
+  const [ sortBy, setSortBy ] = useState('name_asc')
+  const { toGame } = useRouter()
   const { hydratedView } = useView(() => new GamesView())
+  const gameOptions = sortByOptions[sortBy]
 
   // render loading while waiting
   if (!hydratedView) {
@@ -66,7 +66,7 @@ export function Games() {
         </thead>
         <tbody>
           {hydratedView.all(gameOptions).map(game =>
-            <tr key={game.id} onClick={() => setPage({ name: 'GameDetails', props: { gameId: game.id } })}>
+            <tr key={game.id} onClick={() => toGame(game.id)}>
               <td>{game.name}</td>
               <td className="num">{game.numPlays}</td>
               <td className="num">{game.lastPlayedFormatted ?? <span>never played</span>}</td>

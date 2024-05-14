@@ -16,9 +16,7 @@ export function GameDetails({ gameId }: Props) {
 
   return (
     <>
-      <h1>Game details</h1>
-
-      <h2>{game.name}</h2>
+      <h1>{game.name}</h1>
 
       {hydratedView &&
         <GameSummary

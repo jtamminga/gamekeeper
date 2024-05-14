@@ -18,6 +18,11 @@ interface ApiPlaythroughDto {
 // playthrough service
 export class ApiPlaythroughService extends ApiService implements PlaythroughService {
 
+  public async getPlaythrough(id: PlaythroughId): Promise<PlaythroughDto> {
+    const playthrough = await this.apiClient.get<ApiPlaythroughDto>(`${Route.PLAYTHROUGHS}/${id}`)
+    return transform(playthrough)
+  }
+
   public async getPlaythroughs(options?: PlaythroughQueryOptions): Promise<readonly PlaythroughDto[]> {
     const playthroughs = await this.apiClient.get<ApiPlaythroughDto[]>(Route.PLAYTHROUGHS, toCleanQuery(options))
     return playthroughs.map(transform)
@@ -26,6 +31,10 @@ export class ApiPlaythroughService extends ApiService implements PlaythroughServ
   public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughDto> {
     const newPlaythrough = await this.apiClient.post<ApiPlaythroughDto>(Route.PLAYTHROUGHS, playthrough)
     return transform(newPlaythrough)
+  }
+
+  public async removePlaythrough(id: PlaythroughId): Promise<void> {
+    return this.apiClient.delete(`${Route.PLAYTHROUGHS}/${id}`)
   }
 
 }

@@ -1,11 +1,12 @@
 import { CoopPlaythrough, Playthrough, VsPlaythrough } from '@domains'
 import { formatDate, toWinnerName } from './utils'
-import type { PlayerId } from '@services'
+import type { GameId, PlayerId, PlaythroughId } from '@services'
 
 
 export type FormattedScore = { name: string, score: string, playerId?: PlayerId }
 export type FormattedPlaythrough = {
-  id: string
+  id: PlaythroughId
+  gameId: GameId
   playedOn: string
   winner: string
   game?: string
@@ -29,6 +30,7 @@ export function formatPlaythroughs(
   const formattedPlaythroughs = playthroughs.map(playthrough => {
     const formatted: FormattedPlaythrough = {
       id: playthrough.id,
+      gameId: playthrough.gameId,
       playedOn: formatDate(playthrough.playedOn),
       winner: toWinnerName(playthrough),
       winnerId: toWinnerId(playthrough),

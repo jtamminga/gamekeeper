@@ -38,6 +38,14 @@ export class ApiClient {
     })
   }
 
+  public async delete(path: string): Promise<void> {
+    return this.handledFetch(path, {
+      referrerPolicy: 'no-referrer',
+      method: 'DELETE',
+      headers: BASE_HEADERS,
+    })
+  }
+
   protected async handledFetch<T>(path: string, init?: RequestInit | undefined): Promise<T> {
     try {
       const response = await fetch(this.baseUrl + path, init)

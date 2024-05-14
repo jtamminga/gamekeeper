@@ -119,4 +119,12 @@ export class Store {
     return ids.map(id => this.getPlayer(id))
   }
 
+  public getPlaythrough(id: PlaythroughId): Playthrough | undefined {
+    return this._data.playthroughs.get(id)
+  }
+
+  public removePlaythrough(id: PlaythroughId): void {
+    this._data.playthroughs.delete(id)
+  }
+
 }

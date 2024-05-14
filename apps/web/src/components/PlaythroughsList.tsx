@@ -1,6 +1,7 @@
 import { FormattedPlaythroughs, FormattedScore } from '@gamekeeper/core'
 import { PlayerColor } from './PlayerColor'
 import { ReactNode } from 'react'
+import { useRouter } from '@app/hooks'
 
 
 // types
@@ -13,6 +14,8 @@ type Props = {
  * List of playthroughs
  */
 export function PlaythroughsList({ formattedPlaythroughs }: Props) {
+  
+  const { toGame, toPlaythrough } = useRouter()
   const { playthroughs, options: { gameNames, scores } } = formattedPlaythroughs
 
   return (
@@ -30,13 +33,21 @@ export function PlaythroughsList({ formattedPlaythroughs }: Props) {
           <tr key={playthrough.id}>
 
             {/* played on */}
-            <td className="num">
+            <td
+              className="num"
+              onClick={() => toPlaythrough(playthrough.id)}
+            >
               {playthrough.playedOn}
             </td>
 
             {/* game */}
             {gameNames &&
-              <td className="long">{playthrough.game}</td>
+              <td
+                className="long"
+                onClick={() => toGame(playthrough.gameId)}
+              >
+                {playthrough.game}
+              </td>
             }
 
             {/* winner */}

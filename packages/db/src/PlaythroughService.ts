@@ -1,5 +1,5 @@
 import { DbService } from './DbService'
-import { CoopPlaythroughData, GameId, GameType, PlayerId, PlaythroughDto, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData } from '@gamekeeper/core'
+import { CoopPlaythroughData, GameId, GameType, NotFoundError, PlayerId, PlaythroughDto, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData } from '@gamekeeper/core'
 
 
 // type
@@ -22,6 +22,29 @@ type SerializedScore = {
 
 // repository
 export class DbPlaythroughService extends DbService implements PlaythroughService {
+
+  public async getPlaythrough(id: PlaythroughId): Promise<PlaythroughDto> {
+    const query = `
+      SELECT
+        p.id,
+        p.game_id as "gameId",
+        g.type as "gameType",
+        p.played_on as "playedOn",
+        p.players,
+        p.scores,
+        p.result
+      FROM playthroughs p
+      JOIN games g ON g.id = p.game_id
+      WHERE p.id=?
+    `
+
+    const dto = await this._dataService.get<DbPlaythroughDto>(query, id)
+    if (!dto) {
+      throw new NotFoundError(`cannot find game with id "${id}"`)
+    }
+    
+    return toPlaythroughDto(dto)
+  }
 
   public async getPlaythroughs(
     options: PlaythroughQueryOptions = {}
@@ -92,6 +115,11 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
 
     const id = await this._dataService.insert(query, ...values)
     return toPlaythroughDto({ ...dto, id })
+  }
+
+  public async removePlaythrough(id: PlaythroughId): Promise<void> {
+    const query = `DELETE FROM playthroughs WHERE id=?`
+    return this._dataService.run(query, id)
   }
   
 }

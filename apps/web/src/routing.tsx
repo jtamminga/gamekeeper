@@ -1,10 +1,11 @@
-import { GameId } from '@gamekeeper/core'
+import { GameId, PlaythroughId } from '@gamekeeper/core'
 import {
   AddGame,
   AddPlaythrough,
   GameDetails,
   GamePlaythroughs,
   Games,
+  PlaythroughDetails,
   Stats
 } from './screens'
 
@@ -13,6 +14,7 @@ import {
 export type Page =
   | { name: 'Stats' }
   | { name: 'AddPlaythrough' }
+  | { name: 'PlaythroughDetails', props: { playthroughId: PlaythroughId }}
   | { name: 'Games' }
   | { name: 'AddGame' }
   | { name: 'GameDetails', props: { gameId: GameId } }
@@ -34,5 +36,7 @@ export function router(page: Page) {
       return <GameDetails {...page.props} />
     case 'GamePlaythroughs':
       return <GamePlaythroughs {...page.props} />
+    case 'PlaythroughDetails':
+      return <PlaythroughDetails {...page.props} />
   }
 }

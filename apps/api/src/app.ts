@@ -5,7 +5,7 @@ import { dashboardImage } from './dashboardImage'
 import { DbServices } from '@gamekeeper/db-services'
 import { InvalidParamsError } from './InvalidParamsError'
 import { toStatsQuery } from './stats'
-import { type GameId, Route, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, StatsView } from '@gamekeeper/core'
+import { GameId, Route, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, StatsView, PlaythroughId } from '@gamekeeper/core'
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 
@@ -76,6 +76,12 @@ app.post(Route.PLAYERS, async function (req, res) {
 // ============
 
 
+// get specific playthrough
+app.get(`${Route.PLAYTHROUGHS}/:id`, async function(req, res) {
+  const playthrough = await playthroughService.getPlaythrough(req.params.id as PlaythroughId)
+  res.json({ data: playthrough })
+})
+
 // get playthroughs
 app.get(Route.PLAYTHROUGHS, async function (req, res) {
   const query = toPlaythroughQueryOptions(req)
@@ -90,6 +96,12 @@ app.post(Route.PLAYTHROUGHS, async function (req, res) {
 
   const playthrough = await playthroughService.addPlaythrough(data)
   res.json({ data: playthrough })
+})
+
+// remove playthrough
+app.delete(`${Route.PLAYTHROUGHS}/:id`, async function(req, res) {
+  await playthroughService.removePlaythrough(req.params.id as PlaythroughId)
+  res.json({ data: null })
 })
 
 
