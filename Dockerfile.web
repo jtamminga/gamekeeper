@@ -1,7 +1,7 @@
 FROM node:lts-bullseye-slim
 
 # ENV NODE_ENV=production
-ARG VITE_API_URL=http://192.168.0.100:3000
+ARG VITE_API_URL=http://192.168.0.100:3001
 
 WORKDIR /usr/src/app
 
