@@ -3,6 +3,7 @@ import { FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroug
 import { differenceInDays } from 'date-fns'
 import { HydratableView } from './HydratableView'
 import { formatPercent } from './utils'
+import { PlayerId } from '@services'
 
 
 // types
@@ -20,6 +21,12 @@ export interface HydratedStatsView {
   readonly winnerThisYear: {
     winrate: string
     player: string
+    playerId: PlayerId
+  }
+  readonly winnerLately: {
+    winrate: string
+    player: string
+    playerId: PlayerId
   }
   readonly numUniqueGamesPlayed: number
 }
@@ -40,20 +47,23 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       numPlaysLastYear,
       numPlaysAllTime,
       numPlaysByMonthThisYear,
-      overallWinrates,
-      numUniqueGamesPlayed
+      overallWinratesThisYear,
+      numUniqueGamesPlayed,
+      overallWinratesLatest,
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
       stats.numPlaythroughs({ year: year - 1 }),
       stats.numPlaythroughs({}),
       stats.playsByMonth({ year }),
-      stats.overallWinrates(year),
+      stats.overallWinrates({ year }),
       stats.uniqueGamesPlayed(year),
+      stats.overallWinrates({ latestPlaythroughs: NUM_LATEST_PLAYTHROUGHTS }),
       gamekeeper.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
     ])
 
     const latestPlaythrough = gamekeeper.playthroughs.all()[0]
-    const winningWinrate = overallWinrates.highest
+    const winningWinrate = overallWinratesThisYear.highest
+    const winningLately = overallWinratesLatest.highest
 
     return {
       numPlaysThisYear: totalPlays(numPlaysThisYear),
@@ -69,7 +79,13 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       },
       winnerThisYear: {
         winrate: formatPercent(winningWinrate.winrate),
-        player: winningWinrate.player.name
+        player: winningWinrate.player.name,
+        playerId: winningWinrate.player.id
+      },
+      winnerLately: {
+        winrate: formatPercent(winningLately.winrate),
+        player: winningLately.player.name,
+        playerId: winningLately.player.id
       },
       numUniqueGamesPlayed
     }

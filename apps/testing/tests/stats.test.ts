@@ -147,6 +147,39 @@ describe('stats', async function () {
       assert.equal(overallWinrates.highest.player.id, alex.id)
       assert.equal(overallWinrates.highest.winrate, 1 / 2)
     })
+
+    it('winrate using latest playthroughs', async function () {
+      const game = await gamekeeper.games.create(Factory.createGame())
+      await gamekeeper.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
+      await gamekeeper.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
+      await gamekeeper.playthroughs.create(Factory.createVsPlaythrough(game.id, john.id))
+
+      const winrates = await gamekeeper.stats.winrates({})
+      const gameWinrates = winrates.get(game)!
+      assert.equal(gameWinrates.for(alex.id), 2 / 3)
+      assert.equal(gameWinrates.for(john.id), 1 / 3)
+      assert.equal(gameWinrates.highest.player.id, alex.id)
+      assert.equal(gameWinrates.highest.winrate, 2 / 3)
+
+      const overallWinrates = await gamekeeper.stats.overallWinrates()
+      assert.equal(overallWinrates.for(alex.id), 2 / 3)
+      assert.equal(overallWinrates.for(john.id), 1 / 3)
+      assert.equal(overallWinrates.highest.player.id, alex.id)
+      assert.equal(overallWinrates.highest.winrate, 2 / 3)
+
+      const latestWinrates = await gamekeeper.stats.winrates({ latestPlaythroughs: 2 })
+      const latestGameWinrates = latestWinrates.get(game)!
+      assert.equal(latestGameWinrates.for(alex.id), 1, 'winrate for alex')
+      assert.equal(latestGameWinrates.for(john.id), 0, 'winrate for john')
+      assert.equal(latestGameWinrates.highest.player.id, alex.id, 'winner should be alex')
+      assert.equal(latestGameWinrates.highest.winrate, 1, 'winners winrate should be 100%')
+
+      const latestOverallWinrates = await gamekeeper.stats.overallWinrates({ latestPlaythroughs: 2 })
+      assert.equal(latestOverallWinrates.for(alex.id), 1, 'overall winrate for alex')
+      assert.equal(latestOverallWinrates.for(john.id), 0, 'overall winrate for john')
+      assert.equal(latestOverallWinrates.highest.player.id, alex.id, 'overall winner should be alex')
+      assert.equal(latestOverallWinrates.highest.winrate, 1, 'overall highest winrate should be 100%')
+    })
   })
 
   describe('calculating scoring', async function () {

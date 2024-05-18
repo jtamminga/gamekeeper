@@ -62,7 +62,7 @@ function toWinnerId(playthrough: Playthrough): PlayerId | undefined {
     : undefined
 }
 
-function formatScores(playthrough: Playthrough): FormattedScore[] {
+export function formatScores(playthrough: Playthrough): FormattedScore[] {
   if (playthrough instanceof VsPlaythrough) {
     return playthrough.scores.all.map(score => ({
       name: score.player.name,

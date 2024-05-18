@@ -1,6 +1,6 @@
 import { PlaythroughFlowFactory } from '@factories'
 import type { PlaythroughFlow } from '@flows'
-import type { GameKeeperDeps } from '@core'
+import { NotFoundError, type GameKeeperDeps } from '@core'
 import type { NewBasePlaythroughData, Playthrough } from './Playthrough'
 import type { GameId, PlaythroughId, PlaythroughQueryOptions } from '@services'
 import type { NewVsPlaythroughData } from './VsPlaythrough'
@@ -37,20 +37,18 @@ export class Playthroughs {
     return playthroughs.slice(0, limit)
   }
 
+  public get(id: PlaythroughId): Playthrough {
+    const playthrough = this._deps.store.getPlaythrough(id)
+    if (!playthrough) {
+      throw new NotFoundError(`cannot find playthrough with id "${id}"`)
+    }
+    
+    return playthrough
+  }
+
   public async create(data: NewPlaythroughData): Promise<Playthrough> {
     const dto = await this._deps.services.playthroughService.addPlaythrough(data)
     return this._deps.store.bindPlaythrough(dto)
-  }
-
-  public async get(id: PlaythroughId): Promise<Playthrough> {
-    const playthrough = this._deps.store.getPlaythrough(id)
-    if (playthrough) {
-      return playthrough
-    }
-    else {
-      const dto = await this._deps.services.playthroughService.getPlaythrough(id)
-      return this._deps.store.bindPlaythrough(dto)
-    }
   }
 
   public async remove(id: PlaythroughId): Promise<void> {

@@ -132,7 +132,7 @@ app.get(Route.STATS.PLAYS_BY_MONTH, async function (req, res) {
 })
 app.get(Route.STATS.OVERALL_WINRATES, async function (req, res) {
   const query = toStatsQuery(req)
-  const stats = await statsService.getOverallWinrates(query.year)
+  const stats = await statsService.getOverallWinrates(query)
   res.json({ data: stats })
 })
 app.get(Route.STATS.NUM_UNIQUE_GAMES_PLAYED, async function (req, res) {

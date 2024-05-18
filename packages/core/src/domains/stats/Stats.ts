@@ -1,6 +1,6 @@
 import { GameStats } from './GameStats'
 import type { Game } from '../game'
-import type { GameId, StatsQuery as ServiceStatsQuery } from '@services'
+import type { GameId, StatsQuery as ServiceStatsQuery, StatsQuery } from '@services'
 import type { GameKeeperDeps } from '@core'
 import { Winrates } from './Winrates'
 
@@ -58,8 +58,8 @@ export class Stats {
     return map
   }
 
-  public async overallWinrates(year?: number): Promise<Winrates> {
-    const result = await this._deps.services.statsService.getOverallWinrates(year)
+  public async overallWinrates(query?: StatsQuery): Promise<Winrates> {
+    const result = await this._deps.services.statsService.getOverallWinrates(query)
     return Winrates.from(result, this._deps)
   }
 

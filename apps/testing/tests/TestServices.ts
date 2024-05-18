@@ -6,6 +6,7 @@ import { CoopPlaythroughData,
   GameType,
   NewGameData,
   NewPlayerData,
+  NotFoundError,
   PlayerDto,
   PlayerId,
   PlayerService,
@@ -73,7 +74,23 @@ export class TestPlaythroughService implements PlaythroughService {
   public constructor(private _db: MemoryDatabase) { }
 
   public async getPlaythroughs(options?: PlaythroughQueryOptions | undefined): Promise<readonly PlaythroughDto[]> {
-    return this._db.playthroughs
+    if (options === undefined) {
+      return this._db.playthroughs
+    }
+
+    let playthroughs = [...this._db.playthroughs]
+    if (options.limit) {
+      playthroughs = playthroughs.slice(0, options.limit)
+    }
+    if (options.gameId) {
+      playthroughs = playthroughs.filter(p => p.gameId === options.gameId)
+    }
+
+    if (options.fromDate || options.toDate) {
+      throw new Error('not implemented')
+    }
+
+    return playthroughs
   }
 
   public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughDto> {
@@ -88,6 +105,19 @@ export class TestPlaythroughService implements PlaythroughService {
     }
     this._db.playthroughs.push(dto)
     return dto
+  }
+
+  public async getPlaythrough(id: PlaythroughId): Promise<PlaythroughDto> {
+    const playthrough = this._db.playthroughs.find(p => p.id === id)
+    if (!playthrough) {
+      throw new NotFoundError(`playthrough "${id}" not found`)
+    }
+    return playthrough
+  }
+
+  public async removePlaythrough(id: PlaythroughId): Promise<void> {
+    const index = this._db.playthroughs.findIndex(p => p.id === id)
+    this._db.playthroughs.splice(index, 1)
   }
 
 }

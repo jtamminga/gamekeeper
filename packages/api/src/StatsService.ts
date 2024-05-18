@@ -17,8 +17,8 @@ export class ApiStatsService extends ApiService implements StatsService {
     return this.apiClient.get(Route.STATS.WINRATES, toCleanQuery(query))
   }
 
-  public async getOverallWinrates(year?: number | undefined): Promise<WinrateDto[]> {
-    return this.apiClient.get(Route.STATS.OVERALL_WINRATES, toCleanQuery({ year }))
+  public async getOverallWinrates(query: StatsQuery = {}): Promise<WinrateDto[]> {
+    return this.apiClient.get(Route.STATS.OVERALL_WINRATES, toCleanQuery(query))
   }
 
   public async getLastPlayed(query: StatsQuery = {}): Promise<StatsResultData<Date | undefined>> {

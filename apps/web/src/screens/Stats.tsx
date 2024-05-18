@@ -1,4 +1,4 @@
-import { Loading, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
+import { Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
 import { useView } from '@app/hooks'
 import { StatsView } from '@gamekeeper/core'
 
@@ -18,7 +18,8 @@ export function Stats() {
     winnerThisYear,
     numUniqueGamesPlayed,
     numPlaysByMonth,
-    latestPlaythroughs
+    latestPlaythroughs,
+    winnerLately
   } = hydratedView
 
   return (
@@ -31,13 +32,20 @@ export function Stats() {
       />
 
       <StatCard
+        value={winnerLately.winrate}
+        description={<>winner of last 10 games <PlayerColor playerId={winnerLately.playerId}>{winnerLately.player}</PlayerColor></>}
+      />
+
+      <h2>{new Date().getFullYear()} stats</h2>
+
+      <StatCard
         value={numPlaysThisYear}
         description="games played"
       />
 
       <StatCard
         value={winnerThisYear.winrate}
-        description={`winner ${winnerThisYear.player}`}
+        description={<>winner <PlayerColor playerId={winnerThisYear.playerId}>{winnerThisYear.player}</PlayerColor></>}
       />
 
       <StatCard

@@ -5,6 +5,7 @@ import type { GameId } from '../game'
 export type StatsQuery = {
   gameId?: GameId
   year?: number
+  latestPlaythroughs?: number
 }
 export type WinrateDto = {
   playerId: PlayerId
@@ -26,7 +27,7 @@ export interface StatsService {
 
   getWinrates(query?: StatsQuery): Promise<StatsResultData<WinrateDto[]>>
 
-  getOverallWinrates(year?: number): Promise<WinrateDto[]>
+  getOverallWinrates(query?: StatsQuery): Promise<WinrateDto[]>
 
   getLastPlayed(query?: StatsQuery): Promise<StatsResultData<Date | undefined>>
 

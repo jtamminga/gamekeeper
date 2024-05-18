@@ -33,8 +33,8 @@ export class SimpleStatsService implements StatsService {
     return this.forEachGroup(grouped, this.calculateWinrates)
   }
 
-  public async getOverallWinrates(year?: number): Promise<WinrateDto[]> {
-    const playthroughs = await this.getPlaythroughs({ year })
+  public async getOverallWinrates(query: StatsQuery = {}): Promise<WinrateDto[]> {
+    const playthroughs = await this.getPlaythroughs(query)
     return this.calculateWinrates(playthroughs)
   }
 
@@ -81,13 +81,17 @@ export class SimpleStatsService implements StatsService {
     }
   }
 
-  private async getPlaythroughs({ gameId, year }: StatsQuery): Promise<readonly PlaythroughDto[]> {
+  private async getPlaythroughs({ gameId, year, latestPlaythroughs }: StatsQuery): Promise<readonly PlaythroughDto[]> {
     let query: PlaythroughQueryOptions  = { gameId }
 
     // add date range to query if year is specified
     if (year !== undefined) {
       const dateRange = this.getDateRangeFromYear(year)
       query = { ...query, ...dateRange }
+    }
+
+    if (latestPlaythroughs !== undefined) {
+      query.limit = latestPlaythroughs
     }
     
     const playthroughs = await this._playthroughService.getPlaythroughs(query)
