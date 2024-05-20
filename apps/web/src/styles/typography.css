@@ -1,0 +1,20 @@
+h1 {
+  font-size: 2em;
+  line-height: 1.1;
+}
+
+h2, h3 {
+  margin-bottom: var(--space-md);
+}
+
+h1, h2, h3 {
+  margin-top: var(--space-lg);
+}
+
+.highlight {
+  color: var(--brand-primary);
+}
+
+.text-muted {
+  color: var(--color-gray)
+}

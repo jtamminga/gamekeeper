@@ -26,19 +26,19 @@ export function GameSummary({ view }: Props) {
           {renderScoreStats(view.scoreStats)}
         </>
       }
-      
-      
-
-      <h3>Last playthroughs</h3>
+            
+      <h3>Lastest playthroughs</h3>
       <PlaythroughsList
         formattedPlaythroughs={view.latestPlaythroughs}
       />
 
       {view.hasMorePlaythroughs &&
-        <button
-          type="button"
-          onClick={() => router.setPage({ name: 'GamePlaythroughs', props: { gameId: view.game.id } })}
-        >All Playthroughs</button>
+        <div className="flex h-centered">
+          <button
+            type="button"
+            onClick={() => router.setPage({ name: 'GamePlaythroughs', props: { gameId: view.game.id } })}
+          >All Playthroughs</button>
+        </div>
       }
     </>
   )

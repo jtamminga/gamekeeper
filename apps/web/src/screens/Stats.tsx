@@ -26,7 +26,7 @@ export function Stats() {
   return (
     <>
       <h1>Stats</h1>
-      <h2 className="mb-md">{new Date().getFullYear()} stats</h2>
+      <h2>{new Date().getFullYear()} stats</h2>
 
       <StatCard
         value={numPlaysThisYear}
@@ -48,7 +48,7 @@ export function Stats() {
       />
 
       <h2 className="mb-0">Recent stats</h2>
-      <h3 className="mt-0 mb-md text-muted">for latest {latestNumPlaythorughs} games</h3>
+      <h3 className="mt-0 text-muted">for latest {latestNumPlaythorughs} games</h3>
 
       <StatCard
         value={latestWinner.winrate}
