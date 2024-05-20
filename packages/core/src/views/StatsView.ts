@@ -16,19 +16,20 @@ export interface HydratedStatsView {
   readonly numPlaysLastYear: number
   readonly numPlaysAllTime: number
   readonly numPlaysByMonth: BarChartData
-  readonly latestPlaythroughs: FormattedPlaythroughs
-  readonly daysSinceLastPlaythrough: number
+  readonly numUniqueGamesPlayedThisYear: number
   readonly winnerThisYear: {
     winrate: string
     player: string
     playerId: PlayerId
   }
-  readonly winnerLately: {
+  readonly daysSinceLastPlaythrough: number
+  readonly latestPlaythroughs: FormattedPlaythroughs
+  readonly latestWinner: {
     winrate: string
     player: string
     playerId: PlayerId
   }
-  readonly numUniqueGamesPlayed: number
+  readonly latestNumPlaythorughs: number
 }
 
 
@@ -48,7 +49,7 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       numPlaysAllTime,
       numPlaysByMonthThisYear,
       overallWinratesThisYear,
-      numUniqueGamesPlayed,
+      numUniqueGamesPlayedThisYear,
       overallWinratesLatest,
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
@@ -66,10 +67,10 @@ export class StatsView implements HydratableView<HydratedStatsView> {
     const winningLately = overallWinratesLatest.highest
 
     return {
+      numUniqueGamesPlayedThisYear,
       numPlaysThisYear: totalPlays(numPlaysThisYear),
       numPlaysLastYear: totalPlays(numPlaysLastYear),
       numPlaysAllTime: totalPlays(numPlaysAllTime),
-      latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
       daysSinceLastPlaythrough: latestPlaythrough
         ? differenceInDays(Date.now(), latestPlaythrough.playedOn)
         : -1,
@@ -82,12 +83,13 @@ export class StatsView implements HydratableView<HydratedStatsView> {
         player: winningWinrate.player.name,
         playerId: winningWinrate.player.id
       },
-      winnerLately: {
+      latestWinner: {
         winrate: formatPercent(winningLately.winrate),
         player: winningLately.player.name,
         playerId: winningLately.player.id
       },
-      numUniqueGamesPlayed
+      latestNumPlaythorughs: NUM_LATEST_PLAYTHROUGHTS,
+      latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
     }
   }
 

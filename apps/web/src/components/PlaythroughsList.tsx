@@ -7,19 +7,20 @@ import { useRouter } from '@app/hooks'
 // types
 type Props = {
   formattedPlaythroughs: FormattedPlaythroughs
+  className?: string
 }
 
 
 /**
  * List of playthroughs
  */
-export function PlaythroughsList({ formattedPlaythroughs }: Props) {
+export function PlaythroughsList({ formattedPlaythroughs, className }: Props) {
   
   const { toGame, toPlaythrough } = useRouter()
   const { playthroughs, options: { gameNames, scores } } = formattedPlaythroughs
 
   return (
-    <table>
+    <table className={className}>
       <thead>
         <tr>
           <th className="num">Date</th>
