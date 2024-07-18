@@ -38,6 +38,15 @@ export class ApiClient {
     })
   }
 
+  public async patch<T>(path: string, data: any): Promise<T> {
+    return this.handledFetch(path, {
+      referrerPolicy: 'no-referrer',
+      method: 'PATCH',
+      headers: BASE_HEADERS,
+      body: JSON.stringify(data)
+    })
+  }
+
   public async delete(path: string): Promise<void> {
     return this.handledFetch(path, {
       referrerPolicy: 'no-referrer',

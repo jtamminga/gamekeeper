@@ -1,5 +1,5 @@
 import type { GameDto, GameId } from './GameDto'
-import type { NewGameData } from '@domains'
+import type { NewGameData, UpdatedGameData } from '@domains'
 
 
 // repository
@@ -10,5 +10,7 @@ export interface GameService {
   getGame(id: GameId): Promise<GameDto>
 
   addGame(game: NewGameData): Promise<GameDto>
+
+  updateGame(updatedGame: UpdatedGameData): Promise<GameDto>
 
 }

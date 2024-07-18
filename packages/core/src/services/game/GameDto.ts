@@ -18,4 +18,5 @@ export interface GameDto {
   name: string
   type: GameType
   scoring: ScoringType
+  weight?: number
 }

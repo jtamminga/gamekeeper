@@ -5,7 +5,7 @@ import { dashboardImage } from './dashboardImage'
 import { DbServices } from '@gamekeeper/db-services'
 import { InvalidParamsError } from './InvalidParamsError'
 import { toStatsQuery } from './stats'
-import { GameId, Route, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, StatsView, PlaythroughId } from '@gamekeeper/core'
+import { GameId, Route, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, StatsView, PlaythroughId, UpdatedGameData } from '@gamekeeper/core'
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 
@@ -48,6 +48,13 @@ app.get(`${Route.GAMES}/:id`, async function (req, res) {
 app.post(Route.GAMES, async function (req, res) {
   const data = req.body as NewGameData
   const game = await gameService.addGame(data)
+  res.json({ data: game })
+})
+
+// update game
+app.patch(`${Route.GAMES}/:id`, async function (req, res) {
+  const data = req.body as Omit<UpdatedGameData, 'id'>
+  const game = await gameService.updateGame({ ...data, id: req.params.id as GameId })
   res.json({ data: game })
 })
 

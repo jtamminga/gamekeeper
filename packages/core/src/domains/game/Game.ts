@@ -1,6 +1,6 @@
 import { GameKeeperDeps, Serializable } from '@core'
 import { Playthrough, Playthroughs } from '../playthrough'
-import { NewData, Entity } from '../Entity'
+import { NewData, Entity, UpdatedData } from '../Entity'
 import { GameId, GameType, ScoringType } from '@services'
 
 
@@ -10,8 +10,10 @@ export interface GameData {
   name: string
   scoring: ScoringType
   type: GameType
+  weight?: number
 }
 export type NewGameData = NewData<GameData>
+export type UpdatedGameData = UpdatedData<GameData>
 
 
 // class

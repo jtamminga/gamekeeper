@@ -1,4 +1,4 @@
-import type { GameDto, GameId, GameService, GameType, NewGameData, ScoringType } from '@gamekeeper/core'
+import type { GameDto, GameId, GameService, GameType, NewGameData, ScoringType, UpdatedGameData } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { Route } from '@gamekeeper/core'
 
@@ -9,6 +9,7 @@ interface ApiGameDto {
   name: string
   type: number
   scoring: number
+  weight?: number
 }
 
 
@@ -29,6 +30,11 @@ export class ApiGameService extends ApiService implements GameService {
     const newGame = await this.apiClient.post<ApiGameDto>(Route.GAMES, game)
     return transform(newGame)
   }
+  
+  public async updateGame(updatedGame: UpdatedGameData): Promise<GameDto> {
+    const game = await this.apiClient.patch<ApiGameDto>(Route.forGame(updatedGame.id), updatedGame)
+    return transform(game)
+  }
 
 }
 
@@ -39,6 +45,7 @@ function transform(game: ApiGameDto): GameDto {
     id: game.id as GameId,
     name: game.name,
     type: game.type as GameType,
-    scoring: game.scoring as ScoringType
+    scoring: game.scoring as ScoringType,
+    weight: game.weight
   }
 }

@@ -4,7 +4,8 @@ CREATE TABLE games (
 	"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	"name" TEXT NOT NULL,
   "type" INTEGER NOT NULL,
-	"scoring" INTEGER
+	"scoring" INTEGER NOT NULL,
+	"weight" REAL
 );
 
 CREATE TABLE players (
