@@ -1,5 +1,5 @@
 import type { GameKeeperDeps } from '@core'
-import type { Game, GameData, NewGameData } from './Game'
+import type { Game, GameData, NewGameData, UpdatedGameData } from './Game'
 import type { GameId } from '@services'
 
 
@@ -27,6 +27,11 @@ export class Games {
 
   public async create(data: NewGameData): Promise<Game> {
     const dto = await this._deps.services.gameService.addGame(data)
+    return this._deps.store.bindGame(dto)
+  }
+
+  public async update(data: UpdatedGameData): Promise<Game> {
+    const dto = await this._deps.services.gameService.updateGame(data)
     return this._deps.store.bindGame(dto)
   }
 

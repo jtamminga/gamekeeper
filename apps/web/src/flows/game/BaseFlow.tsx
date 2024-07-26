@@ -12,6 +12,7 @@ export function BaseFlow({ onComplete }: Props) {
   const [name, setName] = useState('')
   const [type, setType] = useState('1')
   const [scoring, setScoring] = useState('1')
+  const [weight, setWeight] = useState('')
 
   function onTypeChange(e: ChangeEvent<HTMLInputElement>) {
     setType(e.target.value)
@@ -32,6 +33,9 @@ export function BaseFlow({ onComplete }: Props) {
       name,
       type: parseInt(type),
       scoring: parseInt(scoring)
+    }
+    if (weight.length > 0) {
+      data.weight = Number.parseFloat(weight)
     }
 
     // call on complete
@@ -110,6 +114,17 @@ export function BaseFlow({ onComplete }: Props) {
           />
           No score
         </label>
+      </div>
+
+      {/* weight */}
+      <div className="form-control">
+        <label>Weight</label>
+        <input
+          type="number"
+          name="weight"
+          value={weight}
+          onChange={e => setWeight(e.target.value)}
+        />
       </div>
 
       <button

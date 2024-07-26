@@ -226,5 +226,8 @@ function cacheHandler(req: Request, res: Response, next: NextFunction) {
 
 function logging(req: Request, res: Response, next: NextFunction) {
   console.info(`${req.method}: ${req.url}`)
+  if (Object.keys(req.body).length > 0) {
+    console.info(` > body:`, req.body)
+  }
   next()
 }

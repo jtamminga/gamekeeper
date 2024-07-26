@@ -53,6 +53,7 @@ export class Store {
 
     let game = games.get(dto.id)
     if (game) {
+      game.update(dto)
       return game
     }
 
