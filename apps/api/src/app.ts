@@ -14,7 +14,6 @@ import express, { NextFunction, Request, Response } from 'express'
 const app = express()
 app.use(express.json())
 app.use(cors())
-app.use(cacheHandler)
 app.use(logging)
 
 // create and extract services
@@ -219,10 +218,10 @@ function errorHandler(err: Error, req: Request, res: Response, next: NextFunctio
   next(err)
 }
 
-function cacheHandler(req: Request, res: Response, next: NextFunction) {
-  res.setHeader('Cache-Control', 'public, max-age=60')
-  next()
-}
+// function cacheHandler(req: Request, res: Response, next: NextFunction) {
+//   res.setHeader('Cache-Control', 'public, max-age=60')
+//   next()
+// }
 
 function logging(req: Request, res: Response, next: NextFunction) {
   console.info(`${req.method}: ${req.url}`)

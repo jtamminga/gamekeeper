@@ -1,0 +1,6 @@
+.game-weight {
+  border-radius: var(--border-radius);
+  background-color: red;
+  padding: 6px 9px;
+  margin-right: var(--space-md);
+}

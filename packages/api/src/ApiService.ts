@@ -1,7 +1,7 @@
-import { ApiClient } from './ApiClient'
+import type { IApiClient } from './IApiClient'
 
 export abstract class ApiService {
 
-  public constructor(protected readonly apiClient: ApiClient) { }
+  public constructor(protected readonly apiClient: IApiClient) { }
 
 }

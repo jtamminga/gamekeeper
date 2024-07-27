@@ -8,6 +8,9 @@
 .h-centered {
   justify-content: center;
 }
+.v-centered {
+  align-items: center;
+}
 
 .mb-0 {
   margin-bottom: 0;
@@ -30,4 +33,7 @@
 }
 .mt-lg {
   margin-top: var(--space-lg);
+}
+.grow {
+  flex-grow: 1;
 }

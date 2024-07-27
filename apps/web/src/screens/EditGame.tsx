@@ -54,6 +54,7 @@ export function EditGame({ gameId }: Props) {
 
       <button
         onClick={onUpdate}
+        type="button"
       >
         Update
       </button>

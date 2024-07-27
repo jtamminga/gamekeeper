@@ -1,4 +1,4 @@
-import { GameSummary, Link } from '@app/components'
+import { GameSummary, GameWeight, Link } from '@app/components'
 import { useGamekeeper, useView } from '@app/hooks'
 import { GameId, GameView } from '@gamekeeper/core'
 
@@ -16,9 +16,14 @@ export function GameDetails({ gameId }: Props) {
 
   return (
     <>
-      <h1>{game.name}</h1>
+      <div className="flex v-centered">
+        {game.weight !== undefined &&
+          <GameWeight weight={game.weight} />
+        }
+        <h1 className="grow">{game.name}</h1>
+        <Link page={{ name: 'EditGame', props: { gameId }}}>Edit</Link>
+      </div>
 
-      <Link page={{ name: 'EditGame', props: { gameId }}}>Edit</Link>
 
       {hydratedView &&
         <GameSummary

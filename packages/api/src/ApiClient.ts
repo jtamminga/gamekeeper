@@ -1,10 +1,15 @@
 import { ApiError } from './ApiError'
+import type { IApiClient } from './IApiClient'
 
 
 // consts
 const BASE_HEADERS = {
   'Content-Type': 'application/json',
 }
+const BASE_OPTIONS = {
+  referrerPolicy: 'no-referrer',
+  headers: BASE_HEADERS
+} as const
 
 
 // types
@@ -13,7 +18,7 @@ export type ApiResponse<T> = {
 }
 
 
-export class ApiClient {
+export class ApiClient implements IApiClient {
 
   public constructor(private baseUrl: string) { }
 
@@ -23,39 +28,35 @@ export class ApiClient {
       : path
 
     return this.handledFetch(fullPath, {
-      referrerPolicy: 'no-referrer',
+      ...BASE_OPTIONS,
       method: 'GET',
-      headers: BASE_HEADERS
     })
   }
 
   public async post<T>(path: string, data: any): Promise<T> {
     return this.handledFetch(path, {
-      referrerPolicy: 'no-referrer',
+      ...BASE_OPTIONS,
       method: 'POST',
-      headers: BASE_HEADERS,
       body: JSON.stringify(data)
     })
   }
 
   public async patch<T>(path: string, data: any): Promise<T> {
     return this.handledFetch(path, {
-      referrerPolicy: 'no-referrer',
+      ...BASE_OPTIONS,
       method: 'PATCH',
-      headers: BASE_HEADERS,
       body: JSON.stringify(data)
     })
   }
 
   public async delete(path: string): Promise<void> {
     return this.handledFetch(path, {
-      referrerPolicy: 'no-referrer',
+      ...BASE_OPTIONS,
       method: 'DELETE',
-      headers: BASE_HEADERS,
     })
   }
 
-  protected async handledFetch<T>(path: string, init?: RequestInit | undefined): Promise<T> {
+  private async handledFetch<T>(path: string, init?: RequestInit | undefined): Promise<T> {
     try {
       const response = await fetch(this.baseUrl + path, init)
 

@@ -4,6 +4,7 @@ import { ApiGameService } from './GameService'
 import { ApiPlayerService } from './PlayerService'
 import { ApiPlaythroughService } from './PlaythroughService'
 import { ApiStatsService } from './StatsService'
+import { ApiCachingClient } from './ApiCachingClient'
 
 
 export class ApiServices implements Services {
@@ -15,11 +16,12 @@ export class ApiServices implements Services {
 
   public constructor(baseUrl: string) {
     const apiClient = new ApiClient(baseUrl)
+    const cachingClient = new ApiCachingClient(apiClient)
 
-    this.gameService = new ApiGameService(apiClient)
-    this.playerService = new ApiPlayerService(apiClient)
-    this.playthroughService = new ApiPlaythroughService(apiClient)
-    this.statsService = new ApiStatsService(apiClient)
+    this.gameService = new ApiGameService(cachingClient)
+    this.playerService = new ApiPlayerService(cachingClient)
+    this.playthroughService = new ApiPlaythroughService(cachingClient)
+    this.statsService = new ApiStatsService(cachingClient)
   }
   
 }
