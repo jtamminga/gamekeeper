@@ -37,3 +37,13 @@
 .grow {
   flex-grow: 1;
 }
+
+.mr-sm {
+  margin-right: var(--space-sm);
+}
+.mr-md {
+  margin-right: var(--space-md);
+}
+.mr-lg {
+  margin-right: var(--space-lg);
+}

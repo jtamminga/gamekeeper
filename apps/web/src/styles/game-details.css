@@ -1,0 +1,15 @@
+.game-title-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.game-title-bar h1 {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.game-info-bar {
+  display: flex;
+  margin-bottom: var(--space-lg);
+}

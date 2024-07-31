@@ -38,6 +38,7 @@ a {
   font-weight: 500;
   color: var(--brand-primary);
   text-decoration: inherit;
+  cursor: pointer;
 }
 a:hover {
   filter: brightness(130%);

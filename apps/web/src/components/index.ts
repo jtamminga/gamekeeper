@@ -1,7 +1,6 @@
 export * from './DateSelect'
 export * from './GameSelect'
 export * from './GameSummary'
-export * from './GameWeight'
 export * from './Link'
 export * from './Loading'
 export * from './NumberInput'

@@ -1,6 +1,6 @@
-import { GameSummary, GameWeight, Link } from '@app/components'
+import { GameSummary, Link } from '@app/components'
 import { useGamekeeper, useView } from '@app/hooks'
-import { GameId, GameView } from '@gamekeeper/core'
+import { Game, GameId, GameView, VsGame } from '@gamekeeper/core'
 
 
 type Props = {
@@ -16,14 +16,17 @@ export function GameDetails({ gameId }: Props) {
 
   return (
     <>
-      <div className="flex v-centered">
-        {game.weight !== undefined &&
-          <GameWeight weight={game.weight} />
-        }
-        <h1 className="grow">{game.name}</h1>
+      <div className="game-title-bar">
+        <h1>{game.name}</h1>
         <Link page={{ name: 'EditGame', props: { gameId }}}>Edit</Link>
       </div>
 
+      <div className="game-info-bar">
+        {renderGameTypePill(game)}
+        {game.weight !== undefined &&
+          renderWeightPill(game.weight)
+        }
+      </div>
 
       {hydratedView &&
         <GameSummary
@@ -34,4 +37,23 @@ export function GameDetails({ gameId }: Props) {
     </>
   )
 
+}
+
+function renderGameTypePill(game: Game) {
+  return (
+    <div className="pill">
+      {game instanceof VsGame
+        ? 'VS'
+        : 'Coop'
+      }
+    </div>
+  )
+}
+
+function renderWeightPill(weight: number) {
+  return (
+    <div className="pill">
+      Weight: {weight} / 5
+    </div>
+  )
 }
