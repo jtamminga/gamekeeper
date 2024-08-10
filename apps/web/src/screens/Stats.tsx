@@ -1,4 +1,4 @@
-import { Loading, PlayerColor, PlaysByMonth, CalendarGraph, PlaythroughsList, StatCard } from '@app/components'
+import { CalendarGraph, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
 import { useView } from '@app/hooks'
 import { StatsView } from '@gamekeeper/core'
 
@@ -21,13 +21,21 @@ export function Stats() {
     latestWinner,
     latestNumPlaythorughs,
     latestPlaythroughs,
-    numPlaysPerDayThisYear
+    numPlaysPerDayThisYear,
+    avgPlaysPerDayThisYear,
+    mostPlaysInDayThisYear
   } = hydratedView
+
+  const curYear = new Date().getFullYear()
 
   return (
     <>
       <h1>Stats</h1>
-      <h2>{new Date().getFullYear()} stats</h2>
+
+      <div className="page-subtitle">
+        <h2>Overall</h2>
+        <h3>{curYear}</h3>
+      </div>
 
       <StatCard
         value={numPlaysThisYear}
@@ -48,8 +56,10 @@ export function Stats() {
         data={numPlaysByMonth}
       />
 
-      <h2 className="mb-0">Recent stats</h2>
-      <h3 className="mt-0 text-muted">for latest {latestNumPlaythorughs} games</h3>
+      <div className="page-subtitle">
+        <h2>Recent stats</h2>
+        <h3>latest {latestNumPlaythorughs} games</h3>
+      </div>
 
       <StatCard
         value={latestWinner.winrate}
@@ -66,7 +76,22 @@ export function Stats() {
         formattedPlaythroughs={latestPlaythroughs}
       />
 
-      <h2>Plays per day</h2>
+      <div className="page-subtitle">
+        <h2>Plays per day</h2>
+        <h3>{curYear}</h3>
+      </div>
+
+      <div className="mb-lg">
+        <StatCard
+          value={avgPlaysPerDayThisYear}
+          description="Average plays per day"
+        />
+
+        <StatCard
+          value={mostPlaysInDayThisYear}
+          description="Most plays in one day"
+        />
+      </div>
 
       <CalendarGraph
         countPerDay={numPlaysPerDayThisYear.plays}

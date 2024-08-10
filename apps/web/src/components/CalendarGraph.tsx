@@ -1,15 +1,20 @@
-// import { addDays } from 'date-fns'
+import { formatDate } from '@gamekeeper/core'
+import { addDays } from 'date-fns'
 
+
+// types
 type Props = {
   countPerDay: number[]
   firstDay: Date
 }
 
 
+// consts
 const daysInWeek = 7
 
 
-export function CalendarGraph({ countPerDay }: Props) {
+// component
+export function CalendarGraph({ countPerDay, firstDay }: Props) {
   const numColumns = Math.ceil(countPerDay.length / daysInWeek)
 
   const rows: JSX.Element[] = []
@@ -19,16 +24,20 @@ export function CalendarGraph({ countPerDay }: Props) {
     for (let i = 0; i < numColumns; i++) {
       const index = (i * daysInWeek) + y
       const count = countPerDay[index]
+      const date = addDays(firstDay, index)
+      // console.log(`index: ${index}, count: ${count}`, date)
 
       row.push(
         <td
+          key={`day-${index}`}
           className={classByCount(count)}
+          title={formatDate(date, true) + ` - plays: ${count}`}
         ></td>
       )
     }
 
     rows.push(
-      <tr>
+      <tr key={`row-${y}`}>
         {row}
       </tr>
     )
@@ -45,6 +54,8 @@ export function CalendarGraph({ countPerDay }: Props) {
   )
 }
 
+
+// helpers
 function classByCount(plays: number | undefined): string {
   if (plays === undefined) {
     return 'day-undefined'

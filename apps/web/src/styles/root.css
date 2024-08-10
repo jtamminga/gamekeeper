@@ -65,7 +65,16 @@ body {
 
 .bar-chart {
   margin-top: var(--space-lg);
-  margin-bottom: var(--space-lg);
+  /* margin-bottom: var(--space-lg); */
+}
+
+.page-subtitle {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+}
+.page-subtitle > h2 + h3 {
+  color: var(--color-gray)
 }
 
 @media (prefers-color-scheme: light) {

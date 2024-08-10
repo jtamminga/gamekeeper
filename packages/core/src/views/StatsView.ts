@@ -2,8 +2,9 @@ import { GameKeeper, StatsResult } from '@domains'
 import { FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
 import { addDays, differenceInDays, isBefore, isSameDay, startOfWeek } from 'date-fns'
 import { HydratableView } from './HydratableView'
-import { formatPercent } from './utils'
+import { formatNumber, formatPercent } from './utils'
 import { PlayerId, PlaysByDateDto } from '@services'
+import { ArrayUtils } from '@core'
 
 
 // types
@@ -34,6 +35,8 @@ export interface HydratedStatsView {
     plays: number[]
     firstDate: Date
   }
+  readonly avgPlaysPerDayThisYear: string
+  readonly mostPlaysInDayThisYear: number
 }
 
 
@@ -55,7 +58,7 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       overallWinratesThisYear,
       numUniqueGamesPlayedThisYear,
       overallWinratesLatest,
-      numPlaysPerDateThisYear,
+      numPlaysByDateThisYear,
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
       stats.numPlaythroughs({ year: year - 1 }),
@@ -97,8 +100,10 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       latestNumPlaythorughs: NUM_LATEST_PLAYTHROUGHTS,
       latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
       numPlaysPerDayThisYear: {
-        ...toNumPlaysPerDay(numPlaysPerDateThisYear, year)
-      }
+        ...toNumPlaysPerDay(numPlaysByDateThisYear, year)
+      },
+      avgPlaysPerDayThisYear: formatNumber(ArrayUtils.average(numPlaysByDateThisYear.map(i => i.plays))),
+      mostPlaysInDayThisYear: numPlaysByDateThisYear.reduce((most, cur) => cur.plays > most ? cur.plays : most, 0)
     }
   }
 
@@ -110,17 +115,21 @@ function totalPlays(grouped: StatsResult<number>): number {
   return Array.from(grouped.values()).reduce((sum, count) => sum + count)
 }
 
-function toNumPlaysPerDay(playsPerDate: PlaysByDateDto[], year: number): { plays: number[], firstDate: Date } {
+/**
+ * Converts plays by date to an array with each index representing a day
+ * @param playsByDate play count grouped by date
+ * @param year what year this is for
+ */
+function toNumPlaysPerDay(playsByDate: PlaysByDateDto[], year: number): { plays: number[], firstDate: Date } {
   let curDay = new Date(year, 0)
   const firstDate = startOfWeek(curDay)
-  curDay = firstDate
 
   let index = 0
   const today = Date.now()
   const result: number[] = []
   while(isBefore(curDay, today)) {
-    if (isSameDay(curDay, playsPerDate[index]?.date)) {
-      result.push(playsPerDate[index].plays)
+    if (isSameDay(curDay, playsByDate[index]?.date)) {
+      result.push(playsByDate[index].plays)
       index++
     } else {
       result.push(0)
