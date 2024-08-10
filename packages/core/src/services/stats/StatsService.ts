@@ -17,7 +17,7 @@ export type ScoreStatsDto = {
   lowScore: ScoreStatDto
   averageScore: number
 }
-
+export type PlaysByDateDto = { date: Date, plays: number }
 export type StatsResultData<TData> = Record<GameId, Readonly<TData>>
 
 
@@ -36,5 +36,7 @@ export interface StatsService {
   getNumUniqueGamesPlayed(year?: number): Promise<number>
 
   getScoreStats(query?: StatsQuery): Promise<StatsResultData<ScoreStatsDto | undefined>>
+
+  getNumPlaysByDate(query?: StatsQuery): Promise<PlaysByDateDto[]>
 
 }

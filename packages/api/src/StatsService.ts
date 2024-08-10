@@ -1,9 +1,13 @@
-import { GameId, StatsQuery, StatsResultData, StatsService, WinrateDto, Route, ScoreStatsDto } from '@gamekeeper/core'
+import { GameId, StatsQuery, StatsResultData, StatsService, WinrateDto, Route, ScoreStatsDto, PlaysByDateDto } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { toCleanQuery } from './utils'
 
 
 type ApiLastPlayedDto = StatsResultData<string | undefined>
+type ApiPlaysByDateDto = {
+  date: string
+  plays: number
+}
 
 
 // stats service
@@ -44,6 +48,14 @@ export class ApiStatsService extends ApiService implements StatsService {
   
   public async getScoreStats(query?: StatsQuery | undefined): Promise<StatsResultData<ScoreStatsDto | undefined>> {
     return await this.apiClient.get(Route.STATS.SCORE_STATS, toCleanQuery(query))
+  }
+
+  public async getNumPlaysByDate(query?: StatsQuery): Promise<PlaysByDateDto[]> {
+    const result = await this.apiClient.get<ApiPlaysByDateDto[]>(Route.STATS.NUM_PLAYS_BY_DATE, toCleanQuery(query))
+    return result.map(item => ({
+      date: new Date(item.date),
+      plays: item.plays
+    }))
   }
 
 }

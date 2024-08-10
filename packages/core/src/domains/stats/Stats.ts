@@ -1,13 +1,13 @@
 import { GameStats } from './GameStats'
 import type { Game } from '../game'
-import type { GameId, StatsQuery as ServiceStatsQuery, StatsQuery } from '@services'
+import type { GameId, PlaysByDateDto, StatsQuery } from '@services'
 import type { GameKeeperDeps } from '@core'
 import { Winrates } from './Winrates'
 
 
 
 // types
-export type DomainStatsQuery = Omit<ServiceStatsQuery, 'gameId'>
+export type OverallStatsQuery = Omit<StatsQuery, 'gameId'>
 export type StatsResult<TData> = Map<Game, TData>
 
 
@@ -17,12 +17,12 @@ export class Stats {
 
   public forGame(
     game: Game,
-    query?: DomainStatsQuery
+    query?: OverallStatsQuery
   ): GameStats {
     return new GameStats(this._deps, game, query)
   }
 
-  public async numPlaythroughs(query: DomainStatsQuery): Promise<StatsResult<number>> {
+  public async numPlaythroughs(query: OverallStatsQuery): Promise<StatsResult<number>> {
     const result = await this._deps.services.statsService.getNumPlays(query)
 
     const map = new Map<Game, number>()
@@ -34,7 +34,7 @@ export class Stats {
     return map
   }
 
-  public async lastPlayed(query: DomainStatsQuery): Promise<StatsResult<Date | undefined>> {
+  public async lastPlayed(query: OverallStatsQuery): Promise<StatsResult<Date | undefined>> {
     const result = await this._deps.services.statsService.getLastPlayed(query)
 
     const map = new Map<Game, Date | undefined>()
@@ -46,7 +46,7 @@ export class Stats {
     return map
   }
 
-  public async winrates(query: DomainStatsQuery): Promise<StatsResult<Winrates>> {
+  public async winrates(query: OverallStatsQuery): Promise<StatsResult<Winrates>> {
     const result = await this._deps.services.statsService.getWinrates(query)
 
     const map = new Map<Game, Winrates>()
@@ -58,17 +58,21 @@ export class Stats {
     return map
   }
 
-  public async overallWinrates(query?: StatsQuery): Promise<Winrates> {
+  public async overallWinrates(query?: OverallStatsQuery): Promise<Winrates> {
     const result = await this._deps.services.statsService.getOverallWinrates(query)
     return Winrates.from(result, this._deps)
   }
 
-  public async playsByMonth(query: DomainStatsQuery): Promise<number[]> {
+  public async playsByMonth(query: OverallStatsQuery): Promise<number[]> {
     return this._deps.services.statsService.getNumPlaysByMonth(query)
   }
 
   public async uniqueGamesPlayed(year?: number): Promise<number> {
     return this._deps.services.statsService.getNumUniqueGamesPlayed(year)
+  }
+
+  public async numPlaysByDate(query?: OverallStatsQuery): Promise<PlaysByDateDto[]> {
+    return this._deps.services.statsService.getNumPlaysByDate(query)
   }
 
 }

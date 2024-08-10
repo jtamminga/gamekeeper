@@ -9,6 +9,7 @@ type GameWithStats = {
   name: string
   type: GameType
   numPlays: number
+  weight: number | undefined
   lastPlayed: Date | undefined
   lastPlayedFormatted: string | undefined
 }
@@ -16,6 +17,7 @@ export type GameSortBy =
   | 'name'
   | 'numPlays'
   | 'lastPlayed'
+  | 'weight'
 export type GameSortOrder = 'asc' | 'desc'
 export type GetGamesOptions = {
   sortBy?: GameSortBy
@@ -47,6 +49,7 @@ export class GamesView implements HydratableView<HydratedGamesView> {
         id: game.id,
         name: game.name,
         type: game instanceof VsGame ? GameType.VS : GameType.COOP,
+        weight: game.weight,
         numPlays: numPlays.get(game) ?? 0,
         lastPlayed: lastPlayedDate,
         lastPlayedFormatted: lastPlayedDate ? formatDate(lastPlayedDate, true) : undefined
@@ -72,6 +75,8 @@ function getSortableValue(game: GameWithStats, sortBy: GameSortBy): string | num
       return game.lastPlayed?.getTime() ?? 0
     case 'numPlays':
       return game.numPlays
+    case 'weight':
+      return game.weight ?? 0
   }
 }
 function gamesComparer({ sortBy, order }: Required<GetGamesOptions>): (a: GameWithStats, b: GameWithStats) => number {

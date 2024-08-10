@@ -1,0 +1,20 @@
+/* override table styles */
+table.calendar-graph {
+  width: auto;
+}
+
+.calendar-graph td {
+  width: 10px;
+  padding: 0;
+  border-width: 0;
+}
+.calendar-graph tr {
+  height: 10px;
+}
+
+.calendar-graph td.day-one {
+  background-color: rgb(0, 65, 0);
+}
+.calendar-graph td.day-many {
+  background-color: green;
+}

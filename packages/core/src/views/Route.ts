@@ -15,7 +15,8 @@ export namespace Route {
     LAST_PLAYTHROUGHS: `${_stats}/last-plays`,
     PLAYS_BY_MONTH: `${_stats}/plays-by-month`,
     NUM_UNIQUE_GAMES_PLAYED: `${_stats}/num-unique-games-played`,
-    SCORE_STATS: `${_stats}/score-stats`
+    SCORE_STATS: `${_stats}/score-stats`,
+    NUM_PLAYS_BY_DATE: `${_stats}/num-plays-by-date`
   } as const
 
   export function forGame(id: GameId) {

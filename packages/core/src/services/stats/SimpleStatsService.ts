@@ -1,8 +1,8 @@
 import type { PlayerId } from '../player'
 import { GameType, type GameId } from '../game'
 import type { PlaythroughDto, PlaythroughQueryOptions, PlaythroughService, ScoreDto } from '../playthrough'
-import type { ScoreStatDto, ScoreStatsDto, StatsQuery, StatsResultData, StatsService, WinrateDto } from './StatsService'
-import { endOfYear } from 'date-fns'
+import type { PlaysByDateDto, ScoreStatsDto, StatsQuery, StatsResultData, StatsService, WinrateDto } from './StatsService'
+import { endOfYear, isSameDay } from 'date-fns'
 import { ArrayUtils } from '@core'
 
 
@@ -65,6 +65,26 @@ export class SimpleStatsService implements StatsService {
     const playthroughs = await this.getPlaythroughs(query)
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, this.calculateScoreStats)
+  }
+
+  public async getNumPlaysByDate(query: StatsQuery = {}): Promise<PlaysByDateDto[]> {
+    // by default playthroughs are ordered by played_on date desc
+    const playthroughs = [...await this.getPlaythroughs(query)].reverse()
+    const result: PlaysByDateDto[] = []
+    let preDate = playthroughs[0]?.playedOn
+    let plays = 0
+    // looping for n+1 times on purpose
+    // this way we "flush" the last one onto result
+    for (let i = 0; i <= playthroughs.length; i++) {
+      if (isSameDay(preDate, playthroughs[i]?.playedOn)) {
+        plays++
+      } else {
+        result.push({ date: preDate, plays })
+        preDate = playthroughs[i]?.playedOn
+        plays = 1
+      }
+    }
+    return result
   }
 
 

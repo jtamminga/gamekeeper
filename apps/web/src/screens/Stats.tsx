@@ -1,4 +1,4 @@
-import { Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
+import { Loading, PlayerColor, PlaysByMonth, CalendarGraph, PlaythroughsList, StatCard } from '@app/components'
 import { useView } from '@app/hooks'
 import { StatsView } from '@gamekeeper/core'
 
@@ -21,6 +21,7 @@ export function Stats() {
     latestWinner,
     latestNumPlaythorughs,
     latestPlaythroughs,
+    numPlaysPerDayThisYear
   } = hydratedView
 
   return (
@@ -63,6 +64,13 @@ export function Stats() {
       <PlaythroughsList
         className="mt-lg"
         formattedPlaythroughs={latestPlaythroughs}
+      />
+
+      <h2>Plays per day</h2>
+
+      <CalendarGraph
+        countPerDay={numPlaysPerDayThisYear.plays}
+        firstDay={numPlaysPerDayThisYear.firstDate}
       />
     </>
   )

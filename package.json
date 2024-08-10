@@ -9,6 +9,7 @@
   ],
   "packageManager": "yarn@4.0.2",
   "scripts": {
+    "build:core": "yarn workspace @gamekeeper/core build",
     "build:packages": "yarn workspaces foreach -Rpt --from 'packages/*' run build",
     "build:all": "yarn workspaces foreach -Rpt --from 'apps/*' run build",
     "build:api": "yarn workspaces foreach -Rpt --from 'apps/api' run build",

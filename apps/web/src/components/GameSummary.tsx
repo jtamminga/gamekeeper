@@ -6,7 +6,7 @@ import { useRouter } from '@app/hooks'
 import type { FormattedScoreStats, HydratedGameView } from '@gamekeeper/core'
 
 
-export type Props = {
+type Props = {
   view: HydratedGameView
 }
 

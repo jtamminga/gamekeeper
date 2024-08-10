@@ -18,6 +18,8 @@ const sortByOptions: SortByOptionRecord = {
   'plays_dec': { label: 'Plays (most first)', sortBy: 'numPlays', order: 'desc' },
   'played_asc': { label: 'Last Played (oldest first)', sortBy: 'lastPlayed', order: 'asc' },
   'played_desc': { label: 'Last Played (recent first)', sortBy: 'lastPlayed', order: 'desc' },
+  'weight_asc': { label: 'Weight (Light first)', sortBy: 'weight', order: 'asc' },
+  'weight_desc': { label: 'Weight (Heavy first)', sortBy: 'weight', order: 'desc' }
 }
 
 
@@ -29,6 +31,7 @@ export function Games() {
   const { toGame } = useRouter()
   const { hydratedView } = useView(() => new GamesView())
   const gameOptions = sortByOptions[sortBy]
+  const showWeight = gameOptions.sortBy === 'weight'
 
   // render loading while waiting
   if (!hydratedView) {
@@ -60,7 +63,7 @@ export function Games() {
         <thead>
           <tr>
             <th>Name</th>
-            <th className="num">Plays</th>
+            <th className="num">{ showWeight ? 'Weight' : 'Plays' }</th>
             <th className="num">Last Played</th>
           </tr>
         </thead>
@@ -68,7 +71,7 @@ export function Games() {
           {hydratedView.all(gameOptions).map(game =>
             <tr key={game.id} onClick={() => toGame(game.id)}>
               <td>{game.name}</td>
-              <td className="num">{game.numPlays}</td>
+              <td className="num">{ showWeight ? (game.weight ?? "-") : game.numPlays}</td>
               <td className="num">{game.lastPlayedFormatted ?? <span>never played</span>}</td>
             </tr>
           )}
