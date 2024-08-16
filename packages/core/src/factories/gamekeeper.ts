@@ -1,25 +1,10 @@
 import { GameKeeper, Store } from '@domains'
-import { ConsoleLogger, StatsService, type Services, SimpleStatsService } from '@services'
-
-
-// types
-// export type ExternalServices = Omit<Services, 'statsService'> & {
-//   statsService?: StatsService
-// }
+import { ConsoleLogger, type Services } from '@services'
 
 
 // factory
 export namespace GameKeeperFactory {
   export function create(services: Services) {
-
-    // external services
-    // use simple stats service if no other is specified
-    // const services: Services = {
-    //   ...externalServices,
-    //   statsService: externalServices.statsService
-    //     ? externalServices.statsService
-    //     : new SimpleStatsService(externalServices.playthroughService)
-    // }
 
     // create other dependencies
     const logger = new ConsoleLogger(process.env.NODE_ENV === 'production')

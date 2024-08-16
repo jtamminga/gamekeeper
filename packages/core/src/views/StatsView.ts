@@ -121,8 +121,8 @@ function totalPlays(grouped: StatsResult<number>): number {
  * @param year what year this is for
  */
 function toNumPlaysPerDay(playsByDate: PlaysByDateDto[], year: number): { plays: number[], firstDate: Date } {
-  let curDay = new Date(year, 0)
-  const firstDate = startOfWeek(curDay)
+  const firstDate = startOfWeek(new Date(year, 0))
+  let curDay = firstDate
 
   let index = 0
   const today = Date.now()

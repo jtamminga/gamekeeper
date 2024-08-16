@@ -3,7 +3,7 @@ import { useGamekeeper } from '../hooks'
 
 
 type Props = {
-  playerIds: PlayerId[]
+  playerIds: ReadonlyArray<PlayerId>
   onChange: (ids: PlayerId[]) => void
 }
 

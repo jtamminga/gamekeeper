@@ -1,11 +1,11 @@
 import {
   GameId,
   PlaythroughService,
-  SimpleStatsService,
   StatsQuery,
   StatsResultData
 } from '@gamekeeper/core'
 import { DataService } from './DataService'
+import { SimpleStatsService } from './SimpleStatsService'
 
 
 // types

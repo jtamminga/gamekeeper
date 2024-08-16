@@ -30,7 +30,7 @@ export function Stats() {
 
   return (
     <>
-      <h1>Stats</h1>
+      <h1 className="mt-0 mb-0">Stats</h1>
 
       <div className="page-subtitle">
         <h2>Overall</h2>

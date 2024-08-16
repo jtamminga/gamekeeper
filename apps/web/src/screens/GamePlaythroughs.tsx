@@ -1,4 +1,4 @@
-import { PlaythroughsList } from '@app/components'
+import { Link, PlaythroughsList } from '@app/components'
 import { useGamekeeper, useView } from '@app/hooks'
 import { AllPlaythroughsView, GameId } from '@gamekeeper/core'
 
@@ -16,10 +16,12 @@ export function GamePlaythroughs({ gameId }: Props) {
 
   return (
     <>
-      <h1>All Playthroughs</h1>
+      <div className="game-title-bar">
+        <h1>{game.name}</h1>
+        <Link page={{ name: 'GameDetails', props: { gameId }}}>Back</Link>
+      </div>
 
-      <h2>{game.name}</h2>
-
+      <h3>All Playthroughs</h3>
       {hydratedView &&
         <PlaythroughsList
           formattedPlaythroughs={hydratedView.playthroughs}

@@ -29,6 +29,7 @@ export function GameSummary({ view }: Props) {
             
       <h3>Lastest playthroughs</h3>
       <PlaythroughsList
+        className="mb-lg"
         formattedPlaythroughs={view.latestPlaythroughs}
       />
 
