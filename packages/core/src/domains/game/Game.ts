@@ -62,9 +62,10 @@ export abstract class Game<T extends Playthrough = Playthrough>
       .sort(Playthroughs.sortLastPlayedFirst) as T[]
   }
 
-  public update(data: Omit<UpdatedGameData, 'id'>): void {
+  public async update(data: Omit<UpdatedGameData, 'id'>): Promise<void> {
     this._name = data.name ?? this._name
     this._weight = data.weight ?? this._weight
+    await this._deps.services.gameService.updateGame(this)
   }
 
   public abstract toData(): GameData

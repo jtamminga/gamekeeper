@@ -30,11 +30,6 @@ export class Games {
     return this._deps.store.bindGame(dto)
   }
 
-  public async update(data: UpdatedGameData): Promise<Game> {
-    const dto = await this._deps.services.gameService.updateGame(data)
-    return this._deps.store.bindGame(dto)
-  }
-
   public toData(): ReadonlyArray<GameData> {
     return this.all().map(game => game.toData())
   }

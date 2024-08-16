@@ -18,8 +18,7 @@ export function EditGame({ gameId }: Props) {
   const router = useRouter()
 
   async function onUpdate() {
-    await gamekeeper.games.update({
-      id: gameId,
+    await game.update({
       name,
       weight: weight === undefined
         ? undefined
