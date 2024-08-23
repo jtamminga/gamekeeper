@@ -46,11 +46,13 @@ export function CalendarGraph({ countPerDay, firstDay }: Props) {
   }
 
   return (
-    <table className="calendar-graph">
-      <tbody>
-        {rows}
-      </tbody>
-    </table>
+    <div className="calendar-graph-container">
+      <table className="calendar-graph">
+        <tbody>
+          {rows}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

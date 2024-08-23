@@ -1,6 +1,7 @@
 .game-title-bar {
   display: flex;
   align-items: center;
+  margin-top: var(--space-lg);
   margin-bottom: var(--space-md);
 }
 

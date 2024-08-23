@@ -1,6 +1,12 @@
+.calendar-graph-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+
 /* override table styles */
 table.calendar-graph {
-  width: auto;
+  width: max-content;
   border-spacing: 2px;
   border-collapse: separate;
 }

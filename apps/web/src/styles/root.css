@@ -1,5 +1,4 @@
 :root {
-
   --space-sm: 5px;
   --space-md: 10px;
   --space-lg: 30px;
@@ -26,10 +25,17 @@
 
 #root {
   max-width: 400px;
+  min-width: 320px;
   margin: 0 auto;
   padding: 2rem;
-  padding-top: 80px;
-  width: 100%;
+  padding-top: 54px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-size: 16px;
 }
 
 /* global elements */
@@ -47,14 +53,7 @@ a.active {
   text-decoration: underline;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-  font-size: 16px;
-}
+
 
 .player-score-inputs {
   margin-bottom: var(--space-sm);

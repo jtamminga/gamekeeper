@@ -41,7 +41,7 @@ export function Games() {
   // render games
   return (
     <>
-      <div className="flex space-between">
+      <div className="flex space-between mt-lg">
         <div className="form-control">
           <label>Order by</label>
           <select

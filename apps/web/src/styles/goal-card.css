@@ -1,0 +1,42 @@
+.goal-card {
+  background-color: var(--dark-gray-accent);
+
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  border-radius: var(--border-radius);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.goal-card .goal-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.goal-card .progress-bar-container {
+  position: relative;
+}
+
+.goal-card .progress-bar-container .progress-bar {
+  background-color: var(--dark-gray);
+  height: 10px;
+  border-radius: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.goal-card .progress-bar-container .progress-bar .inner-bar {
+  background-color: var(--brand-primary);
+  position: absolute;
+  height: 10px;
+}
+
+.goal-card .progress-bar-container .expected {
+  height: 14px;
+  width: 2px;
+  background-color: lightgray;
+  position: absolute;
+  top: -2px;
+}

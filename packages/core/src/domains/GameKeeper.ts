@@ -1,4 +1,5 @@
 import { Games } from './game'
+import { Goals } from './goal'
 import { Players } from './player'
 import { Playthroughs } from './playthrough'
 import { Stats } from './stats'
@@ -13,18 +14,21 @@ export class GameKeeper {
   public readonly players: Players
   public readonly playthroughs: Playthroughs
   public readonly stats: Stats
+  public readonly goals: Goals
 
   public constructor(deps: GameKeeperDeps) {
     this.games = new Games(deps)
     this.players = new Players(deps)
     this.playthroughs = new Playthroughs(deps)
     this.stats = new Stats(deps)
+    this.goals = new Goals(deps)
   }
 
   public async hydrate(options?: PlaythroughQueryOptions): Promise<void> {
     const hydrations: Promise<any>[] = [
       this.players.hydrate(),
-      this.games.hydrate()
+      this.games.hydrate(),
+      this.goals.hydrate()
     ]
 
     if (options) {

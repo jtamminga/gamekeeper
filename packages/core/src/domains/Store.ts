@@ -1,7 +1,10 @@
 import { GameKeeperDeps, NotFoundError } from '@core'
-import { Game, Player, Playthrough } from '@domains'
 import { GameFactory, PlayerFactory, PlaythroughFactory } from '@factories'
-import { GameDto, GameId, Logger, PlayerDto, PlayerId, PlaythroughDto, PlaythroughId, Services } from '@services'
+import { GameDto, GameId, GoalId, Logger, PlayerDto, PlayerId, PlaythroughDto, PlaythroughId, Services } from '@services'
+import { Game } from './game'
+import { Playthrough } from './playthrough'
+import { Player } from './player'
+import { Goal } from './goal'
 
 
 // type
@@ -9,6 +12,7 @@ type Records = {
   games: Map<GameId, Game>
   playthroughs: Map<PlaythroughId, Playthrough>
   players: Map<PlayerId, Player>
+  goals: Map<GoalId, Goal>
 }
 
 
@@ -24,7 +28,8 @@ export class Store {
     this._data = {
       games: new Map(),
       playthroughs: new Map(),
-      players: new Map()
+      players: new Map(),
+      goals: new Map()
     }
   }
 
@@ -38,6 +43,10 @@ export class Store {
 
   public get playthroughs(): ReadonlyArray<Playthrough> {
     return Array.from(this._data.playthroughs, ([_, playthrough]) => playthrough)
+  }
+
+  public get goals(): ReadonlyArray<Goal> {
+    return Array.from(this._data.goals, ([_, goal]) => goal)
   }
 
   private get deps(): GameKeeperDeps {

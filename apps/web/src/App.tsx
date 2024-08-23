@@ -23,13 +23,13 @@ export default function App() {
 
   // render
   return (
-    <div className="App">
+    <>
       <RouterContainer>
         {hydrated
           ? <Layout />
           : <Loading />
         }
       </RouterContainer>
-    </div>
+    </>
   )
 }

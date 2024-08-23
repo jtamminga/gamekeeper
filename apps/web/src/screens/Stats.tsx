@@ -1,4 +1,5 @@
-import { CalendarGraph, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
+import { gamekeeper } from '@app/bootstrap'
+import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
 import { useView } from '@app/hooks'
 import { StatsView } from '@gamekeeper/core'
 
@@ -30,7 +31,10 @@ export function Stats() {
 
   return (
     <>
-      <h1 className="mt-0 mb-0">Stats</h1>
+      <div className="page-subtitle">
+        <h2>Goals</h2>
+      </div>
+      <Goal goal={gamekeeper.goals.topPriority} />
 
       <div className="page-subtitle">
         <h2>Overall</h2>
