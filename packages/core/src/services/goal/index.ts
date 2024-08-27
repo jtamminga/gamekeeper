@@ -1,1 +1,1 @@
-export * from './GoalDto'
+export * from './GoalData'

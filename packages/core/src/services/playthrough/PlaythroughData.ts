@@ -6,6 +6,7 @@ import type { ScoreData } from './ScoreData'
 
 export type PlaythroughId = Opaque<string, 'PlaythroughId'>
 
+
 // base types
 export interface BasePlaythroughData {
   id: PlaythroughId
@@ -15,29 +16,24 @@ export interface BasePlaythroughData {
 }
 export type NewBasePlaythroughData = NewData<BasePlaythroughData>
 
+
 // vs types
 export interface VsPlaythroughData extends BasePlaythroughData {
+  type: 'vs'
   winnerId: PlayerId | null
   scores?: ReadonlyArray<ScoreData>
 }
 export type NewVsPlaythroughData = NewData<VsPlaythroughData>
-export namespace VsPlaythroughData {
-  export function guard(data: BasePlaythroughData): data is VsPlaythroughData {
-    return Object.hasOwn(data, 'winnerId')
-  }
-}
+
 
 // coop types
 export interface CoopPlaythroughData extends BasePlaythroughData {
+  type: 'coop'
   playersWon: boolean
   score?: number
 }
 export type NewCoopPlaythroughData = NewData<CoopPlaythroughData>
-export namespace CoopPlaythroughData {
-  export function guard(data: BasePlaythroughData): data is CoopPlaythroughData {
-    return Object.hasOwn(data, 'playersWon')
-  }
-}
+
 
 // types
 export type NewPlaythroughData =
@@ -47,3 +43,16 @@ export type NewPlaythroughData =
 export type PlaythroughData =
   | VsPlaythroughData
   | CoopPlaythroughData
+
+
+// guards
+export namespace VsPlaythroughData {
+  export function guard(data: PlaythroughData): data is VsPlaythroughData {
+    return data.type === 'vs'
+  }
+}
+export namespace CoopPlaythroughData {
+  export function guard(data: PlaythroughData): data is CoopPlaythroughData {
+    return data.type === 'coop'
+  }
+}

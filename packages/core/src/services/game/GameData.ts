@@ -1,4 +1,5 @@
-import { Opaque } from '@core'
+import type { NewData, Opaque } from '@core'
+
 
 export type GameId = Opaque<string, 'GameId'>
 
@@ -13,10 +14,18 @@ export enum ScoringType {
   NO_SCORE = 3
 }
 
-export interface GameDto {
+export interface GameData {
   id: GameId
   name: string
-  type: GameType
   scoring: ScoringType
+  type: GameType
+  weight?: number
+}
+
+export type NewGameData = NewData<GameData>
+
+export type UpdatedGameData = {
+  id: GameId
+  name?: string
   weight?: number
 }

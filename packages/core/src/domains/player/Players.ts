@@ -1,6 +1,6 @@
 import type { GameKeeperDeps } from '@core'
-import type { NewPlayerData, Player, PlayerData } from './Player'
-import type { PlayerId } from '@services'
+import type { Player } from './Player'
+import type { NewPlayerData, PlayerData, PlayerId } from '@services'
 
 
 // class

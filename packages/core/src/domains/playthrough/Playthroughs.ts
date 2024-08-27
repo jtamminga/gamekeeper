@@ -56,6 +56,7 @@ export class Playthroughs {
 
   /**
    * sort playthroughs from latest first to earliest last
+   * FIXME: feels kinda weird, this is used in games, but why?
    */
   public static sortLastPlayedFirst(a: Playthrough, b: Playthrough): number {
     return b.playedOn.getTime() - a.playedOn.getTime()

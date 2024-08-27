@@ -1,6 +1,6 @@
 import { GameKeeperDeps, NotFoundError } from '@core'
 import { GameFactory, PlayerFactory, PlaythroughFactory } from '@factories'
-import { GameDto, GameId, GoalId, Logger, PlayerDto, PlayerId, PlaythroughData, PlaythroughId, Services } from '@services'
+import { GameData, GameId, GoalId, Logger, PlayerData, PlayerId, PlaythroughData, PlaythroughId, Services } from '@services'
 import { Game } from './game'
 import { Playthrough } from './playthrough'
 import { Player } from './player'
@@ -57,7 +57,7 @@ export class Store {
     }
   }
 
-  public bindGame(dto: GameDto): Game {
+  public bindGame(dto: GameData): Game {
     const { games } = this._data
 
     let game = games.get(dto.id)
@@ -70,25 +70,25 @@ export class Store {
     return game
   }
 
-  public bindGames(dtos: ReadonlyArray<GameDto>): void {
-    dtos.forEach(dto => this.bindGame(dto))
+  public bindGames(data: ReadonlyArray<GameData>): void {
+    data.forEach(dto => this.bindGame(dto))
   }
 
-  public bindPlayer(dto: PlayerDto): Player {
+  public bindPlayer(data: PlayerData): Player {
     const { players } = this._data
 
-    let player = players.get(dto.id)
+    let player = players.get(data.id)
     if (player) {
       return player
     }
 
-    player = PlayerFactory.create(dto)
-    players.set(dto.id, player)
+    player = PlayerFactory.create(data)
+    players.set(data.id, player)
     return player
   }
 
-  public bindPlayers(dtos: ReadonlyArray<PlayerDto>): void {
-    dtos.forEach(dto => this.bindPlayer(dto))
+  public bindPlayers(data: ReadonlyArray<PlayerData>): void {
+    data.forEach(dto => this.bindPlayer(dto))
   }
 
   public bindPlaythrough(data: PlaythroughData): Playthrough {
@@ -104,8 +104,8 @@ export class Store {
     return playthrough
   }
 
-  public bindPlaythroughs(dtos: ReadonlyArray<PlaythroughData>): void {
-    dtos.forEach(dto => this.bindPlaythrough(dto))
+  public bindPlaythroughs(data: ReadonlyArray<PlaythroughData>): void {
+    data.forEach(dto => this.bindPlaythrough(dto))
   }
 
   public getGame(id: GameId): Game {

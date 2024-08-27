@@ -1,5 +1,5 @@
-import { Game, type GameData } from './Game'
-import { GameType, type VsPlaythroughData } from '@services'
+import { Game } from './Game'
+import { GameData, GameType, type VsPlaythroughData } from '@services'
 import type { VsPlaythrough } from '../playthrough'
 
 

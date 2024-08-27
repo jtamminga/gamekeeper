@@ -1,23 +1,7 @@
-import { GameKeeperDeps, NewData, Serializable } from '@core'
+import type { GameKeeperDeps, Serializable } from '@core'
 import { Playthrough, Playthroughs } from '../playthrough'
 import { Entity } from '../Entity'
-import { GameId, GameType, ScoringType } from '@services'
-
-
-// types
-export interface GameData {
-  id: GameId
-  name: string
-  scoring: ScoringType
-  type: GameType
-  weight?: number
-}
-export type NewGameData = NewData<GameData>
-export type UpdatedGameData = {
-  id: GameId
-  name?: string
-  weight?: number
-}
+import { GameData, GameId, ScoringType, UpdatedGameData } from '@services'
 
 
 // class

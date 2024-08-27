@@ -3,7 +3,6 @@ import type { PlayerId, ScoreData } from '@services'
 import { ScoringType } from '@services'
 
 
-
 // class
 export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
 

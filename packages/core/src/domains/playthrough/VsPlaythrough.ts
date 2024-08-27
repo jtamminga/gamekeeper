@@ -1,9 +1,9 @@
+import { Playthrough } from './Playthrough'
+import { VsPlaythroughScores } from './VsPlaythroughScores'
 import type { GameKeeperDeps } from '@core'
 import type { PlayerId, VsPlaythroughData } from '@services'
+import type { Player } from '../player'
 import type { VsGame } from '../game'
-import { Playthrough } from './Playthrough'
-import { Player } from '../player'
-import { VsPlaythroughScores } from './VsPlaythroughScores'
 
 
 // class
@@ -35,6 +35,7 @@ export class VsPlaythrough extends Playthrough {
   public override toData(): VsPlaythroughData {
     const data: VsPlaythroughData = {
       ...super.toData(),
+      type: 'vs',
       winnerId: this.winnerId
     }
     if (!this.scores.empty) {

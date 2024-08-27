@@ -1,8 +1,9 @@
 import { Player } from '@domains'
-import { PlayerDto } from '@services'
+import type { PlayerData } from '@services'
+
 
 export namespace PlayerFactory {
-  export function create(dto: PlayerDto): Player {
-    return new Player(dto)
+  export function create(data: PlayerData): Player {
+    return new Player(data)
   }
 }

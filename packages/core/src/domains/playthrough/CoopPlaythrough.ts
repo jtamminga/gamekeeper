@@ -23,6 +23,7 @@ export class CoopPlaythrough extends Playthrough {
   public override toData(): CoopPlaythroughData {
     const data: CoopPlaythroughData = {
       ...super.toData(),
+      type: 'coop',
       playersWon: this.playersWon
     }
     if (this.score) {

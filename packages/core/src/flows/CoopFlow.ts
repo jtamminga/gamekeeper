@@ -29,6 +29,7 @@ export class CoopFlow extends PlaythroughFlow<CoopGame> {
 
     return {
       ...this.data,
+      type: 'coop',
       playersWon: this.playersWon,
       score: this.score
     }

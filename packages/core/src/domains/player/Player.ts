@@ -1,14 +1,6 @@
 import { Entity } from '../Entity'
-import type { PlayerId } from '@services'
-import type { NewData, Serializable } from  '@core'
-
-
-// type
-export interface PlayerData {
-  id: PlayerId
-  name: string
-}
-export type NewPlayerData = NewData<PlayerData>
+import type { PlayerData, PlayerId } from '@services'
+import type { Serializable } from  '@core'
 
 
 // class

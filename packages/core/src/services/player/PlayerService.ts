@@ -1,11 +1,10 @@
-import type { NewPlayerData } from '@domains'
-import type { PlayerDto } from './PlayerDto'
+import type { NewPlayerData, PlayerData } from './PlayerData'
 
 
 export interface PlayerService {
 
-  addPlayer(player: NewPlayerData): Promise<PlayerDto>
+  addPlayer(player: NewPlayerData): Promise<PlayerData>
 
-  getPlayers(): Promise<readonly PlayerDto[]>
+  getPlayers(): Promise<readonly PlayerData[]>
   
 }

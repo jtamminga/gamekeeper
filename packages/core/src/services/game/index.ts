@@ -1,2 +1,2 @@
-export * from './GameDto'
+export * from './GameData'
 export * from './GameService'

@@ -1,4 +1,4 @@
-import { GameId } from '@services'
+import type { GameId } from '@services'
 import { Goal } from './Goal'
 
 

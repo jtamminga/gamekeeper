@@ -61,6 +61,7 @@ export class VsFlow extends PlaythroughFlow<VsGame> {
 
     return {
       gameId,
+      type: 'vs',
       playedOn,
       playerIds,
       winnerId: this.winnerId,
