@@ -1,5 +1,5 @@
-import { type PlayerId, ScoringType } from '@services'
-import type { NewVsPlaythroughData, Player, Scores, VsGame } from '@domains'
+import { NewVsPlaythroughData, type PlayerId, ScoringType } from '@services'
+import type { Player, Scores, VsGame } from '@domains'
 import { PlaythroughFlow } from './PlaythroughFlow'
 
 

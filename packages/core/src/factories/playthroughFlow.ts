@@ -1,6 +1,7 @@
 import { GameKeeperDeps } from '@core'
-import { CoopGame, NewBasePlaythroughData, VsGame } from '@domains'
+import { CoopGame, VsGame } from '@domains'
 import { CoopFlow, type PlaythroughFlow, VsFlow } from '@flows'
+import { NewBasePlaythroughData } from '@services'
 
 
 export namespace PlaythroughFlowFactory {

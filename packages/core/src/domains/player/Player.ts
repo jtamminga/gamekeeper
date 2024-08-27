@@ -1,6 +1,6 @@
-import { type NewData, Entity } from '../Entity'
+import { Entity } from '../Entity'
 import type { PlayerId } from '@services'
-import type { Serializable } from  '@core'
+import type { NewData, Serializable } from  '@core'
 
 
 // type

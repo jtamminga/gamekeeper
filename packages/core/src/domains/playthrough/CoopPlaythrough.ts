@@ -1,20 +1,7 @@
-import { GameKeeperDeps } from '@core'
-import { CoopGame } from '../game'
-import { Playthrough, BasePlaythroughData } from './Playthrough'
-import { NewData } from '@domains'
-
-
-// types
-export interface CoopPlaythroughData extends BasePlaythroughData {
-  playersWon: boolean
-  score?: number
-}
-export type NewCoopPlaythroughData = NewData<CoopPlaythroughData>
-export namespace CoopPlaythroughData {
-  export function guard(data: BasePlaythroughData): data is CoopPlaythroughData {
-    return Object.hasOwn(data, 'playersWon')
-  }
-}
+import type { GameKeeperDeps } from '@core'
+import type { CoopPlaythroughData } from '@services'
+import type { CoopGame } from '../game'
+import { Playthrough } from './Playthrough'
 
 
 // class

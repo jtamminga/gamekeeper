@@ -1,30 +1,16 @@
-import { GameKeeperDeps } from '@core'
+import type { GameKeeperDeps } from '@core'
 import { CoopPlaythrough, Playthrough, VsPlaythrough } from '@domains'
-import { GameType, PlayerId, PlaythroughDto, ScoreDto } from '@services'
+import { type PlaythroughData, CoopPlaythroughData, VsPlaythroughData } from '@services'
 
 
 export namespace PlaythroughFactory {
-  export function create(deps: GameKeeperDeps, dto: PlaythroughDto): Playthrough {
-
-    if (dto.gameType === GameType.VS) {  
-      return new VsPlaythrough(deps, {
-        id: dto.id,
-        gameId: dto.gameId,
-        playerIds: dto.players,
-        playedOn: dto.playedOn,
-        winnerId: dto.result as PlayerId,
-        scores: dto.scores as ScoreDto[]
-      })
+  
+  export function create(deps: GameKeeperDeps, data: PlaythroughData): Playthrough {
+    if (VsPlaythroughData.guard(data)) {  
+      return new VsPlaythrough(deps, data)
     }
-    else if (dto.gameType === GameType.COOP) {  
-      return new CoopPlaythrough(deps, {
-        id: dto.id,
-        gameId: dto.gameId,
-        playerIds: dto.players,
-        playedOn: dto.playedOn,
-        playersWon: dto.result as boolean,
-        score: dto.scores as number
-      })
+    else if (CoopPlaythroughData.guard(data)) {  
+      return new CoopPlaythrough(deps, data)
     }
     else {
       throw new Error('error creating playthough')

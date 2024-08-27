@@ -1,6 +1,6 @@
-import { GameKeeperDeps, Serializable } from '@core'
-import { ScoreData } from './Scores'
-import { Player } from '../player'
+import type { GameKeeperDeps, Serializable } from '@core'
+import type { ScoreData } from '@services'
+import type { Player } from '../player'
 
 
 export class VsPlaythroughScores implements Serializable<ReadonlyArray<ScoreData>> {

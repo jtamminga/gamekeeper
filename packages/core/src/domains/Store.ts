@@ -1,6 +1,6 @@
 import { GameKeeperDeps, NotFoundError } from '@core'
 import { GameFactory, PlayerFactory, PlaythroughFactory } from '@factories'
-import { GameDto, GameId, GoalId, Logger, PlayerDto, PlayerId, PlaythroughDto, PlaythroughId, Services } from '@services'
+import { GameDto, GameId, GoalId, Logger, PlayerDto, PlayerId, PlaythroughData, PlaythroughId, Services } from '@services'
 import { Game } from './game'
 import { Playthrough } from './playthrough'
 import { Player } from './player'
@@ -91,20 +91,20 @@ export class Store {
     dtos.forEach(dto => this.bindPlayer(dto))
   }
 
-  public bindPlaythrough(dto: PlaythroughDto): Playthrough {
+  public bindPlaythrough(data: PlaythroughData): Playthrough {
     const { playthroughs } = this._data
 
-    let playthrough = playthroughs.get(dto.id)
+    let playthrough = playthroughs.get(data.id)
     if (playthrough) {
       return playthrough
     }
 
-    playthrough = PlaythroughFactory.create(this.deps, dto)
-    playthroughs.set(dto.id, playthrough)
+    playthrough = PlaythroughFactory.create(this.deps, data)
+    playthroughs.set(data.id, playthrough)
     return playthrough
   }
 
-  public bindPlaythroughs(dtos: ReadonlyArray<PlaythroughDto>): void {
+  public bindPlaythroughs(dtos: ReadonlyArray<PlaythroughData>): void {
     dtos.forEach(dto => this.bindPlaythrough(dto))
   }
 

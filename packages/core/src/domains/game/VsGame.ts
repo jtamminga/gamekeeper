@@ -1,6 +1,6 @@
 import { Game, type GameData } from './Game'
-import { GameType } from '@services'
-import type { VsPlaythrough, VsPlaythroughData } from '../playthrough'
+import { GameType, type VsPlaythroughData } from '@services'
+import type { VsPlaythrough } from '../playthrough'
 
 
 // vs game domain

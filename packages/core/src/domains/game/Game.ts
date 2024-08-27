@@ -1,6 +1,6 @@
-import { GameKeeperDeps, Serializable } from '@core'
+import { GameKeeperDeps, NewData, Serializable } from '@core'
 import { Playthrough, Playthroughs } from '../playthrough'
-import { NewData, Entity } from '../Entity'
+import { Entity } from '../Entity'
 import { GameId, GameType, ScoringType } from '@services'
 
 

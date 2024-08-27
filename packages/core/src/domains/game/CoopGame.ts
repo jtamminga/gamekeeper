@@ -1,6 +1,6 @@
 import { Game, type GameData } from './Game'
-import { GameType } from '@services'
-import type { CoopPlaythrough, CoopPlaythroughData } from '../playthrough'
+import { CoopPlaythroughData, GameType } from '@services'
+import type { CoopPlaythrough } from '../playthrough'
 
 
 // class

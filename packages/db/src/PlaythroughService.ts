@@ -1,5 +1,5 @@
 import { DbService } from './DbService'
-import { CoopPlaythroughData, GameId, GameType, NotFoundError, PlayerId, PlaythroughDto, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData } from '@gamekeeper/core'
+import { BasePlaythroughData, CoopPlaythroughData, GameId, GameType, NotFoundError, PlayerId, PlaythroughData, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData } from '@gamekeeper/core'
 
 
 // type
@@ -18,12 +18,10 @@ type SerializedScore = {
 }
 
 
-
-
 // repository
 export class DbPlaythroughService extends DbService implements PlaythroughService {
 
-  public async getPlaythrough(id: PlaythroughId): Promise<PlaythroughDto> {
+  public async getPlaythrough(id: PlaythroughId): Promise<PlaythroughData> {
     const query = `
       SELECT
         p.id,
@@ -48,7 +46,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
 
   public async getPlaythroughs(
     options: PlaythroughQueryOptions = {}
-  ): Promise<readonly PlaythroughDto[]> {
+  ): Promise<readonly PlaythroughData[]> {
 
     const {limit, fromDate, toDate, gameId} = options
 
@@ -96,7 +94,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
     return dtos.map(dto => toPlaythroughDto(dto))
   }
 
-  public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughDto> {
+  public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughData> {
     const dto = toDto(playthrough)
 
     const query = `
@@ -130,25 +128,37 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
 // =======
 
 
-function toPlaythroughDto(playthrough: DbPlaythroughDto): PlaythroughDto {
-  const isVsPlaythrough = playthrough.gameType === GameType.VS
-  return {
+function toPlaythroughDto(playthrough: DbPlaythroughDto): PlaythroughData {
+  const basePlaythrough: BasePlaythroughData = {
     id: playthrough.id.toString() as PlaythroughId,
     gameId: playthrough.gameId.toString() as GameId,
-    gameType: playthrough.gameType as GameType,
+    playerIds: JSON.parse(playthrough.players) as PlayerId[],
     playedOn: new Date(playthrough.playedOn),
-    result: isVsPlaythrough
-      ? playthrough.result === null
-        ? null
-        : playthrough.result.toString() as PlayerId
-      : playthrough.result === 1,
-    players: JSON.parse(playthrough.players) as PlayerId[],
-    scores: playthrough.scores
-      ? isVsPlaythrough
-        ? parseScores(playthrough.scores)
-        : Number.parseInt(playthrough.scores)
-      : undefined
   }
+
+  if (playthrough.gameType === GameType.VS) {
+    return {
+      ...basePlaythrough,
+      winnerId: playthrough.result === null
+        ? null
+        : playthrough.result.toString() as PlayerId,
+      scores: playthrough.scores === undefined
+        ? undefined
+        : parseScores(playthrough.scores)
+    } satisfies VsPlaythroughData
+  }
+
+  if (playthrough.gameType === GameType.COOP) {
+    return {
+      ...basePlaythrough,
+      playersWon: playthrough.result === 1,
+      score: playthrough.scores === undefined
+        ? undefined
+        : Number.parseInt(playthrough.scores)
+    } satisfies CoopPlaythroughData
+  }
+
+  throw new Error(`unsupported game type "${playthrough.gameType}"`)
 }
 
 function parseScores(scores: string): readonly ScoreDto[] {

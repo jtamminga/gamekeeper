@@ -1,5 +1,5 @@
-import type { CoopGame, NewCoopPlaythroughData } from '@domains'
-import { ScoringType } from '@services'
+import type { CoopGame, } from '@domains'
+import { NewCoopPlaythroughData, ScoringType } from '@services'
 import { PlaythroughFlow } from './PlaythroughFlow'
 
 

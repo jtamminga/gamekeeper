@@ -1,23 +1,9 @@
-import { GameKeeperDeps } from '@core'
-import { VsGame } from '../game'
-import { Playthrough, BasePlaythroughData } from './Playthrough'
-import { ScoreData } from './Scores'
-import { PlayerId } from '@services'
-import { Player, type NewData } from '@domains'
+import type { GameKeeperDeps } from '@core'
+import type { PlayerId, VsPlaythroughData } from '@services'
+import type { VsGame } from '../game'
+import { Playthrough } from './Playthrough'
+import { Player } from '../player'
 import { VsPlaythroughScores } from './VsPlaythroughScores'
-
-
-// types
-export interface VsPlaythroughData extends BasePlaythroughData {
-  winnerId: PlayerId | null
-  scores?: ReadonlyArray<ScoreData>
-}
-export type NewVsPlaythroughData = NewData<VsPlaythroughData>
-export namespace VsPlaythroughData {
-  export function guard(data: BasePlaythroughData): data is VsPlaythroughData {
-    return Object.hasOwn(data, 'winnerId')
-  }
-}
 
 
 // class

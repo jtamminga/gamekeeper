@@ -6,7 +6,7 @@ import {
   GameType,
   PlayerId,
   PlaysByDateDto,
-  PlaythroughDto,
+  PlaythroughData,
   PlaythroughQueryOptions,
   PlaythroughService,
   ScoreDto,
@@ -130,8 +130,8 @@ export class SimpleStatsService implements StatsService {
     return playthroughs
   }
 
-  private groupedByGame(playthroughs: ReadonlyArray<PlaythroughDto>): Record<GameId, PlaythroughDto[]> {
-    const grouped: Record<GameId, PlaythroughDto[]> = {}
+  private groupedByGame(playthroughs: ReadonlyArray<PlaythroughData>): Record<GameId, PlaythroughData[]> {
+    const grouped: Record<GameId, PlaythroughData[]> = {}
 
     for (const playthrough of playthroughs) {
       const group = grouped[playthrough.gameId]
@@ -148,8 +148,8 @@ export class SimpleStatsService implements StatsService {
   }
 
   private forEachGroup<TOut>(
-    grouped: Record<GameId, PlaythroughDto[]>,
-    reduce: (group: PlaythroughDto[]) => TOut
+    grouped: Record<GameId, PlaythroughData[]>,
+    reduce: (group: PlaythroughData[]) => TOut
   ): StatsResultData<TOut> {
 
     const result: StatsResultData<TOut> = {}
@@ -162,7 +162,7 @@ export class SimpleStatsService implements StatsService {
     return result
   }
 
-  private calculateWinrates(playthroughs: ReadonlyArray<PlaythroughDto>): WinrateDto[] {
+  private calculateWinrates(playthroughs: ReadonlyArray<PlaythroughData>): WinrateDto[] {
     // 1. store for each player how many plays and wins they got
     const allStats = new Map<PlayerId, {plays: number, wins: number}>()
     for (const playthrough of playthroughs) {
@@ -208,7 +208,7 @@ export class SimpleStatsService implements StatsService {
   }
 
   // assume all playthroughs are of the same game
-  private calculateScoreStats(playthroughs: ReadonlyArray<PlaythroughDto>): ScoreStatsDto | undefined {
+  private calculateScoreStats(playthroughs: ReadonlyArray<PlaythroughData>): ScoreStatsDto | undefined {
     if (playthroughs.length === 0) {
       return undefined
     }

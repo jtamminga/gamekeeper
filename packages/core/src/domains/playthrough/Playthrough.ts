@@ -1,18 +1,8 @@
-import { type NewData, Entity } from '../Entity'
-import type { Game } from '../game'
-import type { GameId, PlayerId, PlaythroughId } from '@services'
 import type { GameKeeperDeps, Serializable } from '@core'
-import type { Player } from '@domains'
-
-
-// types
-export interface BasePlaythroughData {
-  id: PlaythroughId
-  gameId: GameId
-  playerIds: ReadonlyArray<PlayerId>
-  playedOn: Date
-}
-export type NewBasePlaythroughData = NewData<BasePlaythroughData>
+import type { BasePlaythroughData, GameId, PlayerId, PlaythroughId } from '@services'
+import type { Player } from '../player'
+import type { Game } from '../game'
+import { Entity } from '../Entity'
 
 
 // class

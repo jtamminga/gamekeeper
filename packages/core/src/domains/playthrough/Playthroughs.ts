@@ -1,14 +1,8 @@
 import { PlaythroughFlowFactory } from '@factories'
 import type { PlaythroughFlow } from '@flows'
 import { NotFoundError, type GameKeeperDeps } from '@core'
-import type { NewBasePlaythroughData, Playthrough } from './Playthrough'
-import type { GameId, PlaythroughId, PlaythroughQueryOptions } from '@services'
-import type { NewVsPlaythroughData } from './VsPlaythrough'
-import type { NewCoopPlaythroughData } from './CoopPlaythrough'
-
-
-// types
-export type NewPlaythroughData = NewVsPlaythroughData | NewCoopPlaythroughData
+import type { Playthrough } from './Playthrough'
+import type { GameId, NewBasePlaythroughData, NewPlaythroughData, PlaythroughId, PlaythroughQueryOptions } from '@services'
 
 
 // class
@@ -19,9 +13,9 @@ export class Playthroughs {
   ) { }
 
   public async hydrate(options?: PlaythroughQueryOptions): Promise<Playthroughs> {
-    const dtos = await this._deps.services.playthroughService.getPlaythroughs(options)
-    this._deps.logger.info(`playthroughs hydrated: ${dtos.length} records`)
-    this._deps.store.bindPlaythroughs(dtos)
+    const data = await this._deps.services.playthroughService.getPlaythroughs(options)
+    this._deps.logger.info(`playthroughs hydrated: ${data.length} records`)
+    this._deps.store.bindPlaythroughs(data)
     return this
   }
 

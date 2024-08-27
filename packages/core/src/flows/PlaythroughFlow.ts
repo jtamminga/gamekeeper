@@ -1,5 +1,6 @@
-import type { Game, NewBasePlaythroughData, NewPlaythroughData, Player } from '@domains'
+import type { Game, Player } from '@domains'
 import type { GameKeeperDeps } from '@core'
+import { NewBasePlaythroughData, NewPlaythroughData } from '@services'
 
 
 export abstract class PlaythroughFlow<TGame extends Game = Game> {

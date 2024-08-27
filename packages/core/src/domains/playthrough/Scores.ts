@@ -1,12 +1,7 @@
-import { Serializable } from '@core'
-import { PlayerId, ScoringType } from '@services'
+import type { Serializable } from '@core'
+import type { PlayerId, ScoreData } from '@services'
+import { ScoringType } from '@services'
 
-
-// type
-export type ScoreData = {
-  playerId: PlayerId
-  score: number
-}
 
 
 // class
