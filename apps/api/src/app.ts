@@ -1,5 +1,5 @@
 import 'express-async-errors'
-import { InternalApiPlaythroughDto, toNewPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
+import { ApiNewPlaythroughDto, toNewPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
 import { config } from './config'
 import { dashboardImage } from './dashboardImage'
 import { DbServices } from '@gamekeeper/db-services'
@@ -97,8 +97,8 @@ app.get(Route.PLAYTHROUGHS, async function (req, res) {
 
 // create playthrough
 app.post(Route.PLAYTHROUGHS, async function (req, res) {
-  const dto = req.body as InternalApiPlaythroughDto
-  const data = await toNewPlaythroughData(dto, dbServices)
+  const dto = req.body as ApiNewPlaythroughDto
+  const data = toNewPlaythroughData(dto)
 
   const playthrough = await playthroughService.addPlaythrough(data)
   res.json({ data: playthrough })

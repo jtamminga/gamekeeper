@@ -1,5 +1,5 @@
 import { DbService } from './DbService'
-import { BasePlaythroughData, CoopPlaythroughData, GameId, GameType, NotFoundError, PlayerId, PlaythroughData, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData } from '@gamekeeper/core'
+import { BasePlaythroughData, CoopPlaythroughData, GameId, GameType, NotFoundError, PlayerId, PlaythroughData, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreData, VsPlaythroughData } from '@gamekeeper/core'
 
 
 // type
@@ -10,9 +10,9 @@ export interface DbPlaythroughDto {
   playedOn: string
   result: number | null // player id or 1 for win 
   players: string // json
-  scores?: string // json
+  scores: string | null // json
 }
-type SerializedScore = {
+type DbScoreDto = {
   id: string
   s: number
 }
@@ -41,7 +41,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       throw new NotFoundError(`cannot find game with id "${id}"`)
     }
     
-    return toPlaythroughDto(dto)
+    return toData(dto)
   }
 
   public async getPlaythroughs(
@@ -91,7 +91,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       ':game_id': gameId
     })
 
-    return dtos.map(dto => toPlaythroughDto(dto))
+    return dtos.map(dto => toData(dto))
   }
 
   public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughData> {
@@ -112,7 +112,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
     ]
 
     const id = await this._dataService.insert(query, ...values)
-    return toPlaythroughDto({ ...dto, id })
+    return toData({ ...dto, id })
   }
 
   public async removePlaythrough(id: PlaythroughId): Promise<void> {
@@ -128,7 +128,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
 // =======
 
 
-function toPlaythroughDto(playthrough: DbPlaythroughDto): PlaythroughData {
+function toData(playthrough: DbPlaythroughDto): PlaythroughData {
   const basePlaythrough: BasePlaythroughData = {
     id: playthrough.id.toString() as PlaythroughId,
     gameId: playthrough.gameId.toString() as GameId,
@@ -139,31 +139,28 @@ function toPlaythroughDto(playthrough: DbPlaythroughDto): PlaythroughData {
   if (playthrough.gameType === GameType.VS) {
     return {
       ...basePlaythrough,
+      type: 'vs',
       winnerId: playthrough.result === null
         ? null
         : playthrough.result.toString() as PlayerId,
-      scores: playthrough.scores === undefined
-        ? undefined
-        : parseScores(playthrough.scores)
+      scores: playthrough.scores
+        ? parseScores(playthrough.scores)
+        : undefined
     } satisfies VsPlaythroughData
   }
 
   if (playthrough.gameType === GameType.COOP) {
     return {
       ...basePlaythrough,
+      type: 'coop',
       playersWon: playthrough.result === 1,
-      score: playthrough.scores === undefined
+      score: playthrough.scores === null
         ? undefined
         : Number.parseInt(playthrough.scores)
     } satisfies CoopPlaythroughData
   }
 
   throw new Error(`unsupported game type "${playthrough.gameType}"`)
-}
-
-function parseScores(scores: string): readonly ScoreDto[] {
-  const collection = JSON.parse(scores) as SerializedScore[]
-  return collection.map(score => ({playerId: score.id as PlayerId, score: score.s}))
 }
 
 function toDto(playthrough: VsPlaythroughData | CoopPlaythroughData): Omit<DbPlaythroughDto, 'id'> {
@@ -182,7 +179,7 @@ function toDto(playthrough: VsPlaythroughData | CoopPlaythroughData): Omit<DbPla
         : parseInt(playthrough.winnerId),
       scores: playthrough.scores
         ? serializeScores(playthrough.scores)
-        : undefined
+        : null
     }
   }
   else {
@@ -190,14 +187,19 @@ function toDto(playthrough: VsPlaythroughData | CoopPlaythroughData): Omit<DbPla
       ...base,
       gameType: GameType.COOP,
       result: playthrough.playersWon ? 1 : 0,
-      scores: playthrough.score?.toString()
+      scores: playthrough.score?.toString() ?? null
     }
   }
 }
 
-function serializeScores(scores: readonly ScoreDto[]): string {
-  return JSON.stringify(scores.map<SerializedScore>(score => ({
+function serializeScores(scores: readonly ScoreData[]): string {
+  return JSON.stringify(scores.map<DbScoreDto>(score => ({
     id: score.playerId,
     s: score.score
   })))
+}
+
+function parseScores(scores: string): readonly ScoreData[] {
+  const collection = JSON.parse(scores) as DbScoreDto[]
+  return collection.map(score => ({playerId: score.id as PlayerId, score: score.s}))
 }

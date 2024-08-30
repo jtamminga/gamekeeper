@@ -1,5 +1,5 @@
 import { DbService } from './DbService'
-import { NotFoundError, GameService, GameDto, GameId, GameData, GameType, ScoringType, UpdatedGameData } from '@gamekeeper/core'
+import { NotFoundError, GameService, GameData, GameId, GameType, ScoringType, UpdatedGameData } from '@gamekeeper/core'
 
 
 // types
@@ -15,13 +15,13 @@ export interface DbGameDto {
 // game service
 export class DbGameService extends DbService implements GameService {
 
-  public async getGames(): Promise<readonly GameDto[]> {
+  public async getGames(): Promise<readonly GameData[]> {
     const query = 'SELECT g.* FROM games g ORDER BY g.name'
     const games = await this._dataService.all<DbGameDto>(query)
     return games.map(game => transform(game))
   }
 
-  public async getGame(id: GameId): Promise<GameDto> {
+  public async getGame(id: GameId): Promise<GameData> {
     const query = 'SELECT * FROM games WHERE id=?'
     const dto = await this._dataService.get<DbGameDto>(query, id)
 
@@ -32,13 +32,13 @@ export class DbGameService extends DbService implements GameService {
     return transform(dto)
   }
 
-  public async addGame(game: GameData): Promise<GameDto> {
+  public async addGame(game: GameData): Promise<GameData> {
     const query = 'INSERT INTO games (name, type, scoring, weight) VALUES (?, ?, ?, ?)'
     const id = await this._dataService.insert(query, game.name, game.type, game.scoring, game.weight)
     return transform({ ...game, id })
   }
   
-  public async updateGame(updatedGame: UpdatedGameData): Promise<GameDto> {
+  public async updateGame(updatedGame: UpdatedGameData): Promise<GameData> {
     const mapping: Record<string, string> = {
       name: 'name',
       type: 'type',
@@ -64,8 +64,8 @@ export class DbGameService extends DbService implements GameService {
 
 
 // transform db game to game dto
-function transform(game: DbGameDto): GameDto {
-  const dto: GameDto = {
+function transform(game: DbGameDto): GameData {
+  const data: GameData = {
     id: game.id.toString() as GameId,
     name: game.name,
     type: game.type as GameType,
@@ -73,8 +73,8 @@ function transform(game: DbGameDto): GameDto {
   }
 
   if (game.weight !== undefined && game.weight !== null) {
-    dto.weight = game.weight
+    data.weight = game.weight
   }
 
-  return dto
+  return data
 }

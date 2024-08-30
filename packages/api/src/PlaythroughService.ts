@@ -1,34 +1,49 @@
-import { CoopPlaythroughData, GameId, GameType, PlayerId, PlaythroughDto, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreDto, VsPlaythroughData, Route } from '@gamekeeper/core'
+import {
+  GameId,
+  PlayerId,
+  PlaythroughId,
+  PlaythroughQueryOptions,
+  PlaythroughService,
+  ScoreData,
+  Route,
+  PlaythroughData,
+  BasePlaythroughData
+} from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { toCleanQuery } from './utils'
 
 
 // types
 interface ApiPlaythroughDto {
+  // base
   id: string
   gameId: string
-  gameType: number
+  playerIds: string[]
+  type: string
   playedOn: string
-  result: string | boolean | null
-  players: string[]
-  scores: ScoreDto[]
+  // vs
+  scores?: ScoreData[]
+  winnerId?: string | null
+  // coop
+  playersWon?: boolean
+  score?: number
 }
 
 
 // playthrough service
 export class ApiPlaythroughService extends ApiService implements PlaythroughService {
 
-  public async getPlaythrough(id: PlaythroughId): Promise<PlaythroughDto> {
+  public async getPlaythrough(id: PlaythroughId): Promise<PlaythroughData> {
     const playthrough = await this.apiClient.get<ApiPlaythroughDto>(`${Route.PLAYTHROUGHS}/${id}`)
     return transform(playthrough)
   }
 
-  public async getPlaythroughs(options?: PlaythroughQueryOptions): Promise<readonly PlaythroughDto[]> {
+  public async getPlaythroughs(options?: PlaythroughQueryOptions): Promise<readonly PlaythroughData[]> {
     const playthroughs = await this.apiClient.get<ApiPlaythroughDto[]>(Route.PLAYTHROUGHS, toCleanQuery(options))
     return playthroughs.map(transform)
   }
 
-  public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughDto> {
+  public async addPlaythrough(playthrough: PlaythroughData): Promise<PlaythroughData> {
     const newPlaythrough = await this.apiClient.post<ApiPlaythroughDto>(Route.PLAYTHROUGHS, playthrough)
     return transform(newPlaythrough)
   }
@@ -41,22 +56,33 @@ export class ApiPlaythroughService extends ApiService implements PlaythroughServ
 
 
 // helper
-function transform(dto: ApiPlaythroughDto): PlaythroughDto {
-  return {
+function transform(dto: ApiPlaythroughDto): PlaythroughData {
+  const basePlaythrough: BasePlaythroughData = {
     id: dto.id as PlaythroughId,
-    gameId: dto.gameId as GameId,
-    gameType: dto.gameType as GameType,
+    gameId: dto.gameId.toString() as GameId,
+    playerIds: dto.playerIds as PlayerId[],
     playedOn: new Date(dto.playedOn),
-    result: transformResult(dto.result),
-    players: dto.players as PlayerId[],
-    scores: dto.scores
-  }
-}
-
-function transformResult(result: ApiPlaythroughDto['result']): PlaythroughDto['result'] {
-  if (typeof result === 'string') {
-    return result as PlayerId
   }
 
-  return result
+  if (dto.type === 'vs') {
+    return {
+      ...basePlaythrough,
+      type: 'vs',
+      winnerId: dto.winnerId! as PlayerId | null,
+      scores: dto.scores
+    }
+  }
+
+  else if (dto.type === 'coop') {
+    return {
+      ...basePlaythrough,
+      type: 'coop',
+      playersWon: dto.playersWon!,
+      score: dto.score
+    }
+  }
+
+  else {
+    throw new Error(`supported playthrough type ${dto.type}`)
+  }
 }

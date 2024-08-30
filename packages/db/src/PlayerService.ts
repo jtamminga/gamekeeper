@@ -1,5 +1,5 @@
 import { DbService } from './DbService'
-import { NewPlayerData, PlayerDto, PlayerId, PlayerService } from '@gamekeeper/core'
+import { NewPlayerData, PlayerData, PlayerId, PlayerService } from '@gamekeeper/core'
 
 
 
@@ -13,7 +13,7 @@ export interface DbPlayerDto {
 // service
 export class DbPlayerService extends DbService implements PlayerService {
 
-  public async addPlayer(player: NewPlayerData): Promise<PlayerDto> {
+  public async addPlayer(player: NewPlayerData): Promise<PlayerData> {
     // save to database
     const query = 'INSERT INTO players (name) VALUES (?)'
     const id = await this._dataService.insert(query, player.name)
@@ -21,7 +21,7 @@ export class DbPlayerService extends DbService implements PlayerService {
     return transform({ ...player, id })
   }
 
-  public async getPlayers(): Promise<readonly PlayerDto[]> {
+  public async getPlayers(): Promise<readonly PlayerData[]> {
 
     // query
     const query = 'SELECT * FROM players'
@@ -36,7 +36,7 @@ export class DbPlayerService extends DbService implements PlayerService {
 }
 
 
-function transform(player: DbPlayerDto): PlayerDto {
+function transform(player: DbPlayerDto): PlayerData {
   return {
     id: player.id.toString() as PlayerId,
     name: player.name

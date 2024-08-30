@@ -2,18 +2,19 @@
 import { endOfYear, isSameDay } from 'date-fns'
 import {
   ArrayUtils,
+  CoopPlaythroughData,
   GameId,
-  GameType,
   PlayerId,
   PlaysByDateDto,
   PlaythroughData,
   PlaythroughQueryOptions,
   PlaythroughService,
-  ScoreDto,
+  ScoreData,
   ScoreStatsDto,
   StatsQuery,
   StatsResultData,
   StatsService,
+  VsPlaythroughData,
   WinrateDto
 } from '@gamekeeper/core'
 
@@ -113,7 +114,7 @@ export class SimpleStatsService implements StatsService {
     }
   }
 
-  private async getPlaythroughs({ gameId, year, latestPlaythroughs }: StatsQuery): Promise<readonly PlaythroughDto[]> {
+  private async getPlaythroughs({ gameId, year, latestPlaythroughs }: StatsQuery): Promise<readonly PlaythroughData[]> {
     let query: PlaythroughQueryOptions  = { gameId }
 
     // add date range to query if year is specified
@@ -168,9 +169,9 @@ export class SimpleStatsService implements StatsService {
     for (const playthrough of playthroughs) {
       
       // a. set/update play for each player in this playthrough
-      // tied games are ignored
-      if (playthrough.result !== null) {
-        playthrough.players.forEach(playerId => {
+      // tied games are ignored (coop games don't support tying)
+      if ((VsPlaythroughData.guard(playthrough) && playthrough.winnerId !== null) || CoopPlaythroughData.guard(playthrough)) {
+        playthrough.playerIds.forEach(playerId => {
           const playerStats = allStats.get(playerId)
           if (playerStats) {
             playerStats.plays++
@@ -181,17 +182,16 @@ export class SimpleStatsService implements StatsService {
       }
 
       // b. update wins count based on playthrough result
-      // make sure to check if result is a string (it can be null which means a tie)
-      if (playthrough.gameType === GameType.VS && typeof playthrough.result === 'string') {
-        const playerId = playthrough.result
+      // make sure to check winnerId (it can be null which means a tie)
+      if (VsPlaythroughData.guard(playthrough) && playthrough.winnerId !== null) {
+        const playerId = playthrough.winnerId
         const stats = allStats.get(playerId)!
         stats.wins++
       }
       // make sure to check if result equal to true (it can be null which means a tie)
-      else if (playthrough.gameType === GameType.COOP) {
-        const playersWon = playthrough.result === true
-        if (playersWon) {
-          playthrough.players.forEach(playerId => {
+      else if (CoopPlaythroughData.guard(playthrough)) {
+        if (playthrough.playersWon) {
+          playthrough.playerIds.forEach(playerId => {
             allStats.get(playerId)!.wins++
           })
         }
@@ -213,14 +213,32 @@ export class SimpleStatsService implements StatsService {
       return undefined
     }
 
-    const { gameType } = playthroughs[0]
+    const gameType = playthroughs[0].type
 
-    if (gameType === GameType.COOP) {
-      const allScores = playthroughs.reduce((scores, playthrough) =>
-        typeof playthrough.scores === 'number'
-          ? [ ...scores, playthrough.scores ]
-          : scores
-      , [] as number[])
+    if (gameType === 'vs') {
+      const allScores = (playthroughs as ReadonlyArray<VsPlaythroughData>)
+        .reduce((scores, playthrough) =>
+          scores.concat(playthrough.scores ?? [])
+        , [] as ScoreData[])
+
+      if (allScores.length === 0) {
+        return undefined
+      }
+
+      return {
+        highScore: ArrayUtils.best(allScores, (a, b) => a.score > b.score ? a : b),
+        lowScore: ArrayUtils.best(allScores, (a, b) => a.score < b.score ? a : b),
+        averageScore: ArrayUtils.average(allScores.map(s => s.score))
+      }
+    }
+
+    else if (gameType === "coop") {
+      const allScores = (playthroughs as ReadonlyArray<CoopPlaythroughData>)
+        .reduce((scores, playthrough) =>
+          playthrough.score === undefined
+            ? scores
+            : scores.concat(playthrough.score)
+        , [] as number[])
 
       if (allScores.length === 0) {
         return undefined
@@ -233,23 +251,7 @@ export class SimpleStatsService implements StatsService {
       }
     }
 
-    else if (gameType === GameType.VS) {
-      const allScores = playthroughs.reduce((scores, playthrough) =>
-        typeof playthrough.scores === 'object'
-          ? scores.concat(playthrough.scores)
-          : scores
-      , [] as ScoreDto[])
-
-      if (allScores.length === 0) {
-        return undefined
-      }
-
-      return {
-        highScore: ArrayUtils.best(allScores, (a, b) => a.score > b.score ? a : b),
-        lowScore: ArrayUtils.best(allScores, (a, b) => a.score < b.score ? a : b),
-        averageScore: ArrayUtils.average(allScores.map(s => s.score))
-      }
-    }
+    
 
     else {
       throw new Error('calculateScoreStats does not support this game type')
