@@ -1,4 +1,4 @@
-import { Playthrough, VsPlaythrough } from '@domains'
+import { Playthrough, VsPlaythrough } from '@domains/gameplay'
 import { formatDate, toWinnerName } from './utils'
 import { GameView } from './GameView'
 import { FormattedScore, formatScores } from './FormattedPlaythroughs'

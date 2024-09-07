@@ -1,8 +1,9 @@
-import { Game, GameKeeper, Player } from '@domains'
+import { Game, Player } from '@domains/gameplay'
 import { formatNumber, formatPercent } from './utils'
 import { type FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
 import { HydratableView } from './HydratableView'
 import type { PlayerId } from '@services'
+import { GameKeeper } from '@domains'
 
 
 // types
@@ -38,7 +39,7 @@ export class GameView implements HydratableView<HydratedGameView> {
   public constructor(public readonly game: Game, private players?: ReadonlyArray<Player>) { }
 
   public async hydrate(gamekeeper: GameKeeper): Promise<HydratedGameView> {
-    const gameStats = gamekeeper.stats.forGame(this.game)
+    const gameStats = gamekeeper.insights.stats.forGame(this.game)
     const year = new Date().getFullYear()
 
     // fetch data
@@ -54,7 +55,7 @@ export class GameView implements HydratableView<HydratedGameView> {
       gameStats.winrates(),
       gameStats.winrates({ year }),
       gameStats.scoreStats(),
-      gamekeeper.playthroughs.hydrate({
+      gamekeeper.gameplay.playthroughs.hydrate({
         gameId: this.game.id,
         limit: NUM_HISTORICAL_PLAYTHROUGHS
       })
@@ -68,7 +69,7 @@ export class GameView implements HydratableView<HydratedGameView> {
 
     const players = this.players
       ? this.players
-      : gamekeeper.players.all()
+      : gamekeeper.gameplay.players.all()
 
     const winrates: FormattedPlayerStat[] = players.map(player => ({
       name: player.name,
@@ -98,6 +99,7 @@ export class GameView implements HydratableView<HydratedGameView> {
       hasMorePlaythroughs: numPlaysAllTime > NUM_HISTORICAL_PLAYTHROUGHS,
       latestPlaythroughs: formatPlaythroughs(
         gamekeeper
+          .gameplay
           .playthroughs
           .latest(NUM_HISTORICAL_PLAYTHROUGHS, this.game.id)
       , { scores: true })

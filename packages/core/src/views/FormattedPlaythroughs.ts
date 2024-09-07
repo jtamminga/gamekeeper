@@ -1,4 +1,4 @@
-import { CoopPlaythrough, Playthrough, VsPlaythrough } from '@domains'
+import { CoopPlaythrough, Playthrough, VsPlaythrough } from '@domains/gameplay'
 import { formatDate, toWinnerName } from './utils'
 import type { GameId, PlayerId, PlaythroughId } from '@services'
 

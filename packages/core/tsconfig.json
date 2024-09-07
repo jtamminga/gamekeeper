@@ -31,11 +31,11 @@
     "baseUrl": "./src",                                  /* Specify the base directory to resolve non-relative module names. */
     "paths": {
       "@domains": ["domains"],
+      "@domains/gameplay": ["domains/gameplay"],
+      "@domains/insights": ["domains/insights"],
       "@repos": ["repositories"],
       "@core": ["core"],
-      "@factories": ["factories"],
       "@services": ["services"],
-      "@flows": ["flows"],
       "@views": ["views"]
     },                              /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */

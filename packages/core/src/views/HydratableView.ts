@@ -1,4 +1,4 @@
-import { GameKeeper } from '@domains'
+import type { GameKeeper } from '@domains'
 
 export interface HydratableView<T> {
 

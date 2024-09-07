@@ -1,5 +1,4 @@
 export * from './Data'
-export * from './dep'
 export * from './Functions'
 export * from './Opaque'
 export * from './Range'

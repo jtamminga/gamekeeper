@@ -1,10 +1,11 @@
-import { GameKeeper, StatsResult } from '@domains'
+import { GameKeeper } from '@domains'
 import { FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
 import { addDays, differenceInDays, isBefore, isSameDay, startOfWeek } from 'date-fns'
 import { HydratableView } from './HydratableView'
 import { formatNumber, formatPercent } from './utils'
 import { PlayerId, PlaysByDateDto } from '@services'
 import { ArrayUtils } from '@core'
+import { StatsResult } from '@domains/insights'
 
 
 // types
@@ -47,7 +48,7 @@ const NUM_LATEST_PLAYTHROUGHTS = 10
 export class StatsView implements HydratableView<HydratedStatsView> {
   
   public async hydrate(gamekeeper: GameKeeper): Promise<HydratedStatsView> {
-    const {stats} = gamekeeper
+    const {stats} = gamekeeper.insights
     const year = new Date().getFullYear()
 
     const [
@@ -68,10 +69,10 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       stats.uniqueGamesPlayed(year),
       stats.overallWinrates({ latestPlaythroughs: NUM_LATEST_PLAYTHROUGHTS }),
       stats.numPlaysByDate({ year }),
-      gamekeeper.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
+      gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
     ])
 
-    const latestPlaythrough = gamekeeper.playthroughs.all()[0]
+    const latestPlaythrough = gamekeeper.gameplay.playthroughs.all()[0]
     const winningWinrate = overallWinratesThisYear.highest
     const winningLately = overallWinratesLatest.highest
 
@@ -98,7 +99,7 @@ export class StatsView implements HydratableView<HydratedStatsView> {
         playerId: winningLately.player.id
       },
       latestNumPlaythorughs: NUM_LATEST_PLAYTHROUGHTS,
-      latestPlaythroughs: formatPlaythroughs(gamekeeper.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
+      latestPlaythroughs: formatPlaythroughs(gamekeeper.gameplay.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
       numPlaysPerDayThisYear: {
         ...toNumPlaysPerDay(numPlaysByDateThisYear, year)
       },

@@ -1,4 +1,4 @@
-import { CoopPlaythrough, type Playthrough, VsPlaythrough } from '@domains'
+import { CoopPlaythrough, type Playthrough, VsPlaythrough } from '@domains/gameplay'
 import { format } from 'date-fns'
 
 
