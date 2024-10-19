@@ -1,6 +1,7 @@
 import { Chart, BarController, BarElement, CategoryScale, LinearScale } from 'chart.js'
 import { useEffect, useRef } from 'react'
 import type { BarChartData } from '@gamekeeper/core'
+import { lastDayOfMonth as getLastDayOfMonth } from 'date-fns'
 
 
 // register bar chart components
@@ -9,11 +10,13 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale)
 
 // types
 type Props = {
-  data: BarChartData
+  data: BarChartData,
+  year: number,
+  onMonthClick?: (fromDate: Date, toDate: Date, month: string) => void
 }
 
 
-export function PlaysByMonth({ data }: Props) {
+export function PlaysByMonth({ data, year, onMonthClick }: Props) {
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export function PlaysByMonth({ data }: Props) {
       data: {
         labels: data.labels,
         datasets: [{
-          label: 'this year',
+          label: year.toString(),
           data: data.thisYear,
           backgroundColor: 'rgb(82, 100, 255)'
         }]
@@ -47,12 +50,27 @@ export function PlaysByMonth({ data }: Props) {
             }
           }
         },
+        onClick: e => {
+          // Get the bar element that was clicked
+          // @ts-expect-error not sure why event types don't work :(
+          const points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+
+          if (points.length) {
+            // Get the dataset and index of the clicked bar
+            const point = points[0];
+            const monthIndex = point.index
+            const firstDayOfMonth = new Date(year, monthIndex)
+            const lastDayOfMonth = getLastDayOfMonth(firstDayOfMonth)
+            const monthName = chart.data.labels![point.index]
+            onMonthClick?.(firstDayOfMonth, lastDayOfMonth, monthName)
+          }
+        }
       },
       plugins: [ValueTopOfBar]
     })
 
     return () => chart.destroy()
-  }, [ref, data])
+  }, [ref, data, year])
 
 
   return <canvas ref={ref} className="bar-chart" />

@@ -1,5 +1,5 @@
 import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
-import { useGamekeeper, useView } from '@app/hooks'
+import { useGamekeeper, useRouter, useView } from '@app/hooks'
 import { StatsView } from '@gamekeeper/core'
 
 
@@ -7,6 +7,7 @@ export function Stats() {
 
   const { insights } = useGamekeeper()
   const { hydratedView } = useView(() => new StatsView())
+  const { setPage } = useRouter()
 
   // render loading while waiting
   if (!hydratedView) {
@@ -59,7 +60,11 @@ export function Stats() {
       />
 
       <PlaysByMonth
+        year={curYear}
         data={numPlaysByMonth}
+        onMonthClick={(fromDate, toDate, month) =>
+          setPage({ name: 'Playthroughs', props: { fromDate, toDate, desc: `${month} ${curYear}` }})
+        }
       />
 
       <div className="page-subtitle">
