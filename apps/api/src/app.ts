@@ -165,7 +165,7 @@ app.get(Route.STATS.NUM_PLAYS_BY_DATE, async function (req, res) {
 
 app.get('/stats', async function (req, res) {
   const gamekeeper = GameKeeperFactory.create(dbServices)
-  await gamekeeper.hydrate()
+  await gamekeeper.gameplay.hydrate()
   const statsView = await new StatsView().hydrate(gamekeeper)
   res.json({ data: statsView })
 })
