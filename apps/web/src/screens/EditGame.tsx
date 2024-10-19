@@ -11,8 +11,8 @@ type Props = {
 
 export function EditGame({ gameId }: Props) {
 
-  const gamekeeper = useGamekeeper()
-  const game = useMemo(() => gamekeeper.games.get(gameId), [gameId])
+  const { gameplay } = useGamekeeper()
+  const game = useMemo(() => gameplay.games.get(gameId), [gameId])
   const [name, setName] = useState(game.name)
   const [weight, setWeight] = useState(game.weight?.toString() ?? '')
   const router = useRouter()

@@ -10,8 +10,8 @@ type Props = {
 
 export function GameSelect({ gameId, onChange }: Props) {
 
-  const gamekeeper = useGamekeeper()
-  const games = gamekeeper.games.all()
+  const { gameplay } = useGamekeeper()
+  const games = gameplay.games.all()
 
   return (
     <div className="form-control">

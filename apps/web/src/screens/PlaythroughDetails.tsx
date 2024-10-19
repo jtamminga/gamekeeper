@@ -9,14 +9,14 @@ type Props = {
 
 export function PlaythroughDetails({ playthroughId }: Props) {
 
-  const gamekeeper = useGamekeeper()
+  const { gameplay } = useGamekeeper()
 
   return (
     <>
       <h1>Playthrough</h1>
 
       <div>
-        <button onClick={() => gamekeeper.playthroughs.remove(playthroughId)}>
+        <button onClick={() => gameplay.playthroughs.remove(playthroughId)}>
           Delete
         </button>
       </div>

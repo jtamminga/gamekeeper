@@ -2,7 +2,7 @@ import { ConsoleLogger, type Services } from '@services'
 import { Gameplay } from '@domains/gameplay'
 import { Insights } from '@domains/insights'
 import { ServiceRepository } from '@repos'
-import type { GameKeeper } from '@domains'
+import type { GameKeeper } from './GameKeeper'
 
 
 // factory

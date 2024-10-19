@@ -10,8 +10,8 @@ type Props = {
 
 export function PlayerSelect({ playerIds, onChange }: Props) {
 
-  const gamekeeper = useGamekeeper()
-  const players = gamekeeper.players.all()
+  const { gameplay } = useGamekeeper()
+  const players = gameplay.players.all()
 
   function handleChange(id: PlayerId, checked: boolean) {
     if (checked) {

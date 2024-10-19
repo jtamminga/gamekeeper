@@ -11,7 +11,7 @@ type Props = {
 
 export function BaseFlow({ onComplete }: Props) {
 
-  const gamekeeper = useGamekeeper()
+  const { gameplay } = useGamekeeper()
 
   const [playerIds, setPlayerIds] = useState<PlayerId[]>([])
   const [gameId, setGameId] = useState<GameId>()
@@ -26,7 +26,7 @@ export function BaseFlow({ onComplete }: Props) {
       return
     }
 
-    const flow = gamekeeper.playthroughs.startFlow({
+    const flow = gameplay.playthroughs.startFlow({
       playerIds,
       gameId,
       playedOn

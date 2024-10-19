@@ -10,11 +10,11 @@ import type { Game, NewGameData } from '@gamekeeper/core'
  */
 export function GameFlow() {
 
-  const gamekeeper = useGamekeeper()
+  const { gameplay } = useGamekeeper()
   const [game, setGame] = useState<Game>()
 
   async function addGame(gameData: NewGameData) {
-    const game = await gamekeeper.games.create(gameData)
+    const game = await gameplay.games.create(gameData)
     setGame(game)
   }
 

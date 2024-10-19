@@ -32,7 +32,7 @@ export class Goals {
     return this._goals
   }
 
-  public get topPriority(): Goal {
+  public get topPriority(): Goal | undefined {
     return this._goals[0]
   }
 }

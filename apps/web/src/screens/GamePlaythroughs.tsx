@@ -10,8 +10,8 @@ type Props = {
 
 export function GamePlaythroughs({ gameId }: Props) {
 
-  const gamekeeper = useGamekeeper()
-  const game = gamekeeper.games.get(gameId)
+  const { gameplay } = useGamekeeper()
+  const game = gameplay.games.get(gameId)
   const { hydratedView } = useView(() => new AllPlaythroughsView(game), [game])
 
   return (

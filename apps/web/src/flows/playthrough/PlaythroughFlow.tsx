@@ -13,7 +13,7 @@ import { Loading } from '@app/components'
  */
 export function PlaythroughFlow() {
 
-  const gamekeeper = useGamekeeper()
+  const { gameplay } = useGamekeeper()
   const [flow, setFlow] = useState<PlaythroughFlowModel>()
   const [completed, setCompleted] = useState(false)
   const [playthrough, setPlaythrough] = useState<Playthrough>()
@@ -22,7 +22,7 @@ export function PlaythroughFlow() {
     setCompleted(true)
 
     const playthroughData = flow.build()
-    const playthrough = await gamekeeper.playthroughs.create(playthroughData)
+    const playthrough = await gameplay.playthroughs.create(playthroughData)
     setPlaythrough(playthrough)
   }
 

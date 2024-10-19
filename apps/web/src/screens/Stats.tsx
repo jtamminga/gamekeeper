@@ -1,11 +1,11 @@
-import { gamekeeper } from '@app/bootstrap'
 import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
-import { useView } from '@app/hooks'
+import { useGamekeeper, useView } from '@app/hooks'
 import { StatsView } from '@gamekeeper/core'
 
 
 export function Stats() {
 
+  const { insights } = useGamekeeper()
   const { hydratedView } = useView(() => new StatsView())
 
   // render loading while waiting
@@ -34,7 +34,9 @@ export function Stats() {
       <div className="page-subtitle">
         <h2>Goals</h2>
       </div>
-      <Goal goal={gamekeeper.goals.topPriority} />
+      {insights.goals.topPriority &&
+        <Goal goal={insights.goals.topPriority} />
+      }
 
       <div className="page-subtitle">
         <h2>Overall</h2>
