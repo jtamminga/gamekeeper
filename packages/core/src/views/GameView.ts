@@ -1,8 +1,8 @@
-import { Game, Player } from '@domains/gameplay'
+import { Game, Player, VsGame } from '@domains/gameplay'
 import { formatNumber, formatPercent } from './utils'
 import { type FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
 import { HydratableView } from './HydratableView'
-import type { PlayerId } from '@services'
+import type { GameId, PlayerId } from '@services'
 import { GameKeeper } from '@domains'
 
 
@@ -36,7 +36,28 @@ const NUM_HISTORICAL_PLAYTHROUGHS = 5
 
 export class GameView implements HydratableView<HydratedGameView> {
 
-  public constructor(public readonly game: Game, private players?: ReadonlyArray<Player>) { }
+  public constructor(
+    private gamekeeper: GameKeeper,
+    private readonly gameId: GameId, 
+    private players?: ReadonlyArray<Player>
+  ) { }
+
+  public get game(): Game {
+    return this.gamekeeper.gameplay.games.get(this.gameId)
+  }
+
+  public get typeLabel(): string {
+    return this.game instanceof VsGame
+      ? 'VS'
+      : 'Coop'
+  }
+
+  public get weightLabel(): string | undefined {
+    if (this.game.weight === undefined) {
+      return undefined
+    }
+    return `Weight: ${this.game.weight} / 5`
+  }
 
   public async hydrate(gamekeeper: GameKeeper): Promise<HydratedGameView> {
     const gameStats = gamekeeper.insights.stats.forGame(this.game)

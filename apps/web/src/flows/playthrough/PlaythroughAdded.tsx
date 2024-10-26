@@ -15,16 +15,14 @@ type Props = {
 export function PlaythroughAdded({ playthrough, onReset }: Props) {
 
   // hooks
-  const { view, hydratedView } = useView(() => new PlaythroughView(playthrough), [playthrough])
+  const { view, hydratedView } = useView((gamekeeper) => new PlaythroughView(gamekeeper, playthrough), [playthrough])
 
   // render
   return (
     <>
       <h1>Playthrough recorded</h1>
 
-      {view &&
-        <p>🎉 winner is <span className="highlight">{view.winner}</span></p>
-      }
+      <p>🎉 winner is <span className="highlight">{view.winner}</span></p>
 
       <button
         onClick={onReset}

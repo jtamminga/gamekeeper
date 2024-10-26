@@ -2,12 +2,13 @@ import { Playthrough, VsPlaythrough } from '@domains/gameplay'
 import { formatDate, toWinnerName } from './utils'
 import { GameView } from './GameView'
 import { FormattedScore, formatScores } from './FormattedPlaythroughs'
+import { GameKeeper } from '@domains'
 
 
 export class PlaythroughView extends GameView {
 
-  public constructor(public readonly playthrough: Playthrough) {
-    super(playthrough.game, playthrough.players)
+  public constructor(gamekeeper: GameKeeper, public readonly playthrough: Playthrough) {
+    super(gamekeeper, playthrough.game.id, playthrough.players)
   }
 
   public get playedOn(): string {

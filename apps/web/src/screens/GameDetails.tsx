@@ -1,6 +1,6 @@
 import { GameSummary, Link } from '@app/components'
-import { useGamekeeper, useView } from '@app/hooks'
-import { Game, GameId, GameView, VsGame } from '@gamekeeper/core'
+import { useView } from '@app/hooks'
+import { GameId, GameView } from '@gamekeeper/core'
 
 
 type Props = {
@@ -10,9 +10,8 @@ type Props = {
 
 export function GameDetails({ gameId }: Props) {
 
-  const { gameplay } = useGamekeeper()
-  const game = gameplay.games.get(gameId)
-  const { hydratedView } = useView(() => new GameView(game), [game])
+  const { view, hydratedView } = useView((gamekeeper) => new GameView(gamekeeper, gameId), [gameId])
+  const game = view.game
 
   return (
     <>
@@ -22,9 +21,9 @@ export function GameDetails({ gameId }: Props) {
       </div>
 
       <div className="game-info-bar">
-        {renderGameTypePill(game)}
-        {game.weight !== undefined &&
-          renderWeightPill(game.weight)
+        <div className="pill">{view.typeLabel}</div>
+        {view.weightLabel &&
+          <div className="pill">{view.weightLabel}</div>
         }
       </div>
 
@@ -37,23 +36,4 @@ export function GameDetails({ gameId }: Props) {
     </>
   )
 
-}
-
-function renderGameTypePill(game: Game) {
-  return (
-    <div className="pill">
-      {game instanceof VsGame
-        ? 'VS'
-        : 'Coop'
-      }
-    </div>
-  )
-}
-
-function renderWeightPill(weight: number) {
-  return (
-    <div className="pill">
-      Weight: {weight} / 5
-    </div>
-  )
 }
