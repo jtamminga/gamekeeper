@@ -11,6 +11,11 @@ table.calendar-graph {
   border-collapse: separate;
 }
 
+.calendar-graph tr:first-of-type td {
+  max-width: 10px;
+  color: var(--color-gray);
+}
+
 .calendar-graph td {
   width: 10px;
   padding: 0;

@@ -1,5 +1,5 @@
 import { formatDate } from '@gamekeeper/core'
-import { addDays } from 'date-fns'
+import { addDays, format } from 'date-fns'
 
 
 // types
@@ -20,12 +20,29 @@ export function CalendarGraph({ countPerDay, firstDay }: Props) {
   const rows: JSX.Element[] = []
   let row: JSX.Element[] = []
 
+  // dec is a hack to prevent dec showing first in some cases
+  let preMonthLabel = 'Dec'
+  // row with month labels
+  for (let i = 0; i < numColumns; i++) {
+    const index = i * daysInWeek
+    const date = addDays(firstDay, index)
+    const monthLabel = format(date, 'MMM')
+    const displayLabel = monthLabel !== preMonthLabel
+      ? monthLabel
+      : ''
+    preMonthLabel = monthLabel
+    row.push(<td>{displayLabel}</td>)
+  }
+  rows.push(<tr key="months">{row}</tr>)
+  
+
+  // days representing play frequency
   for (let y = 0; y < daysInWeek; y++) {
+    row = []
     for (let i = 0; i < numColumns; i++) {
       const index = (i * daysInWeek) + y
       const count = countPerDay[index]
       const date = addDays(firstDay, index)
-      // console.log(`index: ${index}, count: ${count}`, date)
 
       row.push(
         <td
@@ -41,8 +58,6 @@ export function CalendarGraph({ countPerDay, firstDay }: Props) {
         {row}
       </tr>
     )
-
-    row = []
   }
 
   return (
