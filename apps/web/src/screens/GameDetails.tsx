@@ -32,7 +32,6 @@ export function GameDetails({ gameId }: Props) {
           view={hydratedView}
         />
       }
-      
     </>
   )
 

@@ -4,6 +4,7 @@ import { PlaythroughsList } from './PlaythroughsList'
 import { StatCard } from './StatCard'
 import { useRouter } from '@app/hooks'
 import type { FormattedScoreStats, HydratedGameView } from '@gamekeeper/core'
+import { CalendarGraph } from './CalendarGraph'
 
 
 type Props = {
@@ -34,13 +35,18 @@ export function GameSummary({ view }: Props) {
       />
 
       {view.hasMorePlaythroughs &&
-        <div className="flex h-centered">
+        <div className="flex h-centered mb-lg">
           <button
             type="button"
             onClick={() => router.setPage({ name: 'GamePlaythroughs', props: { gameId: view.game.id } })}
           >All Playthroughs</button>
         </div>
       }
+
+      <CalendarGraph
+        countPerDay={view.numPlaysPerDayThisYear.plays}
+        firstDay={view.numPlaysPerDayThisYear.firstDate}
+      />
     </>
   )
 }

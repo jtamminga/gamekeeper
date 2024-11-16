@@ -1,4 +1,4 @@
-import { ScoringType } from '@services'
+import { PlaysByDateDto, ScoringType } from '@services'
 import { Winrates } from './Winrates'
 import type { Game, Player } from '@domains/gameplay'
 import type { InsightsDeps } from '../Insights'
@@ -38,6 +38,10 @@ export class GameStats {
 
   public async playsByMonth(query?: OverallStatsQuery): Promise<number[]> {
     return this._deps.service.getNumPlaysByMonth({ ...this._query, ...query, gameId: this.game.id })
+  }
+
+  public async numPlaysByDate(query?: OverallStatsQuery): Promise<PlaysByDateDto[]> {
+    return this._deps.service.getNumPlaysByDate({ ...this._query, ...query, gameId: this.game.id })
   }
 
   public async scoreStats(query?: OverallStatsQuery): Promise<ScoreStats | undefined> {

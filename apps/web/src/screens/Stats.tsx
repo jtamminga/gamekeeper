@@ -1,4 +1,5 @@
 import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
+import { TopPlayedGames } from '@app/components/TopPlayedGames'
 import { useGamekeeper, useRouter, useView } from '@app/hooks'
 import { StatsView } from '@gamekeeper/core'
 
@@ -25,7 +26,8 @@ export function Stats() {
     latestPlaythroughs,
     numPlaysPerDayThisYear,
     avgPlaysPerDayThisYear,
-    mostPlaysInDayThisYear
+    mostPlaysInDayThisYear,
+    topPlayedGames
   } = hydratedView
 
   const curYear = new Date().getFullYear()
@@ -85,6 +87,15 @@ export function Stats() {
       <PlaythroughsList
         className="mt-lg"
         formattedPlaythroughs={latestPlaythroughs}
+      />
+
+      <div className="page-subtitle">
+        <h2>Top played games</h2>
+        <h3>{curYear}</h3>
+      </div>
+
+      <TopPlayedGames
+        topPlayed={topPlayedGames}
       />
 
       <div className="page-subtitle">

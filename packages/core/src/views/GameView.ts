@@ -1,5 +1,5 @@
 import { Game, Player, VsGame } from '@domains/gameplay'
-import { formatNumber, formatPercent } from './utils'
+import { formatNumber, formatPercent, toNumPlaysPerDay } from './utils'
 import { type FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
 import { HydratableView } from './HydratableView'
 import type { GameId, PlayerId } from '@services'
@@ -27,6 +27,10 @@ export interface HydratedGameView {
   readonly scoreStats: FormattedScoreStats | undefined
   readonly latestPlaythroughs: FormattedPlaythroughs
   readonly hasMorePlaythroughs: boolean
+  readonly numPlaysPerDayThisYear: {
+    plays: number[]
+    firstDate: Date
+  }
 }
 
 
@@ -69,13 +73,15 @@ export class GameView implements HydratableView<HydratedGameView> {
       numPlaysThisYear,
       winratesAllTime,
       winratesThisYear,
-      scoreStats
+      scoreStats,
+      numPlaysByDateThisYear
     ] = await Promise.all([
       gameStats.numPlaythroughs(),
       gameStats.numPlaythroughs({ year }),
       gameStats.winrates(),
       gameStats.winrates({ year }),
       gameStats.scoreStats(),
+      gameStats.numPlaysByDate({ year }),
       gamekeeper.gameplay.playthroughs.hydrate({
         gameId: this.game.id,
         limit: NUM_HISTORICAL_PLAYTHROUGHS
@@ -123,7 +129,10 @@ export class GameView implements HydratableView<HydratedGameView> {
           .gameplay
           .playthroughs
           .latest(NUM_HISTORICAL_PLAYTHROUGHS, this.game.id)
-      , { scores: true })
+      , { scores: true }),
+      numPlaysPerDayThisYear: {
+        ...toNumPlaysPerDay(numPlaysByDateThisYear, year)
+      }
     }
   }
 
