@@ -31,7 +31,7 @@ export function CalendarGraph({ countPerDay, firstDay }: Props) {
       ? monthLabel
       : ''
     preMonthLabel = monthLabel
-    row.push(<td>{displayLabel}</td>)
+    row.push(<td key={`month-${i}`}>{displayLabel}</td>)
   }
   rows.push(<tr key="months">{row}</tr>)
   

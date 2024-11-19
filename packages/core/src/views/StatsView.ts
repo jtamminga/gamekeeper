@@ -39,7 +39,14 @@ export interface HydratedStatsView {
   readonly avgPlaysPerDayThisYear: string
   readonly mostPlaysInDayThisYear: number,
   readonly topPlayedGames: {
-    gameName: string, gameId: GameId, numPlays: number
+    gameName: string,
+    gameId: GameId,
+    numPlays: number,
+    highestWinrate: {
+      playerId: PlayerId
+      playerName: string
+      percentage: string
+    } | undefined
   }[]
 }
 
@@ -63,6 +70,7 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       numUniqueGamesPlayedThisYear,
       overallWinratesLatest,
       numPlaysByDateThisYear,
+      winratesThisYear,
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
       stats.numPlaythroughs({ year: year - 1 }),
@@ -72,6 +80,7 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       stats.uniqueGamesPlayed(year),
       stats.overallWinrates({ latestPlaythroughs: NUM_LATEST_PLAYTHROUGHTS }),
       stats.numPlaysByDate({ year }),
+      stats.winrates({ year }),
       gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
     ])
 
@@ -80,7 +89,21 @@ export class StatsView implements HydratableView<HydratedStatsView> {
     const winningLately = overallWinratesLatest.highest
 
     const topPlayedGames = [...numPlaysThisYear.entries()]
-      .map(([game, numPlays]) => ({ gameId: game.id, gameName: game.name, numPlays }))
+      .map(([game, numPlays]) => {
+        const highestWinrate = winratesThisYear.get(game)?.highest
+        return {
+          gameId: game.id,
+          gameName: game.name,
+          numPlays,
+          highestWinrate: highestWinrate
+            ? {
+                playerId: highestWinrate.player.id,
+                playerName: highestWinrate.player.name,
+                percentage: formatPercent(highestWinrate.winrate)
+              }
+            : undefined
+        }
+      })
       .sort((a, b) => b.numPlays - a.numPlays)
       .slice(0, 5)
 

@@ -90,7 +90,7 @@ export function Stats() {
       />
 
       <div className="page-subtitle">
-        <h2>Top played games</h2>
+        <h2>Most played games</h2>
         <h3>{curYear}</h3>
       </div>
 
