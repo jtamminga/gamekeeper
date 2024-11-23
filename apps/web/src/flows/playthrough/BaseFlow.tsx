@@ -19,7 +19,8 @@ export function BaseFlow({ onComplete }: Props) {
     : undefined
 
   const { gameplay } = useGamekeeper()
-  const [playerIds, setPlayerIds] = useState<PlayerId[]>([])
+  // have all players selected by default
+  const [playerIds, setPlayerIds] = useState<PlayerId[]>(gameplay.players.all().map(p => p.id))
   const [gameId, setGameId] = useState<GameId | undefined>(initialGameId)
   const [playedOn, setPlayedOn] = useState(new Date())
 
