@@ -1,31 +1,13 @@
 # Gamekeeper
+Boardgame tracker: keep a record of games played throughout the year. Handy for checking how often you play games as well as when you played them last.
 
-Easily keep track of game wins!
+Includes goals, play tracking, game list, winrates, etc.
 
-# Goal
+<img src="https://github.com/user-attachments/assets/4bd19e95-ac85-4198-936d-d33f91f1c746" width="350">
 
-Project to play around with domain driven development, npm packages, and mono repos
+<img src="https://github.com/user-attachments/assets/3083dce4-8239-473f-9522-cc73451d1bc7" width="350">
 
-## todos
+## Tech
 
-- [x] (web) support negative scores
-- [x] support ties
-- [x] add games
-- [ ] add players
+Uses a locally running server which stores data via a Sqlite database and provides an API that serves JSON data. A single page application can be used to easily view data.
 
-# Stats
-
-## game end stats
-
-- winner
-- winrate
-- last 5 plays of game
-- latest winrates
-- number of plays
-
-## overall stats
-
-- total games played this year
-- total unique games played this year
-- games played per month
-- winrates this year
