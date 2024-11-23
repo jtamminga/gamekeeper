@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Callback, GameId, PlayerId, PlaythroughFlow } from '@gamekeeper/core'
 import { DateSelect, GameSelect, PlayerSelect } from '@app/components'
-import { useGamekeeper } from '@app/hooks'
+import { useGamekeeper, useRouter } from '@app/hooks'
 
 
 type Props = {
@@ -11,10 +11,16 @@ type Props = {
 
 export function BaseFlow({ onComplete }: Props) {
 
-  const { gameplay } = useGamekeeper()
+  const { page } = useRouter()
+  // check for a game id in this page's context
+  // then we can set it as the selected game
+  const initialGameId = page.name === 'AddPlaythrough'
+    ? page.props?.gameId
+    : undefined
 
+  const { gameplay } = useGamekeeper()
   const [playerIds, setPlayerIds] = useState<PlayerId[]>([])
-  const [gameId, setGameId] = useState<GameId>()
+  const [gameId, setGameId] = useState<GameId | undefined>(initialGameId)
   const [playedOn, setPlayedOn] = useState(new Date())
 
   function onNext() {

@@ -15,7 +15,7 @@ import {
 // all possible pages
 export type Page =
   | { name: 'Stats' }
-  | { name: 'AddPlaythrough' }
+  | { name: 'AddPlaythrough', props?: { gameId?: GameId } }
   | { name: 'PlaythroughDetails', props: { playthroughId: PlaythroughId }}
   | { name: 'Games' }
   | { name: 'AddGame' }

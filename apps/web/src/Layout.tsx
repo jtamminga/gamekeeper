@@ -4,14 +4,11 @@ import { useRouter } from './hooks'
 
 
 export function Layout() {
+  const { page } = useRouter()
 
-  // hook
-  const { page, setPage } = useRouter()
-
-  // render
   return (
     <>
-      <Header page={page} navTo={setPage} />
+      <Header />
 
       <main>
         {router(page)}

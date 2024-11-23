@@ -1,30 +1,30 @@
-import type { Callback } from '@gamekeeper/core'
-import type { Page } from './routing'
+import { useRouter } from './hooks'
 
 
-type Props = {
-  page: Page
-  navTo: Callback<Page>
-}
-
-
-export function Header({ page, navTo }: Props) {
+export function Header() {
+  const { page, setPage } = useRouter()
+  // add game id to AddPlaythrough context
+  // if we are currently on a game's page
+  const gameId = page.name === 'GameDetails'
+    ? page.props.gameId
+    : undefined
+  
   return (
     <header>
       <nav>
         <a
           className={page.name === 'Stats' ? 'active' : undefined}
-          onClick={() => navTo({ name: 'Stats' })}
+          onClick={() => setPage({ name: 'Stats' })}
         >stats</a>
 
         <a
           className={page.name === 'Games' ? 'active' : undefined}
-          onClick={() => navTo({ name: 'Games' })}
+          onClick={() => setPage({ name: 'Games' })}
         >games</a>
 
         <a
           className={page.name === 'AddPlaythrough' ? 'active' : undefined}
-          onClick={() => navTo({ name: 'AddPlaythrough' })}
+          onClick={() => setPage({ name: 'AddPlaythrough', props: { gameId } })}
         >record</a>
       </nav>
     </header>
