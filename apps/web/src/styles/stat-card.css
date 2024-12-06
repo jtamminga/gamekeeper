@@ -46,6 +46,6 @@
   text-align: left;
 }
 .detailed-stat-card > div > span:last-child {
-  font-size: 1.3em;
+  /* font-size: 1.3em; */
   text-align: left;
 }
