@@ -1,13 +1,13 @@
-@import 'root.css';
+@import 'root';
 @import 'typography';
-@import 'utilities.css';
-@import 'header.css';
-@import 'button.css';
-@import 'form.css';
-@import 'table.css';
-@import 'players.css';
-@import 'stat-card.css';
-@import 'goal-card.css';
+@import 'utilities';
+@import 'header';
+@import 'button';
+@import 'form';
+@import 'table';
+@import 'players';
+@import 'stat-card';
+@import 'goal-card';
 @import 'pill';
 
 @import 'game-details';
