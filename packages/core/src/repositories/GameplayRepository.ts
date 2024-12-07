@@ -2,7 +2,7 @@ import type { Game, Player, Playthrough } from '@domains/gameplay'
 import type { GameId, NewGameData, NewPlayerData, NewPlaythroughData, PlayerId, PlaythroughId, PlaythroughQueryOptions } from '@services'
 
 
-export interface Repository {
+export interface GameplayRepository {
 
   // players
   players: ReadonlyArray<Player>

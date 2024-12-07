@@ -1,7 +1,7 @@
 import { ConsoleLogger, type Services } from '@services'
 import { Gameplay } from '@domains/gameplay'
 import { Insights } from '@domains/insights'
-import { ServiceRepository } from '@repos'
+import { MemoryGameplayRepository } from '@repos'
 import type { GameKeeper } from './GameKeeper'
 
 
@@ -11,7 +11,7 @@ export namespace GameKeeperFactory {
 
     // create other dependencies
     const logger = new ConsoleLogger(process.env.NODE_ENV === 'production')
-    const repo = new ServiceRepository(services, logger)
+    const repo = new MemoryGameplayRepository(services, logger)
 
     // finally create game keeper
     const gameplay = new Gameplay({ logger, repo })

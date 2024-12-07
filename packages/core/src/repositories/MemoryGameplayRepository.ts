@@ -1,5 +1,5 @@
 import { Game, GameFactory, Player, PlayerFactory, Playthrough, PlaythroughFactory } from '@domains/gameplay'
-import { Repository } from './Repository'
+import { GameplayRepository } from './GameplayRepository'
 import { NotFoundError } from '@core'
 import {
   PlayerId,
@@ -17,7 +17,7 @@ import {
 } from '@services'
 
 
-export class ServiceRepository implements Repository {
+export class MemoryGameplayRepository implements GameplayRepository {
 
   private _players: Map<PlayerId, Player>
   private _games: Map<GameId, Game>

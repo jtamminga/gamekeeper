@@ -1,2 +1,2 @@
-export * from './Repository'
-export * from './ServiceRepository'
+export * from './GameplayRepository'
+export * from './MemoryGameplayRepository'
