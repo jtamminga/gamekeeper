@@ -23,3 +23,29 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
+
+.detailed-stat-card {
+  background-color: var(--dark-gray-accent);
+
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-md);
+  border-radius: var(--border-radius);
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.detailed-stat-card > div {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.detailed-stat-card > div > span:first-child {
+  color: var(--color-gray);
+  text-align: left;
+}
+.detailed-stat-card > div > span:last-child {
+  /* font-size: 1.3em; */
+  text-align: left;
+}
