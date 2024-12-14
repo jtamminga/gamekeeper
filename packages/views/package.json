@@ -1,0 +1,20 @@
+{
+  "name": "@gamekeeper/views",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && tsc-alias"
+  },
+  "dependencies": {
+    "@gamekeeper/core": "1.0.85",
+    "date-fns": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "tsc-alias": "^1.7.0",
+    "typescript": "^4.8.4"
+  }
+}
