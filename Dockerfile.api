@@ -12,6 +12,7 @@ RUN yarn set version berry
 COPY package.json .
 COPY yarn.lock .yarnrc.yml ./
 COPY .yarn ./.yarn
+COPY packages/views ./packages/views
 COPY packages/core ./packages/core
 COPY packages/db ./packages/db
 COPY apps/api ./apps/api
