@@ -17,13 +17,8 @@ COPY packages/core ./packages/core
 COPY packages/db ./packages/db
 COPY apps/api ./apps/api
 
-# RUN yarn install
-# RUN yarn workspace @gamekeeper/api install
-# RUN yarn workspace @gamekeeper/core install
-# RUN yarn workspaces foreach -Rpt --from 'apps/api' run build
-
-RUN yarn workspaces foreach -Rpt --from 'apps/api' install
-RUN yarn workspaces foreach -Rpt --from 'apps/api' run build
+RUN yarn intall:api
+RUN yarn build:api
 
 EXPOSE 3000
 
