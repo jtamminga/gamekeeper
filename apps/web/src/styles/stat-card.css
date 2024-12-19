@@ -1,4 +1,5 @@
 .stat-card {
+  height: 25px;
   background-color: var(--dark-gray-accent);
 
   padding: var(--space-md);
@@ -26,6 +27,7 @@
 
 
 .detailed-stat-card {
+  height: 25px;
   background-color: var(--dark-gray-accent);
 
   padding: var(--space-md) var(--space-lg);
