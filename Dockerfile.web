@@ -17,10 +17,11 @@ COPY packages/api ./packages/api
 COPY apps/web ./apps/web
 
 # run install and build
-# RUN yarn workspace @gamekeeper/web install
+RUN yarn workspace @gamekeeper/web install
 # for some reason i need to run install on core otherwise i get missing node_modules error
-# RUN yarn workspace @gamekeeper/core install
-RUN yarn workspaces foreach -Rpt --from 'apps/web' run install
+RUN yarn workspace @gamekeeper/core install
+
+RUN yarn workspaces foreach -Rpt --from 'apps/web' install
 RUN yarn workspaces foreach -Rpt --from 'apps/web' run build
 
 EXPOSE 3000
