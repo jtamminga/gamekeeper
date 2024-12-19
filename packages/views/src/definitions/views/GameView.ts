@@ -1,21 +1,11 @@
-import type { Game, PlayerId } from '@gamekeeper/core'
-import type { FormattedPlaythroughs } from '../models'
+import type { Game } from '@gamekeeper/core'
+import type { FormattedPlayerStat, FormattedPlaythroughs, FormattedScoreStats, FormattedStat } from '../models'
 
 
-interface FormattedStat {
-  name: string
-  valueAllTime: string,
-  valueThisYear: string
-}
-interface FormattedPlayerStat extends FormattedStat {
-  playerId: PlayerId
-}
-export type FormattedScoreStats = {
-  average: string
-  best: { score: string, player?: string, playerId?: PlayerId }
-}
 export interface GameView {
   readonly game: Game
+  readonly gameTypeLabel: string
+  readonly weightLabel: string | undefined
   readonly numPlaythroughs: FormattedStat
   readonly winrates: ReadonlyArray<FormattedPlayerStat>
   readonly stats: ReadonlyArray<FormattedStat>

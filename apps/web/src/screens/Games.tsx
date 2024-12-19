@@ -1,7 +1,7 @@
-import { GameSortBy, GamesView } from '@gamekeeper/core'
-import { Link, Loading } from '@app/components'
-import { useRouter, useView } from '@app/hooks'
 import { useState } from 'react'
+import { Link, Loading } from '@app/components'
+import { useGamesView, useRouter } from '@app/hooks'
+import { GameSortBy } from '@gamekeeper/views'
 
 
 // types
@@ -29,12 +29,12 @@ export function Games() {
   // hooks
   const [ sortBy, setSortBy ] = useState('name_asc')
   const { toGame } = useRouter()
-  const { hydratedView } = useView(() => new GamesView())
+  const view = useGamesView()
   const gameOptions = sortByOptions[sortBy]
   const showWeight = gameOptions.sortBy === 'weight'
 
   // render loading while waiting
-  if (!hydratedView) {
+  if (!view) {
     return <Loading />
   }
 
@@ -68,7 +68,7 @@ export function Games() {
           </tr>
         </thead>
         <tbody>
-          {hydratedView.all(gameOptions).map(game =>
+          {view.all(gameOptions).map(game =>
             <tr key={game.id} onClick={() => toGame(game.id)}>
               <td>{game.name}</td>
               <td className="num">{ showWeight ? (game.weight ?? "-") : game.numPlays}</td>

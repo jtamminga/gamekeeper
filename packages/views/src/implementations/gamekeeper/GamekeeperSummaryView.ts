@@ -1,64 +1,19 @@
-import { GameKeeper } from '@domains'
-import { FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
-import { differenceInDays } from 'date-fns'
+import { SummaryView } from '@def/views'
 import { HydratableView } from './HydratableView'
-import { formatNumber, formatPercent, toNumPlaysPerDay } from './utils'
-import { GameId, PlayerId } from '@services'
-import { ArrayUtils } from '@core'
-import { StatsResult } from '@domains/insights'
+import { ArrayUtils, GameKeeper, StatsResult } from '@gamekeeper/core'
+import { toNumPlaysPerDay } from '../transforms'
+import { differenceInDays } from 'date-fns'
+import { formatNumber, formatPercent, formatPlaythroughs } from '../formatters'
 
 
-// types
-export type BarChartData = {
-  thisYear: number[]
-  labels: string[]
-}
-export interface HydratedStatsView {
-  readonly numPlaysThisYear: number
-  readonly numPlaysLastYear: number
-  readonly numPlaysAllTime: number
-  readonly numPlaysByMonth: BarChartData
-  readonly numUniqueGamesPlayedThisYear: number
-  readonly winnerThisYear: {
-    winrate: string
-    player: string
-    playerId: PlayerId
-  }
-  readonly daysSinceLastPlaythrough: number
-  readonly latestPlaythroughs: FormattedPlaythroughs
-  readonly latestWinner: {
-    winrate: string
-    player: string
-    playerId: PlayerId
-  }
-  readonly latestNumPlaythorughs: number
-  readonly numPlaysPerDayThisYear: {
-    plays: number[]
-    firstDate: Date
-  }
-  readonly avgPlaysPerDayThisYear: string
-  readonly mostPlaysInDayThisYear: number,
-  readonly topPlayedGames: {
-    gameName: string,
-    gameId: GameId,
-    numPlays: number,
-    highestWinrate: {
-      playerId: PlayerId
-      playerName: string
-      percentage: string
-    } | undefined
-  }[]
-}
-
-
-// constants
 const NUM_LATEST_PLAYTHROUGHTS = 10
 
 
-export class StatsView implements HydratableView<HydratedStatsView> {
-  
-  public async hydrate(gamekeeper: GameKeeper): Promise<HydratedStatsView> {
-    const {stats} = gamekeeper.insights
+export class GamekeeperSummaryView implements HydratableView<SummaryView> {
+  public constructor(private readonly gamekeeper: GameKeeper) { }
+
+  public async hydrate(): Promise<SummaryView> {
+    const {stats} = this.gamekeeper.insights
     const year = new Date().getFullYear()
 
     const [
@@ -81,10 +36,10 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       stats.overallWinrates({ latestPlaythroughs: NUM_LATEST_PLAYTHROUGHTS }),
       stats.numPlaysByDate({ year }),
       stats.winrates({ year }),
-      gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
+      this.gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
     ])
 
-    const latestPlaythrough = gamekeeper.gameplay.playthroughs.all()[0]
+    const latestPlaythrough = this.gamekeeper.gameplay.playthroughs.all()[0]
     const winningWinrate = overallWinratesThisYear.highest
     const winningLately = overallWinratesLatest.highest
 
@@ -130,7 +85,7 @@ export class StatsView implements HydratableView<HydratedStatsView> {
         playerId: winningLately.player.id
       },
       latestNumPlaythorughs: NUM_LATEST_PLAYTHROUGHTS,
-      latestPlaythroughs: formatPlaythroughs(gamekeeper.gameplay.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
+      latestPlaythroughs: formatPlaythroughs(this.gamekeeper.gameplay.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
       numPlaysPerDayThisYear: {
         ...toNumPlaysPerDay(numPlaysByDateThisYear, year)
       },
@@ -139,7 +94,6 @@ export class StatsView implements HydratableView<HydratedStatsView> {
       topPlayedGames
     }
   }
-
 }
 
 

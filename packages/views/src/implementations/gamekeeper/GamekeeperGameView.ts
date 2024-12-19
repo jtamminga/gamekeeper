@@ -1,71 +1,32 @@
-import { Game, Player, VsGame } from '@domains/gameplay'
-import { formatNumber, formatPercent, toNumPlaysPerDay } from './utils'
-import { type FormattedPlaythroughs, formatPlaythroughs } from './FormattedPlaythroughs'
+import { GameView } from '@def/views'
 import { HydratableView } from './HydratableView'
-import type { GameId, PlayerId } from '@services'
-import { GameKeeper } from '@domains'
-
-
-// types
-interface FormattedStat {
-  name: string
-  valueAllTime: string,
-  valueThisYear: string
-}
-interface FormattedPlayerStat extends FormattedStat {
-  playerId: PlayerId
-}
-export type FormattedScoreStats = {
-  average: string
-  best: { score: string, player?: string, playerId?: PlayerId }
-}
-export interface HydratedGameView {
-  readonly game: Game
-  readonly numPlaythroughs: FormattedStat
-  readonly winrates: ReadonlyArray<FormattedPlayerStat>
-  readonly stats: ReadonlyArray<FormattedStat>
-  readonly scoreStats: FormattedScoreStats | undefined
-  readonly latestPlaythroughs: FormattedPlaythroughs
-  readonly hasMorePlaythroughs: boolean
-  readonly numPlaysPerDayThisYear: {
-    plays: number[]
-    firstDate: Date
-  }
-}
+import { GameId, GameKeeper, VsGame } from '@gamekeeper/core'
+import { FormattedPlayerStat, FormattedScoreStats, FormattedStat } from '@def/models'
+import { formatNumber, formatPercent, formatPlaythroughs } from '../formatters'
+import { toNumPlaysPerDay } from '../transforms'
 
 
 // constants
 const NUM_HISTORICAL_PLAYTHROUGHS = 5
 
 
-export class GameView implements HydratableView<HydratedGameView> {
+export class GamekeeperGameView implements HydratableView<GameView> {
 
   public constructor(
-    private gamekeeper: GameKeeper,
+    private readonly gamekeeper: GameKeeper,
     private readonly gameId: GameId, 
-    private players?: ReadonlyArray<Player>
   ) { }
 
-  public get game(): Game {
-    return this.gamekeeper.gameplay.games.get(this.gameId)
-  }
-
-  public get typeLabel(): string {
-    return this.game instanceof VsGame
+  public async hydrate(): Promise<GameView> {
+    const game = this.gamekeeper.gameplay.games.get(this.gameId)
+    const gameStats = this.gamekeeper.insights.stats.forGame(game)
+    const year = new Date().getFullYear()
+    const gameTypeLabel = game instanceof VsGame
       ? 'VS'
       : 'Coop'
-  }
-
-  public get weightLabel(): string | undefined {
-    if (this.game.weight === undefined) {
-      return undefined
-    }
-    return `Weight: ${this.game.weight} / 5`
-  }
-
-  public async hydrate(gamekeeper: GameKeeper): Promise<HydratedGameView> {
-    const gameStats = gamekeeper.insights.stats.forGame(this.game)
-    const year = new Date().getFullYear()
+    const weightLabel = game.weight
+      ? `Weight: ${game.weight} / 5`
+      : undefined
 
     // fetch data
     const [
@@ -82,8 +43,8 @@ export class GameView implements HydratableView<HydratedGameView> {
       gameStats.winrates({ year }),
       gameStats.scoreStats(),
       gameStats.numPlaysByDate({ year }),
-      gamekeeper.gameplay.playthroughs.hydrate({
-        gameId: this.game.id,
+      this.gamekeeper.gameplay.playthroughs.hydrate({
+        gameId: game.id,
         limit: NUM_HISTORICAL_PLAYTHROUGHS
       })
     ])
@@ -94,9 +55,7 @@ export class GameView implements HydratableView<HydratedGameView> {
       valueAllTime: numPlaysAllTime.toString()
     }
 
-    const players = this.players
-      ? this.players
-      : gamekeeper.gameplay.players.all()
+    const players = this.gamekeeper.gameplay.players.all()
 
     const winrates: FormattedPlayerStat[] = players.map(player => ({
       name: player.name,
@@ -118,17 +77,19 @@ export class GameView implements HydratableView<HydratedGameView> {
     }
 
     return {
-      game: this.game,
+      game,
+      gameTypeLabel,
+      weightLabel,
       numPlaythroughs,
       winrates,
       stats: [numPlaythroughs, ...winrates],
       scoreStats: formattedScoreStats,
       hasMorePlaythroughs: numPlaysAllTime > NUM_HISTORICAL_PLAYTHROUGHS,
       latestPlaythroughs: formatPlaythroughs(
-        gamekeeper
+        this.gamekeeper
           .gameplay
           .playthroughs
-          .latest(NUM_HISTORICAL_PLAYTHROUGHS, this.game.id)
+          .latest(NUM_HISTORICAL_PLAYTHROUGHS, game.id)
       , { scores: true }),
       numPlaysPerDayThisYear: {
         ...toNumPlaysPerDay(numPlaysByDateThisYear, year)

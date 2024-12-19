@@ -1,6 +1,6 @@
-import { GameSummary, Link } from '@app/components'
-import { useView } from '@app/hooks'
-import { GameId, GameView } from '@gamekeeper/core'
+import { GameSummary, Link, Loading } from '@app/components'
+import { useGameView } from '@app/hooks'
+import type { GameId } from '@gamekeeper/core'
 
 
 type Props = {
@@ -9,29 +9,28 @@ type Props = {
 
 
 export function GameDetails({ gameId }: Props) {
-
-  const { view, hydratedView } = useView((gamekeeper) => new GameView(gamekeeper, gameId), [gameId])
-  const game = view.game
+  const view = useGameView(gameId)
+  if (!view) {
+    return <Loading />
+  }
 
   return (
     <>
       <div className="game-title-bar">
-        <h1>{game.name}</h1>
+        <h1>{view.game.name}</h1>
         <Link page={{ name: 'EditGame', props: { gameId }}}>Edit</Link>
       </div>
 
       <div className="game-info-bar">
-        <div className="pill">{view.typeLabel}</div>
+        <div className="pill">{view.gameTypeLabel}</div>
         {view.weightLabel &&
           <div className="pill">{view.weightLabel}</div>
         }
       </div>
 
-      {hydratedView &&
-        <GameSummary
-          view={hydratedView}
-        />
-      }
+      <GameSummary
+        view={view}
+      />
     </>
   )
 

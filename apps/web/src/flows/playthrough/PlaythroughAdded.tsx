@@ -1,6 +1,7 @@
-import { GameSummary } from '@app/components'
-import { useView } from '@app/hooks'
-import { Action, Playthrough, PlaythroughView } from '@gamekeeper/core'
+import { GameSummary, Loading, PlayerColor } from '@app/components'
+import { useGameView } from '@app/hooks'
+import { Action, Playthrough } from '@gamekeeper/core'
+import { formatPlaythrough } from '@gamekeeper/views'
 
 
 type Props = {
@@ -14,27 +15,25 @@ type Props = {
  */
 export function PlaythroughAdded({ playthrough, onReset }: Props) {
 
-  // hooks
-  const { view, hydratedView } = useView((gamekeeper) => new PlaythroughView(gamekeeper, playthrough), [playthrough])
+  const view = useGameView(playthrough.gameId)
+  if (!view) {
+    return <Loading />
+  }
+
+  const { winnerId, winner } = formatPlaythrough(playthrough)
 
   // render
   return (
     <>
       <h1>Playthrough recorded</h1>
 
-      <p>🎉 winner is <span className="highlight">{view.winner}</span></p>
+      <p>🎉 winner is <PlayerColor playerId={winnerId}>{winner}</PlayerColor></p>
 
-      <button
-        onClick={onReset}
-      >
+      <button onClick={onReset}>
         Record another
       </button>
 
-      {hydratedView &&
-        <GameSummary
-          view={hydratedView}
-        />
-      }
+      <GameSummary view={view} />
     </>
   )
 }

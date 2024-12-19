@@ -1,6 +1,7 @@
-import { GameId, StatsQuery, StatsResultData, StatsService, WinrateDto, Route, ScoreStatsDto, PlaysByDateDto } from '@gamekeeper/core'
+import { GameId, StatsQuery, StatsResultData, StatsService, WinrateDto, ScoreStatsDto, PlaysByDateDto } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { toCleanQuery } from './utils'
+import { Route } from '@gamekeeper/views'
 
 
 type ApiLastPlayedDto = StatsResultData<string | undefined>

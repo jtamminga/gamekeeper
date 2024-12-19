@@ -1,11 +1,12 @@
 import { ReactNode, useState } from 'react'
-import { CoopFlow, Playthrough, PlaythroughFlow as PlaythroughFlowModel, VsFlow, formatDate } from '@gamekeeper/core'
+import { CoopFlow, Playthrough, PlaythroughFlow as PlaythroughFlowModel, VsFlow } from '@gamekeeper/core'
 import { VsFlowPartial } from './VsFlow'
 import { BaseFlow } from './BaseFlow'
 import { CoopFlowPartial } from './CoopFlow'
 import { useGamekeeper } from '@app/hooks'
 import { PlaythroughAdded } from './PlaythroughAdded'
 import { Loading } from '@app/components'
+import { formatDate } from '@gamekeeper/views'
 
 
 /**

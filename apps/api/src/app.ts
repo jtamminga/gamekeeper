@@ -1,13 +1,14 @@
 import 'express-async-errors'
+import cors from 'cors'
+import express, { NextFunction, Request, Response } from 'express'
+import { GameId, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, PlaythroughId, UpdatedGameData } from '@gamekeeper/core'
+import { DbServices } from '@gamekeeper/db-services'
+import { GamekeeperViewService, Route } from '@gamekeeper/views'
 import { ApiNewPlaythroughDto, toNewPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
 import { config } from './config'
 import { dashboardImage } from './dashboardImage'
-import { DbServices } from '@gamekeeper/db-services'
 import { InvalidParamsError } from './InvalidParamsError'
 import { toStatsQuery } from './stats'
-import { GameId, Route, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, StatsView, PlaythroughId, UpdatedGameData } from '@gamekeeper/core'
-import cors from 'cors'
-import express, { NextFunction, Request, Response } from 'express'
 
 
 // setup express app
@@ -166,8 +167,9 @@ app.get(Route.STATS.NUM_PLAYS_BY_DATE, async function (req, res) {
 app.get('/stats', async function (req, res) {
   const gamekeeper = GameKeeperFactory.create(dbServices)
   await gamekeeper.gameplay.hydrate()
-  const statsView = await new StatsView().hydrate(gamekeeper)
-  res.json({ data: statsView })
+  const gamekeeperViews = new GamekeeperViewService(gamekeeper)
+  const summaryView = await gamekeeperViews.getSummaryView()
+  res.json({ data: summaryView })
 })
 
 

@@ -1,4 +1,4 @@
-import { formatDate } from '@gamekeeper/core'
+import { formatDate } from '@gamekeeper/views'
 import { addDays, format } from 'date-fns'
 
 

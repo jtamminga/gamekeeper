@@ -1,6 +1,6 @@
-import { PlaythroughsList } from '@app/components'
-import { useView } from '@app/hooks'
-import { PlaythroughQueryOptions, PlaythroughsView } from '@gamekeeper/core'
+import { Loading, PlaythroughsList } from '@app/components'
+import { usePlaythroughsView } from '@app/hooks'
+import { PlaythroughQueryOptions } from '@gamekeeper/core'
 
 
 type Props = PlaythroughQueryOptions & { desc?: string }
@@ -8,9 +8,10 @@ type Props = PlaythroughQueryOptions & { desc?: string }
 
 export function Playthroughs({ gameId, fromDate, toDate, desc = 'All playthroughs' }: Props) {
 
-  const { hydratedView } = useView((gameKeeper) =>
-    new PlaythroughsView(gameKeeper, { gameId, fromDate, toDate }), [gameId, fromDate, toDate]
-  )
+  const view = usePlaythroughsView({ gameId, fromDate, toDate })
+  if (!view) {
+    return <Loading />
+  }
 
   return (
     <>
@@ -19,11 +20,9 @@ export function Playthroughs({ gameId, fromDate, toDate, desc = 'All playthrough
       </div>
 
       <h3>{desc}</h3>
-      {hydratedView &&
-        <PlaythroughsList
-          formattedPlaythroughs={hydratedView.playthroughs}
-        />
-      }
+      <PlaythroughsList
+        formattedPlaythroughs={view.playthroughs}
+      />
     </>
   )
 }

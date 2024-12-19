@@ -14,6 +14,7 @@
     "build:all": "yarn workspaces foreach -Rpt --from 'apps/*' run build",
     "build:api": "yarn workspaces foreach -Rpt --from 'apps/api' run build",
     "build:web": "yarn workspaces foreach -Rpt --from 'apps/web' run build",
+    "build:views": "yarn workspace @gamekeeper/views run build",
     "dev:web": "yarn workspace @gamekeeper/web dev",
     "dev:api": "yarn workspace @gamekeeper/api start",
     "dev:all": "npm-run-all --parallel dev:web dev:api",

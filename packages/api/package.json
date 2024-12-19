@@ -9,7 +9,8 @@
     "build": "tsc && tsc-alias"
   },
   "dependencies": {
-    "@gamekeeper/core": "1.0.85"
+    "@gamekeeper/core": "1.0.85",
+    "@gamekeeper/views": "0.0.1"
   },
   "devDependencies": {
     "tsc-alias": "^1.8.8",

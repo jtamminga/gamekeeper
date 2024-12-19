@@ -5,12 +5,12 @@ import {
   PlaythroughQueryOptions,
   PlaythroughService,
   ScoreData,
-  Route,
   PlaythroughData,
   BasePlaythroughData
 } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { toCleanQuery } from './utils'
+import { Route } from '@gamekeeper/views'
 
 
 // types

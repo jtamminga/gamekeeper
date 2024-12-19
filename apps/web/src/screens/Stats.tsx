@@ -1,17 +1,16 @@
 import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
 import { TopPlayedGames } from '@app/components/TopPlayedGames'
-import { useGamekeeper, useRouter, useView } from '@app/hooks'
-import { StatsView } from '@gamekeeper/core'
+import { useGamekeeper, useRouter, useSummaryView } from '@app/hooks'
 
 
 export function Stats() {
 
   const { insights } = useGamekeeper()
-  const { hydratedView } = useView(() => new StatsView())
+  const view = useSummaryView()
   const { setPage } = useRouter()
 
   // render loading while waiting
-  if (!hydratedView) {
+  if (!view) {
     return <Loading />
   }
 
@@ -28,7 +27,7 @@ export function Stats() {
     avgPlaysPerDayThisYear,
     mostPlaysInDayThisYear,
     topPlayedGames
-  } = hydratedView
+  } = view
 
   const curYear = new Date().getFullYear()
 

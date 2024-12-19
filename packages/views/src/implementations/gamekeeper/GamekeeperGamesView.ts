@@ -1,8 +1,7 @@
-import { GameKeeper } from '@domains'
-import { GameId, GameType } from '@services'
-import { formatDate } from './utils'
+import { GamesView } from '@def/views'
+import { GameId, GameKeeper, GameType, VsGame } from '@gamekeeper/core'
 import { HydratableView } from './HydratableView'
-import { VsGame } from '@domains/gameplay'
+import { formatDate } from '../formatters'
 
 
 type GameWithStats = {
@@ -33,17 +32,19 @@ export interface HydratedGamesView {
 }
 
 
-export class GamesView implements HydratableView<HydratedGamesView> {
-  public async hydrate(gamekeeper: GameKeeper): Promise<HydratedGamesView> {
+export class GamekeeperGamesView implements HydratableView<GamesView> {
+  public constructor(private gamekeeper: GameKeeper) { }
+
+  public async hydrate(): Promise<HydratedGamesView> {
     const [
       numPlays,
       lastPlayed
     ] = await Promise.all([
-      gamekeeper.insights.stats.numPlaythroughs({}),
-      gamekeeper.insights.stats.lastPlayed({})
+      this.gamekeeper.insights.stats.numPlaythroughs({}),
+      this.gamekeeper.insights.stats.lastPlayed({})
     ])
 
-    const games = gamekeeper.gameplay.games.all().map(game => {
+    const games = this.gamekeeper.gameplay.games.all().map(game => {
       const lastPlayedDate = lastPlayed.get(game)
 
       return {

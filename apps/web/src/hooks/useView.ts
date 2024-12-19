@@ -1,28 +1,61 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useGamekeeper } from './useGamekeeper'
-import type { GameKeeper, HydratableView } from '@gamekeeper/core'
+import type { GameId, PlaythroughQueryOptions } from '@gamekeeper/core'
+import { useEffect, useState } from 'react'
+import { viewService } from '@app/bootstrap'
+import { GamesView, GameView, PlaythroughsView, SummaryView } from '@gamekeeper/views'
 
 
-export function useView<T extends HydratableView<Awaited<ReturnType<T['hydrate']>>>>(
-  createView: (gamekeeper: GameKeeper) => T, deps: React.DependencyList = []
-) {
+export function useSummaryView() {
+  const [view, setView] = useState<SummaryView>()
 
-    const gamekeeper = useGamekeeper()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const view = useMemo(() => createView(gamekeeper), [...deps, gamekeeper])
-    const [hydratedView, setHydratedView] = useState<Awaited<ReturnType<T['hydrate']>>>()
-
-    // fetch data
-    useEffect(() => {
-      async function fetchData() {
-        const hydratedView = await view.hydrate(gamekeeper)
-        setHydratedView(hydratedView)
-      }
-      fetchData()
-    }, [gamekeeper, view])
-
-    return {
-      view,
-      hydratedView
+  useEffect(() => {
+    async function fetchData() {
+      const view = await viewService.getSummaryView()
+      setView(view)
     }
+    fetchData()
+  }, [])
+
+  return view
+}
+
+export function useGameView(id: GameId) {
+  const [view, setView] = useState<GameView>()
+
+  useEffect(() => {
+    async function fetchData() {
+      const view = await viewService.getGameView(id)
+      setView(view)
+    }
+    fetchData()
+  }, [id])
+
+  return view
+}
+
+export function useGamesView() {
+  const [view, setView] = useState<GamesView>()
+
+  useEffect(() => {
+    async function fetchData() {
+      const view = await viewService.getGamesView()
+      setView(view)
+    }
+    fetchData()
+  }, [])
+
+  return view
+}
+
+export function usePlaythroughsView({ fromDate, toDate, gameId, limit }: PlaythroughQueryOptions) {
+  const [view, setView] = useState<PlaythroughsView>()
+
+  useEffect(() => {
+    async function fetchData() {
+      const view = await viewService.getPlaythroughsView({ fromDate, toDate, gameId, limit })
+      setView(view)
+    }
+    fetchData()
+  }, [fromDate, toDate, gameId, limit])
+
+  return view
 }
