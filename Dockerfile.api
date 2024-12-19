@@ -17,7 +17,8 @@ COPY packages/core ./packages/core
 COPY packages/db ./packages/db
 COPY apps/api ./apps/api
 
-RUN yarn intall:api
+RUN yarn install
+RUN yarn install:api
 RUN yarn build:api
 
 EXPOSE 3000

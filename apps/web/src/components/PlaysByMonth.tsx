@@ -1,7 +1,7 @@
 import { Chart, BarController, BarElement, CategoryScale, LinearScale } from 'chart.js'
 import { useEffect, useRef } from 'react'
-import type { BarChartData } from '@gamekeeper/core'
 import { lastDayOfMonth as getLastDayOfMonth } from 'date-fns'
+import { BarChartData } from '@gamekeeper/views'
 
 
 // register bar chart components

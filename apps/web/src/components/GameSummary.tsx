@@ -2,13 +2,13 @@ import { PlayerColor } from './PlayerColor'
 import { PlaythroughsList } from './PlaythroughsList'
 import { StatCard } from './StatCard'
 import { useRouter } from '@app/hooks'
-import type { FormattedScoreStats, HydratedGameView } from '@gamekeeper/core'
 import { CalendarGraph } from './CalendarGraph'
 import { DetailedStatCard } from './DetailedStatCard'
+import { FormattedScoreStats, GameView } from '@gamekeeper/views'
 
 
 type Props = {
-  view: HydratedGameView
+  view: GameView
 }
 
 
@@ -75,7 +75,7 @@ function renderScoreStats({ average, best }: FormattedScoreStats) {
   )
 }
 
-function renderYearVsTotalStats({ numPlaythroughs, winrates }: HydratedGameView) {
+function renderYearVsTotalStats({ numPlaythroughs, winrates }: GameView) {
   return (
     <>
       <DetailedStatCard

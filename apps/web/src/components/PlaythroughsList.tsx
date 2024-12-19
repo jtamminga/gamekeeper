@@ -1,7 +1,7 @@
-import { FormattedPlaythroughs, FormattedScore } from '@gamekeeper/core'
 import { PlayerColor } from './PlayerColor'
 import { ReactNode } from 'react'
 import { useRouter } from '@app/hooks'
+import { FormattedPlaythroughs, FormattedScore } from '@gamekeeper/views'
 
 
 // types
