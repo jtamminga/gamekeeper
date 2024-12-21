@@ -6,3 +6,4 @@ gamekeeper*.tgz
 dist
 .turbo
 .env.*
+view-data

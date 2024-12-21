@@ -1,5 +1,5 @@
 import { GameId, PlayerId } from '@gamekeeper/core'
-import { FormattedGoal, FormattedPlaythroughs } from '../models'
+import { FormattedGoal, FormattedPlaythroughs, FormattedWinrate } from '../models'
 
 
 // types
@@ -37,10 +37,6 @@ export interface SummaryView {
     gameName: string,
     gameId: GameId,
     numPlays: number,
-    highestWinrate: {
-      playerId: PlayerId
-      playerName: string
-      percentage: string
-    } | undefined
+    highestWinrate: FormattedWinrate | undefined
   }[]
 }

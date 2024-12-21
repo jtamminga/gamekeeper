@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, Loading } from '@app/components'
 import { useGamesView, useRouter } from '@app/hooks'
-import { GameSortBy } from '@gamekeeper/views'
+import { GameSortBy, sortGames } from '@gamekeeper/views'
 
 
 // types
@@ -38,6 +38,8 @@ export function Games() {
     return <Loading />
   }
 
+  const { games } = view
+
   // render games
   return (
     <>
@@ -68,11 +70,11 @@ export function Games() {
           </tr>
         </thead>
         <tbody>
-          {view.all(gameOptions).map(game =>
+          {sortGames(games, gameOptions).map(game =>
             <tr key={game.id} onClick={() => toGame(game.id)}>
               <td>{game.name}</td>
               <td className="num">{ showWeight ? (game.weight ?? "-") : game.numPlays}</td>
-              <td className="num">{game.lastPlayedFormatted ?? <span>never played</span>}</td>
+              <td className="num">{ game.lastPlayedFormatted ?? <span>never played</span> }</td>
             </tr>
           )}
         </tbody>

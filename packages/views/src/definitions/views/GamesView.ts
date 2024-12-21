@@ -1,6 +1,6 @@
 import type { GameId, GameType } from '@gamekeeper/core'
 
-type GameWithStats = {
+export type GameWithStats = {
   id: GameId
   name: string
   type: GameType
@@ -20,5 +20,5 @@ export type GetGamesOptions = {
   order?: GameSortOrder
 }
 export interface GamesView {
-  all: (options?: GetGamesOptions) => ReadonlyArray<GameWithStats>
+  readonly games: ReadonlyArray<GameWithStats>
 }

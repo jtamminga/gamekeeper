@@ -3,7 +3,7 @@ import { HydratableView } from './HydratableView'
 import { ArrayUtils, GameKeeper, StatsResult } from '@gamekeeper/core'
 import { toNumPlaysPerDay } from '../transforms'
 import { differenceInDays } from 'date-fns'
-import { formatGoal, formatNumber, formatPercent, formatPlaythroughs } from '../formatters'
+import { formatGoal, formatNumber, formatPercent, formatPlaythroughs, formatWinrate } from '../formatters'
 
 
 const NUM_LATEST_PLAYTHROUGHTS = 10
@@ -56,11 +56,7 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
           gameName: game.name,
           numPlays,
           highestWinrate: highestWinrate
-            ? {
-                playerId: highestWinrate.player.id,
-                playerName: highestWinrate.player.name,
-                percentage: formatPercent(highestWinrate.winrate)
-              }
+            ? formatWinrate(highestWinrate, game)
             : undefined
         }
       })

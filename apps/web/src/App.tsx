@@ -1,4 +1,4 @@
-import { gamekeeper } from './bootstrap'
+import { initialize } from './bootstrap'
 import { Layout } from './Layout'
 import { Loading } from './components'
 import { useEffect, useState } from 'react'
@@ -14,8 +14,7 @@ export default function App() {
   // hydrate the app
   useEffect(() => {
     async function hydrateApp() {
-      await gamekeeper.gameplay.hydrate({ limit: 10 })
-      await gamekeeper.insights.goals.hydrate()
+      await initialize()
       setHydrated(true)
     }
 
