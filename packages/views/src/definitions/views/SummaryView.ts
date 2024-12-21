@@ -1,5 +1,5 @@
 import { GameId, PlayerId } from '@gamekeeper/core'
-import { FormattedPlaythroughs } from '../models'
+import { FormattedGoal, FormattedPlaythroughs } from '../models'
 
 
 // types
@@ -8,6 +8,7 @@ export type BarChartData = {
   labels: string[]
 }
 export interface SummaryView {
+  readonly priorityGoal?: FormattedGoal
   readonly numPlaysThisYear: number
   readonly numPlaysLastYear: number
   readonly numPlaysAllTime: number

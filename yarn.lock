@@ -542,6 +542,7 @@ __metadata:
   resolution: "@gamekeeper/api-services@workspace:packages/api"
   dependencies:
     "@gamekeeper/core": "npm:1.0.85"
+    "@gamekeeper/views": "npm:0.0.1"
     tsc-alias: "npm:^1.8.8"
     typescript: "npm:^4.8.4"
   languageName: unknown
@@ -553,6 +554,7 @@ __metadata:
   dependencies:
     "@gamekeeper/core": "npm:1.0.85"
     "@gamekeeper/db-services": "npm:0.0.2"
+    "@gamekeeper/views": "npm:0.0.1"
     "@types/cors": "npm:^2.8.17"
     "@types/express": "npm:^4.17.21"
     cors: "npm:^2.8.5"
@@ -663,6 +665,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^6.14.0"
     "@typescript-eslint/parser": "npm:^6.14.0"
     "@vitejs/plugin-react": "npm:^4.2.1"
+    chart.js: "npm:^4.4.2"
     date-fns: "npm:^3.2.0"
     eslint: "npm:^8.55.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
@@ -5197,7 +5200,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "gamekeeper@workspace:."
   dependencies:
-    chart.js: "npm:^4.4.2"
     npm-run-all: "npm:^4.1.5"
   languageName: unknown
   linkType: soft

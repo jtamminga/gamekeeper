@@ -8,13 +8,13 @@ import {
   Games,
   PlaythroughDetails,
   Playthroughs,
-  Stats
+  Summary
 } from './screens'
 
 
 // all possible pages
 export type Page =
-  | { name: 'Stats' }
+  | { name: 'Summary' }
   | { name: 'AddPlaythrough', props?: { gameId?: GameId } }
   | { name: 'PlaythroughDetails', props: { playthroughId: PlaythroughId }}
   | { name: 'Games' }
@@ -28,8 +28,8 @@ export type Page =
 // router
 export function router(page: Page) {
   switch (page.name) {
-    case 'Stats':
-      return <Stats />
+    case 'Summary':
+      return <Summary />
     case 'Games':
       return <Games />
     case 'AddPlaythrough':

@@ -3,7 +3,7 @@ import { HydratableView } from './HydratableView'
 import { ArrayUtils, GameKeeper, StatsResult } from '@gamekeeper/core'
 import { toNumPlaysPerDay } from '../transforms'
 import { differenceInDays } from 'date-fns'
-import { formatNumber, formatPercent, formatPlaythroughs } from '../formatters'
+import { formatGoal, formatNumber, formatPercent, formatPlaythroughs } from '../formatters'
 
 
 const NUM_LATEST_PLAYTHROUGHTS = 10
@@ -36,9 +36,14 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
       stats.overallWinrates({ latestPlaythroughs: NUM_LATEST_PLAYTHROUGHTS }),
       stats.numPlaysByDate({ year }),
       stats.winrates({ year }),
-      this.gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS })
+      this.gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS }),
+      this.gamekeeper.insights.goals.hydrate()
     ])
 
+    const priorityGoal = this.gamekeeper.insights.goals.topPriority
+    if (priorityGoal) {
+      await priorityGoal.load()
+    }
     const latestPlaythrough = this.gamekeeper.gameplay.playthroughs.all()[0]
     const winningWinrate = overallWinratesThisYear.highest
     const winningLately = overallWinratesLatest.highest
@@ -63,6 +68,7 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
       .slice(0, 5)
 
     return {
+      priorityGoal: priorityGoal ? formatGoal(priorityGoal) : undefined,
       numUniqueGamesPlayedThisYear,
       numPlaysThisYear: totalPlays(numPlaysThisYear),
       numPlaysLastYear: totalPlays(numPlaysLastYear),

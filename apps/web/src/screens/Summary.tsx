@@ -1,11 +1,10 @@
 import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
 import { TopPlayedGames } from '@app/components/TopPlayedGames'
-import { useGamekeeper, useRouter, useSummaryView } from '@app/hooks'
+import { useRouter, useSummaryView } from '@app/hooks'
 
 
-export function Stats() {
+export function Summary() {
 
-  const { insights } = useGamekeeper()
   const view = useSummaryView()
   const { setPage } = useRouter()
 
@@ -15,6 +14,7 @@ export function Stats() {
   }
 
   const {
+    priorityGoal,
     daysSinceLastPlaythrough,
     numPlaysThisYear,
     winnerThisYear,
@@ -33,12 +33,17 @@ export function Stats() {
 
   return (
     <>
-      <div className="page-subtitle">
-        <h2>Goals</h2>
-      </div>
-      {insights.goals.topPriority &&
-        <Goal goal={insights.goals.topPriority} />
+      {priorityGoal &&
+        <>
+          <div className="page-subtitle">
+            <h2>Goals</h2>
+          </div>
+          {priorityGoal &&
+            <Goal goal={priorityGoal} />
+          }
+        </>
       }
+      
 
       <div className="page-subtitle">
         <h2>Overall</h2>

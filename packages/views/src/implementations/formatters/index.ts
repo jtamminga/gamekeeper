@@ -1,4 +1,5 @@
 export * from './formatDate'
+export * from './formatGoal'
 export * from './formatNumber'
 export * from './formatPercent'
 export * from './formatPlayerName'

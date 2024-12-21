@@ -14,13 +14,13 @@ type RouterContainerProps = {
 
 
 // context
-export const RouterContext = createContext<RouterContextType>({ context: { name: 'Stats' }, setContext: () => {} })
+export const RouterContext = createContext<RouterContextType>({ context: { name: 'Summary' }, setContext: () => {} })
 
 
 // provider
 export function RouterContainer({ children }: RouterContainerProps) {
 
-  const [context, setContext] = useState<Page>({ name: 'Stats' })
+  const [context, setContext] = useState<Page>({ name: 'Summary' })
 
   const handleContextChange = useCallback((page: Page) => {
     history.pushState(page, page.name, `?page=${page.name}`)
@@ -36,7 +36,7 @@ export function RouterContainer({ children }: RouterContainerProps) {
       }
       // default to stats page
       else {
-        setContext({ name: 'Stats' })
+        setContext({ name: 'Summary' })
       }
     }
 

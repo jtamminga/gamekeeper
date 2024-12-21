@@ -13,9 +13,9 @@ export function Header() {
     <header>
       <nav>
         <a
-          className={page.name === 'Stats' ? 'active' : undefined}
-          onClick={() => setPage({ name: 'Stats' })}
-        >stats</a>
+          className={page.name === 'Summary' ? 'active' : undefined}
+          onClick={() => setPage({ name: 'Summary' })}
+        >summary</a>
 
         <a
           className={page.name === 'Games' ? 'active' : undefined}
