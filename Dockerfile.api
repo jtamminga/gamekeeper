@@ -19,9 +19,6 @@ COPY apps/api ./apps/api
 
 # run install and build
 RUN yarn install
-# for some reason i need to run install on core otherwise i get missing node_modules error
-RUN yarn workspace @gamekeeper/core install
-
 RUN yarn build:api
 RUN yarn workspaces focus --production @gamekeeper/api
 
