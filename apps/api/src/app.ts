@@ -6,7 +6,6 @@ import { DbServices } from '@gamekeeper/db-services'
 import { GamekeeperViewService, Route } from '@gamekeeper/views'
 import { ApiNewPlaythroughDto, toNewPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
 import { config } from './config'
-import { dashboardImage } from './dashboardImage'
 import { InvalidParamsError } from './InvalidParamsError'
 import { toStatsQuery } from './stats'
 
@@ -178,12 +177,12 @@ app.get('/stats', async function (req, res) {
 // ===============
 
 
-app.get('/dashboard-image', async function (req, res) {
-  const imageBuffer = await dashboardImage()
-  res.set('Content-type', 'image/png')
-  res.set('Content-Disposition', 'inline; filename="dashboard.png"')
-  res.send(imageBuffer)
-})
+// app.get('/dashboard-image', async function (req, res) {
+//   const imageBuffer = await dashboardImage()
+//   res.set('Content-type', 'image/png')
+//   res.set('Content-Disposition', 'inline; filename="dashboard.png"')
+//   res.send(imageBuffer)
+// })
 
 
 //
