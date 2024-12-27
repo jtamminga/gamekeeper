@@ -58,7 +58,8 @@ export abstract class Game<T extends Playthrough = Playthrough>
     return {
       id: this.id,
       name: this.name,
-      scoring: this.scoring
+      scoring: this.scoring,
+      weight: this.weight
     }
   }
 
