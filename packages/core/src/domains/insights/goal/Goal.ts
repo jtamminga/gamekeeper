@@ -1,5 +1,5 @@
 import { Entity } from '@domains'
-import { getDayOfYear } from 'date-fns'
+import getDayOfYear from 'date-fns/getDayOfYear'
 import type { GoalId } from '@services'
 import type { InsightsDeps } from '../Insights'
 
