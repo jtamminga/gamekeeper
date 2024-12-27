@@ -18,15 +18,12 @@ COPY packages/db ./packages/db
 COPY apps/api ./apps/api
 
 # run install and build
-# for some reason i need to run install on core otherwise i get missing node_modules error
 RUN yarn install
-RUN yarn workspace @gamekeeper/api install
+# for some reason i need to run install on core otherwise i get missing node_modules error
 RUN yarn workspace @gamekeeper/core install
-RUN yarn workspace @gamekeeper/views install
-RUN yarn workspace @gamekeeper/db-services install
 
-RUN yarn install:api
 RUN yarn build:api
+RUN yarn workspaces focus --production @gamekeeper/api
 
 EXPOSE 3000
 
