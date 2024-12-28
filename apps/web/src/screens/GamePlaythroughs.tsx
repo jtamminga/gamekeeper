@@ -17,7 +17,7 @@ export function GamePlaythroughs({ gameId }: Props) {
 
   return (
     <>
-      <div className="game-title-bar">
+      <div className="title-with-link">
         <h1>{view.game!.name}</h1>
         <Link page={{ name: 'GameDetails', props: { gameId }}}>Back</Link>
       </div>

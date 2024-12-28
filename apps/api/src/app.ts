@@ -1,7 +1,7 @@
 import 'express-async-errors'
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
-import { GameId, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, PlaythroughId, UpdatedGameData } from '@gamekeeper/core'
+import { GameId, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, PlaythroughId, UpdatedGameData, PlayerId } from '@gamekeeper/core'
 import { DbServices } from '@gamekeeper/db-services'
 import { GamekeeperViewService, Route } from '@gamekeeper/views'
 import { ApiNewPlaythroughDto, toNewPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
@@ -73,6 +73,12 @@ app.get(Route.PLAYERS, async function (_, res) {
 app.post(Route.PLAYERS, async function (req, res) {
   const data = req.body as NewPlayerData
   const player = await playerService.addPlayer(data)
+  res.json({ data: player })
+})
+
+app.patch(`${Route.PLAYERS}/:id`, async function (req, res) {
+  const data = req.body as Omit<UpdatedGameData, 'id'>
+  const player = await playerService.updatePlayer({ ...data, id: req.params.id as PlayerId })
   res.json({ data: player })
 })
 

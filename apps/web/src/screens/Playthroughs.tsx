@@ -15,7 +15,7 @@ export function Playthroughs({ gameId, fromDate, toDate, desc = 'All playthrough
 
   return (
     <>
-      <div className="game-title-bar">
+      <div className="title-with-link">
         <h1>Playthroughs</h1>
       </div>
 

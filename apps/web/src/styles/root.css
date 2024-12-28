@@ -1,4 +1,7 @@
 :root {
+  --max-width: 400px;
+  --min-width: 320px;
+
   --space-sm: 5px;
   --space-md: 10px;
   --space-lg: 30px;
@@ -24,11 +27,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-#root {
-  max-width: 400px;
-  min-width: 320px;
+#app {
+  max-width: var(--max-width);
+  min-width: var(--min-width);
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--space-lg);
   padding-top: 54px;
 }
 
@@ -75,6 +78,23 @@ a.active {
 }
 .page-subtitle > h2 + h3 {
   color: var(--color-gray)
+}
+
+.title-with-link {
+  display: flex;
+  align-items: center;
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.title-with-link h1 {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.game-info-bar {
+  display: flex;
+  margin-bottom: var(--space-lg);
 }
 
 @media (prefers-color-scheme: light) {

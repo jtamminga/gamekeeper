@@ -61,13 +61,17 @@ export class MemoryGameplayRepository implements GameplayRepository {
     return this.bindPlayer(playerData)
   }
 
+  public async updatePlayer(player: Player): Promise<void> {
+    await this._services.playerService.updatePlayer(player.toData())
+  }
+
   private bindPlayer(data: PlayerData): Player {
     let player = this._players.get(data.id)
     if (player) {
       return player
     }
 
-    player = PlayerFactory.create(data)
+    player = PlayerFactory.create({ logger: this._logger, repo: this }, data)
     this._players.set(data.id, player)
     return player
   }

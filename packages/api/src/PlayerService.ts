@@ -23,6 +23,11 @@ export class ApiPlayerService extends ApiService implements PlayerService {
     return players.map(transform)
   }
 
+  public async updatePlayer(player: PlayerData): Promise<PlayerData> {
+    const updatedPlayer = await this.apiClient.patch<ApiPlayerDto>(Route.forPlayer(player.id), player)
+    return transform(updatedPlayer)
+  }
+
 }
 
 

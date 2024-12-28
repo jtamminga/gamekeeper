@@ -59,61 +59,65 @@ export function BaseFlow({ onComplete }: Props) {
       {/* game type */}
       <div className="form-control">
         <label>Type</label>
-        <label>
-          <input
-            type="radio"
-            name="game-type"
-            value="1"
-            checked={type === '1'}
-            onChange={onTypeChange}
-          />
-          VS
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="game-type"
-            value="2"
-            checked={type === '2'}
-            onChange={onTypeChange}
-          />
-          Coop
-        </label>
+        <div className="list">
+          <label>
+            <input
+              type="radio"
+              name="game-type"
+              value="1"
+              checked={type === '1'}
+              onChange={onTypeChange}
+            />
+            VS
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="game-type"
+              value="2"
+              checked={type === '2'}
+              onChange={onTypeChange}
+            />
+            Coop
+          </label>
+        </div>
       </div>
 
       {/* scoring type */}
       <div className="form-control">
         <label>Scoring</label>
-        <label>
-          <input
-            type="radio"
-            name="scoring-type"
-            value="1"
-            checked={scoring === '1'}
-            onChange={onScoreTypeChange}
-          />
-          Highest score wins
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="scoring-type"
-            value="2"
-            checked={scoring === '2'}
-            onChange={onScoreTypeChange}
-          />
-          Lowest score wins
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="scoring-type"
-            value="3"
-            checked={scoring === '3'}
-            onChange={onScoreTypeChange}
-          />
-          No score
-        </label>
+        <div className="list">
+          <label>
+            <input
+              type="radio"
+              name="scoring-type"
+              value="1"
+              checked={scoring === '1'}
+              onChange={onScoreTypeChange}
+            />
+            Highest score wins
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="scoring-type"
+              value="2"
+              checked={scoring === '2'}
+              onChange={onScoreTypeChange}
+            />
+            Lowest score wins
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="scoring-type"
+              value="3"
+              checked={scoring === '3'}
+              onChange={onScoreTypeChange}
+            />
+            No score
+          </label>
+        </div>
       </div>
 
       {/* weight */}

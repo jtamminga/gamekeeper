@@ -10,6 +10,7 @@ export interface GameplayRepository {
   getPlayer(id: PlayerId): Player
   getPlayers(ids: ReadonlyArray<PlayerId>): ReadonlyArray<Player>
   createPlayer(data: NewPlayerData): Promise<Player>
+  updatePlayer(player: Player): Promise<void>
 
   // games
   games: ReadonlyArray<Game>

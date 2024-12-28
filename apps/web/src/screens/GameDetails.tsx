@@ -16,7 +16,7 @@ export function GameDetails({ gameId }: Props) {
 
   return (
     <>
-      <div className="game-title-bar">
+      <div className="title-with-link">
         <h1>{view.game.name}</h1>
         <Link page={{ name: 'EditGame', props: { gameId }}}>Edit</Link>
       </div>

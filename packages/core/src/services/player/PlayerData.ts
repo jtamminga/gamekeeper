@@ -9,3 +9,8 @@ export interface PlayerData {
 }
 
 export type NewPlayerData = NewData<PlayerData>
+
+export type UpdatedPlayerData = {
+  id: PlayerId
+  name?: string
+}

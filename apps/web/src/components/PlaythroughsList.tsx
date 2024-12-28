@@ -23,7 +23,7 @@ export function PlaythroughsList({ formattedPlaythroughs, className }: Props) {
     <table className={className}>
       <thead>
         <tr>
-          <th className="num">Date</th>
+          <th>Date</th>
           {gameNames && <th>Game</th>}
           <th>Winner</th>
           {scores && <th>Scores</th>}
@@ -35,7 +35,6 @@ export function PlaythroughsList({ formattedPlaythroughs, className }: Props) {
 
             {/* played on */}
             <td
-              className="num"
               onClick={() => toPlaythrough(playthrough.id)}
             >
               {playthrough.playedOn}

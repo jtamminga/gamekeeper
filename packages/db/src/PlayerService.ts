@@ -32,6 +32,12 @@ export class DbPlayerService extends DbService implements PlayerService {
     // return
     return dtos.map(dto => transform(dto))
   }
+
+  public async updatePlayer(player: PlayerData): Promise<PlayerData> {
+    const query = 'UPDATE players SET name = ? WHERE id = ?'
+    await this._dataService.run(query, player.name, player.id)
+    return player
+  }
   
 }
 

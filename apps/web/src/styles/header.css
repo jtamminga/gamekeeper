@@ -5,17 +5,36 @@ header {
   right: 0px;
   display: flex;
   justify-content: center;
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
 }
 
 header > nav {
   display: flex;
-  gap: var(--space-lg);
-  padding: var(--space-md) var(--space-lg);
+  width: 100%;
+  max-width: var(--max-width);
+  min-width: var(--min-width);
+
   border-radius: var(--border-radius);
-  background-color: #1d1d1d;
+  background-color: rgb(0 0 0 / 33%);
+  align-items: center;
 }
 
-header > nav > a {
-  cursor: pointer;
+header > nav > .nav-links {
+  display: flex;
+  padding: var(--space-md);
+  width: 100%;
+  justify-content: space-between;
+}
+
+header > nav > .nav-links > .inner-links {
+  display: flex;
+  padding-left: var(--space-md);
+  gap: var(--space-lg);
+}
+
+header > nav > .nav-links a.record {
+  background: linear-gradient(45deg, #686fff, #243adc);
+  padding: 2px 14px;
+  border-radius: 6px;
+  color: white;
 }

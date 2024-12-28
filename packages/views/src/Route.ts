@@ -22,5 +22,8 @@ export namespace Route {
   export function forGame(id: GameId) {
     return `${GAMES}/${id}` as const
   }
+  export function forPlayer(id: string) {
+    return `${PLAYERS}/${id}` as const
+  }
 
 }

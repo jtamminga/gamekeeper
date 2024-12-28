@@ -1,4 +1,4 @@
-import type { NewPlayerData, PlayerData } from './PlayerData'
+import type { NewPlayerData, PlayerData, UpdatedPlayerData } from './PlayerData'
 
 
 export interface PlayerService {
@@ -6,5 +6,7 @@ export interface PlayerService {
   addPlayer(player: NewPlayerData): Promise<PlayerData>
 
   getPlayers(): Promise<readonly PlayerData[]>
+
+  updatePlayer(player: UpdatedPlayerData): Promise<PlayerData>
   
 }

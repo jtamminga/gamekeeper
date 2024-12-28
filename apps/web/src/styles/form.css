@@ -23,3 +23,13 @@ input, select {
   font-size: 1em;
   padding: var(--space-sm)
 }
+
+.form-control .list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.form-control label > input[type="radio"] {
+  margin-right: var(--space-md);
+}

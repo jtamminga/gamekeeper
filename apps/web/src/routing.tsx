@@ -1,13 +1,22 @@
-import { GameId, PlaythroughId, PlaythroughQueryOptions } from '@gamekeeper/core'
+import type {
+  GameId,
+  PlayerId,
+  PlaythroughId,
+  PlaythroughQueryOptions
+} from '@gamekeeper/core'
 import {
   AddGame,
+  AddPlayer,
   AddPlaythrough,
   EditGame,
+  EditPlayer,
   GameDetails,
   GamePlaythroughs,
   Games,
+  Players,
   PlaythroughDetails,
   Playthroughs,
+  Settings,
   Summary
 } from './screens'
 
@@ -23,6 +32,10 @@ export type Page =
   | { name: 'GamePlaythroughs', props: { gameId: GameId } }
   | { name: 'EditGame', props: { gameId: GameId } }
   | { name: 'Playthroughs', props: PlaythroughQueryOptions & { desc?: string } }
+  | { name: 'Settings' }
+  | { name: 'Players' }
+  | { name: 'AddPlayer' }
+  | { name: 'EditPlayer', props: { playerId: PlayerId } }
 
 
 // router
@@ -46,5 +59,13 @@ export function router(page: Page) {
       return <Playthroughs {...page.props} />
     case 'EditGame':
       return <EditGame {...page.props} />
+    case 'Settings':
+      return <Settings />
+    case 'Players':
+      return <Players />
+    case 'AddPlayer':
+      return <AddPlayer />
+    case 'EditPlayer':
+      return <EditPlayer {...page.props} />
   }
 }
