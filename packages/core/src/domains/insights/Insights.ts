@@ -1,13 +1,15 @@
+import type { InsightsRepository } from '@repos'
+import type { Logger, StatsService } from '@services'
+import type { Gameplay } from '@domains/gameplay'
 import { Goals } from './goal'
 import { Stats } from './stats'
-import type { Gameplay } from '@domains/gameplay'
-import type { Logger, StatsService } from '@services'
 
 
 export type InsightsDeps = {
   logger: Logger
   service: StatsService
   gameplay: Gameplay
+  repo: InsightsRepository
 }
 
 
@@ -19,6 +21,10 @@ export class Insights {
   public constructor(deps: InsightsDeps) {
     this.stats = new Stats(deps)
     this.goals = new Goals(deps)
+  }
+
+  public async hydrate(year: number): Promise<void> {
+    await this.goals.hydrate(year)
   }
 
 }

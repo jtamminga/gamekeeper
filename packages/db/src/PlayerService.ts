@@ -18,7 +18,7 @@ export class DbPlayerService extends DbService implements PlayerService {
     const query = 'INSERT INTO players (name) VALUES (?)'
     const id = await this._dataService.insert(query, player.name)
     
-    return transform({ ...player, id })
+    return this.transform({ ...player, id })
   }
 
   public async getPlayers(): Promise<readonly PlayerData[]> {
@@ -30,7 +30,7 @@ export class DbPlayerService extends DbService implements PlayerService {
     const dtos = await this._dataService.all<DbPlayerDto>(query)
 
     // return
-    return dtos.map(dto => transform(dto))
+    return dtos.map(dto => this.transform(dto))
   }
 
   public async updatePlayer(player: PlayerData): Promise<PlayerData> {
@@ -38,13 +38,13 @@ export class DbPlayerService extends DbService implements PlayerService {
     await this._dataService.run(query, player.name, player.id)
     return player
   }
-  
-}
 
-
-function transform(player: DbPlayerDto): PlayerData {
-  return {
-    id: player.id.toString() as PlayerId,
-    name: player.name
+  private transform(player: DbPlayerDto): PlayerData {
+    return {
+      id: player.id.toString() as PlayerId,
+      name: player.name
+    }
   }
+  
+  
 }

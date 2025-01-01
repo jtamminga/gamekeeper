@@ -1,5 +1,6 @@
 import type {
   GameId,
+  GoalId,
   PlayerId,
   PlaythroughId,
   PlaythroughQueryOptions
@@ -36,6 +37,9 @@ export type Page =
   | { name: 'Players' }
   | { name: 'AddPlayer' }
   | { name: 'EditPlayer', props: { playerId: PlayerId } }
+  | { name: 'Goals' }
+  | { name: 'AddGoal' }
+  | { name: 'EditGoal', props: { goalId: GoalId } }
 
 
 // router

@@ -145,6 +145,7 @@ export class MemoryGameplayRepository implements GameplayRepository {
 
   public async removePlaythrough(id: PlaythroughId): Promise<void> {
     await this._services.playthroughService.removePlaythrough(id)
+    this._playthroughs.delete(id)
   }
 
   public getPlaythrough(id: PlaythroughId): Playthrough {

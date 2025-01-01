@@ -37,7 +37,7 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
       stats.numPlaysByDate({ year }),
       stats.winrates({ year }),
       this.gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS }),
-      this.gamekeeper.insights.goals.hydrate()
+      this.gamekeeper.insights.goals.hydrate(year)
     ])
 
     const priorityGoal = this.gamekeeper.insights.goals.topPriority

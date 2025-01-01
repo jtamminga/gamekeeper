@@ -1,21 +1,11 @@
 import { Entity } from '@domains'
 import { getDayOfYear } from 'date-fns'
-import type { GoalId } from '@services'
-import type { InsightsDeps } from '../Insights'
-
-
-export interface GoalData {
-  id: GoalId
-  name: string
-  goal: number
-  type: 'num_plays'
-  year: number
-}
+import type { GoalData, GoalId } from '@services'
+import { InsightsDeps } from '../Insights'
 
 
 export abstract class Goal extends Entity<GoalId> {
 
-  private _name: string
   private _value: number
   private _progress?: number
   private _year: number
@@ -23,13 +13,8 @@ export abstract class Goal extends Entity<GoalId> {
   // progress
   public constructor(protected _deps: InsightsDeps, data: GoalData) {
     super(data.id)
-    this._name = data.name
-    this._value = data.goal
+    this._value = data.value
     this._year = data.year
-  }
-
-  public get name(): string {
-    return this._name
   }
 
   public get value(): number {
@@ -64,6 +49,18 @@ export abstract class Goal extends Entity<GoalId> {
     this._progress = await this.determineProgress()
   }
 
+  protected getBaseData(): Omit<GoalData, 'type'> {
+    return {
+      id: this.id,
+      value: this._value,
+      year: this._year,
+    }
+  }
+
   protected abstract determineProgress(): Promise<number>
+
+  public abstract toData(): GoalData
+
+  public abstract name: string
 
 }

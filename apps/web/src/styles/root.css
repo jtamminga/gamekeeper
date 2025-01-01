@@ -57,7 +57,11 @@ a.active {
   text-decoration: underline;
 }
 
-
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
 
 .player-score-inputs {
   margin-bottom: var(--space-sm);
@@ -84,9 +88,11 @@ a.active {
   display: flex;
   align-items: center;
   margin-top: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+.title-with-link.for-game {
   margin-bottom: var(--space-md);
 }
-
 .title-with-link h1 {
   margin: 0;
   flex-grow: 1;

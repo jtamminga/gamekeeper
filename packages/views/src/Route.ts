@@ -1,4 +1,4 @@
-import type { GameId } from '@gamekeeper/core'
+import type { GameId, GoalId, PlayerId } from '@gamekeeper/core'
 
 
 export namespace Route {
@@ -8,6 +8,7 @@ export namespace Route {
   export const GAMES = '/games'
   export const PLAYERS = '/players'
   export const PLAYTHROUGHS = '/playthroughs'
+  export const GOALS = '/goals'
   export const STATS = {
     NUM_PLAYTHROUGHS: `${_stats}/num-plays`,
     WINRATES: `${_stats}/winrates`,
@@ -22,8 +23,11 @@ export namespace Route {
   export function forGame(id: GameId) {
     return `${GAMES}/${id}` as const
   }
-  export function forPlayer(id: string) {
+  export function forPlayer(id: PlayerId) {
     return `${PLAYERS}/${id}` as const
+  }
+  export function forGoal(id: GoalId) {
+    return `${GOALS}/${id}` as const
   }
 
 }

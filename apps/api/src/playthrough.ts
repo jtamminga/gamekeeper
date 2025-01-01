@@ -22,7 +22,7 @@ export type ApiNewPlaythroughDto = {
 
 
 export function toPlaythroughQueryOptions(req: Request): PlaythroughQueryOptions {
-  const {limit, fromDate, toDate, gameId} = req.query
+  const { limit, fromDate, toDate, gameId } = req.query
   
   const query: PlaythroughQueryOptions = {}
   if (typeof limit === 'string') {

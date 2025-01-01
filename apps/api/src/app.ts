@@ -1,13 +1,14 @@
 import 'express-async-errors'
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
-import { GameId, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, PlaythroughId, UpdatedGameData, PlayerId } from '@gamekeeper/core'
+import { GameId, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, PlaythroughId, UpdatedGameData, PlayerId, UpdatedGoalData, GoalId } from '@gamekeeper/core'
 import { DbServices } from '@gamekeeper/db-services'
 import { GamekeeperViewService, Route } from '@gamekeeper/views'
 import { ApiNewPlaythroughDto, toNewPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
 import { config } from './config'
 import { InvalidParamsError } from './InvalidParamsError'
 import { toStatsQuery } from './stats'
+import { getGoalYear, toNewGoalData, toUpdatedGoalData } from './goals'
 
 
 // setup express app
@@ -22,6 +23,7 @@ const {
   gameService,
   playerService,
   playthroughService,
+  goalService,
   statsService
 } = dbServices
 
@@ -113,6 +115,36 @@ app.post(Route.PLAYTHROUGHS, async function (req, res) {
 // remove playthrough
 app.delete(`${Route.PLAYTHROUGHS}/:id`, async function(req, res) {
   await playthroughService.removePlaythrough(req.params.id as PlaythroughId)
+  res.json({ data: null })
+})
+
+
+//
+// goals
+// =====
+
+
+app.get(`${Route.GOALS}/:id`, async function (req, res) {
+  const goal = await goalService.getGoal(req.params.id as GoalId)
+  res.json({ data: goal })
+})
+app.get(Route.GOALS, async function (req, res) {
+  const year = getGoalYear(req)
+  const goals = await goalService.getGoals(year)
+  res.json({ data: goals })
+})
+app.post(Route.GOALS, async function (req, res) {
+  const data = toNewGoalData(req)
+  const goal = await goalService.addGoal(data)
+  res.json({ data: goal })
+})
+app.patch(`${Route.GOALS}/:id`, async function (req, res) {
+  const data = toUpdatedGoalData(req)
+  const goal = await goalService.updateGoal({ ...data, id: req.params.id as GoalId })
+  res.json({ data: goal })
+})
+app.delete(`${Route.GOALS}/:id`, async function (req, res) {
+  await goalService.removeGoal(req.params.id as GoalId)
   res.json({ data: null })
 })
 

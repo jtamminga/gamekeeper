@@ -22,7 +22,14 @@ CREATE TABLE playthroughs (
 	"scores" TEXT
 );
 
+CREATE TABLE goals (
+	"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	"type" INTEGER NOT NULL,
+	"year" INTEGER NOT NULL,
+	"goal" REAL
+);
+
 -- seed database
 
-INSERT INTO players ("id", "name") VALUES (1, "John");
-INSERT INTO players ("id", "name") VALUES (2, "Alex");
+-- INSERT INTO players ("id", "name") VALUES (1, "John");
+-- INSERT INTO players ("id", "name") VALUES (2, "Alex");

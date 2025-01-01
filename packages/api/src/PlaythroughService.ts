@@ -35,54 +35,52 @@ export class ApiPlaythroughService extends ApiService implements PlaythroughServ
 
   public async getPlaythrough(id: PlaythroughId): Promise<PlaythroughData> {
     const playthrough = await this.apiClient.get<ApiPlaythroughDto>(`${Route.PLAYTHROUGHS}/${id}`)
-    return transform(playthrough)
+    return this.transform(playthrough)
   }
 
   public async getPlaythroughs(options?: PlaythroughQueryOptions): Promise<readonly PlaythroughData[]> {
     const playthroughs = await this.apiClient.get<ApiPlaythroughDto[]>(Route.PLAYTHROUGHS, toCleanQuery(options))
-    return playthroughs.map(transform)
+    return playthroughs.map(this.transform)
   }
 
   public async addPlaythrough(playthrough: PlaythroughData): Promise<PlaythroughData> {
     const newPlaythrough = await this.apiClient.post<ApiPlaythroughDto>(Route.PLAYTHROUGHS, playthrough)
-    return transform(newPlaythrough)
+    return this.transform(newPlaythrough)
   }
 
   public async removePlaythrough(id: PlaythroughId): Promise<void> {
     return this.apiClient.delete(`${Route.PLAYTHROUGHS}/${id}`)
   }
 
-}
-
-
-// helper
-function transform(dto: ApiPlaythroughDto): PlaythroughData {
-  const basePlaythrough: BasePlaythroughData = {
-    id: dto.id as PlaythroughId,
-    gameId: dto.gameId.toString() as GameId,
-    playerIds: dto.playerIds as PlayerId[],
-    playedOn: new Date(dto.playedOn),
-  }
-
-  if (dto.type === 'vs') {
-    return {
-      ...basePlaythrough,
-      type: 'vs',
-      winnerId: dto.winnerId! as PlayerId | null,
-      scores: dto.scores
+  private transform(dto: ApiPlaythroughDto): PlaythroughData {
+    const basePlaythrough: BasePlaythroughData = {
+      id: dto.id as PlaythroughId,
+      gameId: dto.gameId.toString() as GameId,
+      playerIds: dto.playerIds as PlayerId[],
+      playedOn: new Date(dto.playedOn),
+    }
+  
+    if (dto.type === 'vs') {
+      return {
+        ...basePlaythrough,
+        type: 'vs',
+        winnerId: dto.winnerId! as PlayerId | null,
+        scores: dto.scores
+      }
+    }
+  
+    else if (dto.type === 'coop') {
+      return {
+        ...basePlaythrough,
+        type: 'coop',
+        playersWon: dto.playersWon!,
+        score: dto.score
+      }
+    }
+  
+    else {
+      throw new Error(`supported playthrough type ${dto.type}`)
     }
   }
 
-  else if (dto.type === 'coop') {
-    return {
-      ...basePlaythrough,
-      type: 'coop',
-      playersWon: dto.playersWon!,
-      score: dto.score
-    }
-  }
-
-  else {
-    throw new Error(`supported playthrough type ${dto.type}`)
-  }
 }

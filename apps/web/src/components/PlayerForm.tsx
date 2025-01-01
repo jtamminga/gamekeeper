@@ -1,10 +1,10 @@
-import type { NewPlayerData, Player } from '@gamekeeper/core'
+import type { NewPlayerData, PlayerData } from '@gamekeeper/core'
 import { useState } from 'react'
 
 
 type Props = {
   onComplete: (data: NewPlayerData) => Promise<void>
-  player?: Player
+  player?: PlayerData
   submitText: string
 }
 

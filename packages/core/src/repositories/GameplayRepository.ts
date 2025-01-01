@@ -18,7 +18,8 @@ export interface GameplayRepository {
   getGame(id: GameId): Game
   createGame(data: NewGameData): Promise<Game>
   updateGame(game: Game): Promise<void>
-
+  
+  // playthroughs
   playthroughs: ReadonlyArray<Playthrough>
   hydratePlaythroughs(options?: PlaythroughQueryOptions): Promise<ReadonlyArray<Playthrough>>
   getPlaythrough(id: PlaythroughId): Playthrough

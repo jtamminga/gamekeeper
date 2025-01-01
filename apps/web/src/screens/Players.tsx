@@ -14,7 +14,7 @@ export function Players() {
         </Link>
       </div>
       
-      <div>
+      <div className="link-list">
         {gameplay.players.all().map(player =>
           <Link
             key={player.id}

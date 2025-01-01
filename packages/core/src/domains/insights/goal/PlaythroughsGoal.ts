@@ -1,8 +1,19 @@
 import { Goal } from './Goal'
-import type { GameId } from '@services'
+import { GoalType, type GameId, type GoalData } from '@services'
 
 
 export class PlaythroughsGoal extends Goal {
+
+  public get name(): string {
+    return 'Games played'
+  }
+
+  public toData(): GoalData {
+    return {
+      ...this.getBaseData(),
+      type: GoalType.NumPlays
+    }
+  }
 
   protected async determineProgress(): Promise<number> {
     const result = await this._deps.service.getNumPlays({ year: this.year })

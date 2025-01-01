@@ -18,34 +18,32 @@ export class ApiGameService extends ApiService implements GameService {
 
   public async getGames(): Promise<readonly GameData[]> {
     const games = await this.apiClient.get<ApiGameDto[]>(Route.GAMES)
-    return games.map(transform)
+    return games.map(this.transform)
   }
 
   public async getGame(id: GameId): Promise<GameData> {
     const game = await this.apiClient.get<ApiGameDto>(Route.forGame(id))
-    return transform(game)
+    return this.transform(game)
   }
 
   public async addGame(game: NewGameData): Promise<GameData> {
     const newGame = await this.apiClient.post<ApiGameDto>(Route.GAMES, game)
-    return transform(newGame)
+    return this.transform(newGame)
   }
   
   public async updateGame(updatedGame: UpdatedGameData): Promise<GameData> {
     const game = await this.apiClient.patch<ApiGameDto>(Route.forGame(updatedGame.id), updatedGame)
-    return transform(game)
+    return this.transform(game)
   }
 
-}
-
-
-// transform api game to game dto
-function transform(game: ApiGameDto): GameData {
-  return {
-    id: game.id as GameId,
-    name: game.name,
-    type: game.type as GameType,
-    scoring: game.scoring as ScoringType,
-    weight: game.weight
+  private transform(game: ApiGameDto): GameData {
+    return {
+      id: game.id as GameId,
+      name: game.name,
+      type: game.type as GameType,
+      scoring: game.scoring as ScoringType,
+      weight: game.weight
+    }
   }
+
 }

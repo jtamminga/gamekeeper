@@ -18,7 +18,7 @@ export class DbGameService extends DbService implements GameService {
   public async getGames(): Promise<readonly GameData[]> {
     const query = 'SELECT g.* FROM games g ORDER BY g.name'
     const games = await this._dataService.all<DbGameDto>(query)
-    return games.map(game => transform(game))
+    return games.map(game => this.transform(game))
   }
 
   public async getGame(id: GameId): Promise<GameData> {
@@ -29,13 +29,13 @@ export class DbGameService extends DbService implements GameService {
       throw new NotFoundError(`cannot find game with id "${id}"`)
     }
 
-    return transform(dto)
+    return this.transform(dto)
   }
 
   public async addGame(game: GameData): Promise<GameData> {
     const query = 'INSERT INTO games (name, type, scoring, weight) VALUES (?, ?, ?, ?)'
     const id = await this._dataService.insert(query, game.name, game.type, game.scoring, game.weight)
-    return transform({ ...game, id })
+    return this.transform({ ...game, id })
   }
   
   public async updateGame(updatedGame: UpdatedGameData): Promise<GameData> {
@@ -60,21 +60,19 @@ export class DbGameService extends DbService implements GameService {
     return this.getGame(updatedGame.id)
   }
 
-}
-
-
-// transform db game to game dto
-function transform(game: DbGameDto): GameData {
-  const data: GameData = {
-    id: game.id.toString() as GameId,
-    name: game.name,
-    type: game.type as GameType,
-    scoring: game.scoring as ScoringType,
+  private transform(game: DbGameDto): GameData {
+    const data: GameData = {
+      id: game.id.toString() as GameId,
+      name: game.name,
+      type: game.type as GameType,
+      scoring: game.scoring as ScoringType,
+    }
+  
+    if (game.weight !== undefined && game.weight !== null) {
+      data.weight = game.weight
+    }
+  
+    return data
   }
 
-  if (game.weight !== undefined && game.weight !== null) {
-    data.weight = game.weight
-  }
-
-  return data
 }

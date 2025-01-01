@@ -41,7 +41,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       throw new NotFoundError(`cannot find game with id "${id}"`)
     }
     
-    return toData(dto)
+    return this.toData(dto)
   }
 
   public async getPlaythroughs(
@@ -91,11 +91,11 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       ':game_id': gameId
     })
 
-    return dtos.map(dto => toData(dto))
+    return dtos.map(dto => this.toData(dto))
   }
 
   public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughData> {
-    const dto = toDto(playthrough)
+    const dto = this.toDto(playthrough)
 
     const query = `
       INSERT INTO playthroughs
@@ -112,94 +112,88 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
     ]
 
     const id = await this._dataService.insert(query, ...values)
-    return toData({ ...dto, id })
+    return this.toData({ ...dto, id })
   }
 
   public async removePlaythrough(id: PlaythroughId): Promise<void> {
     const query = `DELETE FROM playthroughs WHERE id=?`
     return this._dataService.run(query, id)
   }
+
+  private toData(playthrough: DbPlaythroughDto): PlaythroughData {
+    const basePlaythrough: BasePlaythroughData = {
+      id: playthrough.id.toString() as PlaythroughId,
+      gameId: playthrough.gameId.toString() as GameId,
+      playerIds: JSON.parse(playthrough.players) as PlayerId[],
+      playedOn: new Date(playthrough.playedOn),
+    }
   
-}
-
-
-//
-// helpers
-// =======
-
-
-function toData(playthrough: DbPlaythroughDto): PlaythroughData {
-  const basePlaythrough: BasePlaythroughData = {
-    id: playthrough.id.toString() as PlaythroughId,
-    gameId: playthrough.gameId.toString() as GameId,
-    playerIds: JSON.parse(playthrough.players) as PlayerId[],
-    playedOn: new Date(playthrough.playedOn),
+    if (playthrough.gameType === GameType.VS) {
+      return {
+        ...basePlaythrough,
+        type: 'vs',
+        winnerId: playthrough.result === null
+          ? null
+          : playthrough.result.toString() as PlayerId,
+        scores: playthrough.scores
+          ? this.parseScores(playthrough.scores)
+          : undefined
+      } satisfies VsPlaythroughData
+    }
+  
+    if (playthrough.gameType === GameType.COOP) {
+      return {
+        ...basePlaythrough,
+        type: 'coop',
+        playersWon: playthrough.result === 1,
+        score: playthrough.scores === null
+          ? undefined
+          : Number.parseInt(playthrough.scores)
+      } satisfies CoopPlaythroughData
+    }
+  
+    throw new Error(`unsupported game type "${playthrough.gameType}"`)
   }
-
-  if (playthrough.gameType === GameType.VS) {
-    return {
-      ...basePlaythrough,
-      type: 'vs',
-      winnerId: playthrough.result === null
-        ? null
-        : playthrough.result.toString() as PlayerId,
-      scores: playthrough.scores
-        ? parseScores(playthrough.scores)
-        : undefined
-    } satisfies VsPlaythroughData
-  }
-
-  if (playthrough.gameType === GameType.COOP) {
-    return {
-      ...basePlaythrough,
-      type: 'coop',
-      playersWon: playthrough.result === 1,
-      score: playthrough.scores === null
-        ? undefined
-        : Number.parseInt(playthrough.scores)
-    } satisfies CoopPlaythroughData
-  }
-
-  throw new Error(`unsupported game type "${playthrough.gameType}"`)
-}
-
-function toDto(playthrough: VsPlaythroughData | CoopPlaythroughData): Omit<DbPlaythroughDto, 'id'> {
-  const base = {
-    gameId: Number(playthrough.gameId),
-    playedOn: playthrough.playedOn.toISOString(),
-    players: JSON.stringify(playthrough.playerIds)
-  }
-
-  if (VsPlaythroughData.guard(playthrough)) {
-    return {
-      ...base,
-      gameType: GameType.VS,
-      result: playthrough.winnerId === null
-        ? null
-        : parseInt(playthrough.winnerId),
-      scores: playthrough.scores
-        ? serializeScores(playthrough.scores)
-        : null
+  
+  private toDto(playthrough: VsPlaythroughData | CoopPlaythroughData): Omit<DbPlaythroughDto, 'id'> {
+    const base = {
+      gameId: Number(playthrough.gameId),
+      playedOn: playthrough.playedOn.toISOString(),
+      players: JSON.stringify(playthrough.playerIds)
+    }
+  
+    if (VsPlaythroughData.guard(playthrough)) {
+      return {
+        ...base,
+        gameType: GameType.VS,
+        result: playthrough.winnerId === null
+          ? null
+          : parseInt(playthrough.winnerId),
+        scores: playthrough.scores
+          ? this.serializeScores(playthrough.scores)
+          : null
+      }
+    }
+    else {
+      return {
+        ...base,
+        gameType: GameType.COOP,
+        result: playthrough.playersWon ? 1 : 0,
+        scores: playthrough.score?.toString() ?? null
+      }
     }
   }
-  else {
-    return {
-      ...base,
-      gameType: GameType.COOP,
-      result: playthrough.playersWon ? 1 : 0,
-      scores: playthrough.score?.toString() ?? null
-    }
+  
+  private serializeScores(scores: readonly ScoreData[]): string {
+    return JSON.stringify(scores.map<DbScoreDto>(score => ({
+      id: score.playerId,
+      s: score.score
+    })))
   }
-}
-
-function serializeScores(scores: readonly ScoreData[]): string {
-  return JSON.stringify(scores.map<DbScoreDto>(score => ({
-    id: score.playerId,
-    s: score.score
-  })))
-}
-
-function parseScores(scores: string): readonly ScoreData[] {
-  const collection = JSON.parse(scores) as DbScoreDto[]
-  return collection.map(score => ({playerId: score.id as PlayerId, score: score.s}))
+  
+  private parseScores(scores: string): readonly ScoreData[] {
+    const collection = JSON.parse(scores) as DbScoreDto[]
+    return collection.map(score => ({playerId: score.id as PlayerId, score: score.s}))
+  }
+  
 }

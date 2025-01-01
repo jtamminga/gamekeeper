@@ -25,7 +25,7 @@ if (staticMode) {
 async function initialize() {
   if (!staticMode) {
     await gamekeeper.gameplay.hydrate({ limit: 10 })
-    await gamekeeper.insights.goals.hydrate()
+    await gamekeeper.insights.hydrate(2024)
   }
 }
 
