@@ -55,10 +55,12 @@ export function Summary() {
         description="games played"
       />
 
-      <StatCard
-        value={winnerThisYear.winrate}
-        description={<>best winrate <PlayerColor playerId={winnerThisYear.playerId}>{winnerThisYear.player}</PlayerColor></>}
-      />
+      {winnerThisYear &&
+        <StatCard
+          value={winnerThisYear.winrate}
+          description={<>best winrate <PlayerColor playerId={winnerThisYear.playerId}>{winnerThisYear.player}</PlayerColor></>}
+        />
+      }
 
       <StatCard
         value={numUniqueGamesPlayedThisYear}
@@ -78,10 +80,12 @@ export function Summary() {
         <h3>latest {latestNumPlaythorughs} games</h3>
       </div>
 
-      <StatCard
-        value={latestWinner.winrate}
-        description={<>winrate lately <PlayerColor playerId={latestWinner.playerId}>{latestWinner.player}</PlayerColor></>}
-      />
+      {latestWinner &&
+        <StatCard
+          value={latestWinner.winrate}
+          description={<>winrate lately <PlayerColor playerId={latestWinner.playerId}>{latestWinner.player}</PlayerColor></>}
+        />
+      }
 
       <StatCard
         value={daysSinceLastPlaythrough}
@@ -93,14 +97,18 @@ export function Summary() {
         formattedPlaythroughs={latestPlaythroughs}
       />
 
-      <div className="page-subtitle">
-        <h2>Most played games</h2>
-        <h3>{curYear}</h3>
-      </div>
+      {topPlayedGames.length > 0 &&
+        <>
+          <div className="page-subtitle">
+            <h2>Most played games</h2>
+            <h3>{curYear}</h3>
+          </div>
 
-      <TopPlayedGames
-        topPlayed={topPlayedGames}
-      />
+          <TopPlayedGames
+            topPlayed={topPlayedGames}
+          />
+        </>
+      }
 
       <div className="page-subtitle">
         <h2>Plays per day</h2>

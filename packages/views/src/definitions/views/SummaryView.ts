@@ -8,32 +8,32 @@ export type BarChartData = {
   labels: string[]
 }
 export interface SummaryView {
-  readonly priorityGoal?: FormattedGoal
-  readonly numPlaysThisYear: number
-  readonly numPlaysLastYear: number
-  readonly numPlaysAllTime: number
-  readonly numPlaysByMonth: BarChartData
-  readonly numUniqueGamesPlayedThisYear: number
-  readonly winnerThisYear: {
+  priorityGoal?: FormattedGoal
+  numPlaysThisYear: number
+  numPlaysLastYear: number
+  numPlaysAllTime: number
+  numPlaysByMonth: BarChartData
+  numUniqueGamesPlayedThisYear: number
+  winnerThisYear?: {
     winrate: string
     player: string
     playerId: PlayerId
   }
-  readonly daysSinceLastPlaythrough: number
-  readonly latestPlaythroughs: FormattedPlaythroughs
-  readonly latestWinner: {
+  daysSinceLastPlaythrough: number
+  latestPlaythroughs: FormattedPlaythroughs
+  latestWinner?: {
     winrate: string
     player: string
     playerId: PlayerId
   }
-  readonly latestNumPlaythorughs: number
-  readonly numPlaysPerDayThisYear: {
+  latestNumPlaythorughs: number
+  numPlaysPerDayThisYear: {
     plays: number[]
     firstDate: Date
   }
-  readonly avgPlaysPerDayThisYear: string
-  readonly mostPlaysInDayThisYear: number,
-  readonly topPlayedGames: {
+  avgPlaysPerDayThisYear: string
+  mostPlaysInDayThisYear: number,
+  topPlayedGames: {
     gameName: string,
     gameId: GameId,
     numPlays: number,
