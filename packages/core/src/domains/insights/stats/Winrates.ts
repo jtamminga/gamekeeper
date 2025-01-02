@@ -7,7 +7,7 @@ export class Winrates {
 
   public constructor(public readonly winrates: ReadonlyArray<Winrate>) { }
 
-  public get highest(): Winrate {
+  public get highest(): Winrate | undefined {
     let highestWinrate = this.winrates[0]
     for (let i = 1; i < this.winrates.length; i++) {
       if (this.winrates[i].winrate > highestWinrate.winrate) {

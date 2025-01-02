@@ -20,5 +20,5 @@ export type GetGamesOptions = {
   order?: GameSortOrder
 }
 export interface GamesView {
-  readonly games: ReadonlyArray<GameWithStats>
+  games: ReadonlyArray<GameWithStats>
 }

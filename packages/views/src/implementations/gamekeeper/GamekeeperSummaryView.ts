@@ -63,7 +63,7 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
       .sort((a, b) => b.numPlays - a.numPlays)
       .slice(0, 5)
 
-    return {
+    const view: SummaryView = {
       priorityGoal: priorityGoal ? formatGoal(priorityGoal) : undefined,
       numUniqueGamesPlayedThisYear,
       numPlaysThisYear: totalPlays(numPlaysThisYear),
@@ -76,16 +76,6 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
         thisYear: numPlaysByMonthThisYear,
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
       },
-      winnerThisYear: {
-        winrate: formatPercent(winningWinrate.winrate),
-        player: winningWinrate.player.name,
-        playerId: winningWinrate.player.id
-      },
-      latestWinner: {
-        winrate: formatPercent(winningLately.winrate),
-        player: winningLately.player.name,
-        playerId: winningLately.player.id
-      },
       latestNumPlaythorughs: NUM_LATEST_PLAYTHROUGHTS,
       latestPlaythroughs: formatPlaythroughs(this.gamekeeper.gameplay.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
       numPlaysPerDayThisYear: {
@@ -95,11 +85,28 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
       mostPlaysInDayThisYear: numPlaysByDateThisYear.reduce((most, cur) => cur.plays > most ? cur.plays : most, 0),
       topPlayedGames
     }
+
+    if (winningWinrate) {
+      view.winnerThisYear = {
+        winrate: formatPercent(winningWinrate.winrate),
+        player: winningWinrate.player.name,
+        playerId: winningWinrate.player.id
+      }
+    }
+    if (winningLately) {
+      view.latestWinner = {
+        winrate: formatPercent(winningLately.winrate),
+        player: winningLately.player.name,
+        playerId: winningLately.player.id
+      }
+    }
+
+    return view
   }
 }
 
 
 // helpers
 function totalPlays(grouped: StatsResult<number>): number {
-  return Array.from(grouped.values()).reduce((sum, count) => sum + count)
+  return Array.from(grouped.values()).reduce((sum, count) => sum + count, 0)
 }

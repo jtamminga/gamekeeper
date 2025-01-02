@@ -3,16 +3,16 @@ import type { FormattedPlayerStat, FormattedPlaythroughs, FormattedScoreStats, F
 
 
 export interface GameView {
-  readonly game: Game
-  readonly gameTypeLabel: string
-  readonly weightLabel: string | undefined
-  readonly numPlaythroughs: FormattedStat
-  readonly winrates: ReadonlyArray<FormattedPlayerStat>
-  readonly stats: ReadonlyArray<FormattedStat>
-  readonly scoreStats: FormattedScoreStats | undefined
-  readonly latestPlaythroughs: FormattedPlaythroughs
-  readonly hasMorePlaythroughs: boolean
-  readonly numPlaysPerDayThisYear: {
+  game: Game
+  gameTypeLabel: string
+  weightLabel: string | undefined
+  numPlaythroughs: FormattedStat
+  winrates: ReadonlyArray<FormattedPlayerStat>
+  stats: ReadonlyArray<FormattedStat>
+  scoreStats: FormattedScoreStats | undefined
+  latestPlaythroughs: FormattedPlaythroughs
+  hasMorePlaythroughs: boolean
+  numPlaysPerDayThisYear: {
     plays: number[]
     firstDate: Date
   }
