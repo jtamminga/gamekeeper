@@ -7,13 +7,16 @@ import type {
 } from '@gamekeeper/core'
 import {
   AddGame,
+  AddGoal,
   AddPlayer,
   AddPlaythrough,
   EditGame,
+  EditGoal,
   EditPlayer,
   GameDetails,
   GamePlaythroughs,
   Games,
+  Goals,
   Players,
   PlaythroughDetails,
   Playthroughs,
@@ -71,5 +74,11 @@ export function router(page: Page) {
       return <AddPlayer />
     case 'EditPlayer':
       return <EditPlayer {...page.props} />
+    case 'Goals':
+      return <Goals />
+    case 'AddGoal':
+      return <AddGoal />
+    case 'EditGoal':
+      return <EditGoal {...page.props} />
   }
 }

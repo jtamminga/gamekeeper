@@ -6,14 +6,15 @@ type Props = {
   onComplete: (data: NewGoalData) => Promise<void>
   goal?: GoalData
   submitText: string
+  disableType?: boolean
 }
 
 
-export function GoalForm({ goal, onComplete, submitText }: Props) {
+export function GoalForm({ goal, onComplete, submitText, disableType }: Props) {
 
   const [loading, setLoading] = useState(false)
 
-  const [type, setType] = useState(goal?.type.toString() ?? '')
+  const [type, setType] = useState(goal?.type.toString() ?? '1')
   const [value, setValue] = useState(goal?.value.toString() ?? '')
   const [year, setYear] = useState(goal?.year.toString() ?? '')
 
@@ -40,13 +41,14 @@ export function GoalForm({ goal, onComplete, submitText }: Props) {
         <select
           value={type}
           onChange={e => setType(e.target.value)}
+          disabled={disableType}
         >
           <option disabled>Select type</option>
           <option value="1">Number of game plays</option>
         </select>
       </div>
 
-      <div>
+      <div className="form-control">
         <label>Goal</label>
         <input
           type="number"
@@ -55,7 +57,7 @@ export function GoalForm({ goal, onComplete, submitText }: Props) {
         />
       </div>
 
-      <div>
+      <div className="form-control">
         <label>Year</label>
         <input
           type="number"

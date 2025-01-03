@@ -1,6 +1,6 @@
 import { PlayerForm } from '@app/components'
 import { useGamekeeper, useRouter } from '@app/hooks'
-import { PlayerId } from '@gamekeeper/core'
+import type { PlayerId } from '@gamekeeper/core'
 
 
 type Props = {

@@ -1,6 +1,6 @@
 import { Entity } from '@domains'
 import { getDayOfYear } from 'date-fns'
-import type { GoalData, GoalId } from '@services'
+import type { GoalData, GoalId, UpdatedGoalData } from '@services'
 import { InsightsDeps } from '../Insights'
 
 
@@ -47,6 +47,12 @@ export abstract class Goal extends Entity<GoalId> {
 
   public async load(): Promise<void> {
     this._progress = await this.determineProgress()
+  }
+
+  public async update(data: Omit<UpdatedGoalData, 'id'>): Promise<void> {
+    this._value = data.value ?? this._value
+    this._year = data.year ?? this._year
+    await this._deps.repo.updateGoal(this)
   }
 
   protected getBaseData(): Omit<GoalData, 'type'> {

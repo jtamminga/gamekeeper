@@ -16,20 +16,18 @@ header > nav {
 
   border-radius: var(--border-radius);
   background-color: rgb(0 0 0 / 33%);
-  align-items: center;
 }
 
 header > nav > .nav-links {
   display: flex;
-  padding: var(--space-md);
   width: 100%;
-  justify-content: space-between;
 }
 
 header > nav > .nav-links > .inner-links {
+  flex-grow: 1;
   display: flex;
-  padding-left: var(--space-md);
-  gap: var(--space-lg);
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 header > nav > .nav-links a.record {
@@ -37,4 +35,5 @@ header > nav > .nav-links a.record {
   padding: 2px 14px;
   border-radius: 6px;
   color: white;
+  margin: var(--space-md);
 }

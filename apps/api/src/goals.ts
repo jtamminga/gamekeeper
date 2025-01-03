@@ -14,40 +14,40 @@ export function getGoalYear(req: Request): number {
 }
 
 export function toNewGoalData(req: Request): NewGoalData {
-  const { type, goal, year } = req.body
+  const { type, value, year } = req.body
 
-  if (typeof type !== 'string') {
+  if (typeof type !== 'number') {
     throw new InvalidParamsError('type is required')
   }
 
-  if (typeof goal !== 'string') {
-    throw new InvalidParamsError('goal is required')
+  if (typeof value !== 'number') {
+    throw new InvalidParamsError('value is required')
   }
 
-  if (typeof year !== 'string') {
+  if (typeof year !== 'number') {
     throw new InvalidParamsError('year is required')
   }
 
   return {
-    type: parseInt(type),
-    goal: parseInt(goal),
-    year: parseInt(year)
+    type,
+    value,
+    year
   }
 }
 
 export function toUpdatedGoalData(req: Request): Omit<UpdatedGoalData, 'id'> {
-  const { id, type, goal, year } = req.body
+  const { type, value, year } = req.body
 
   const data: Omit<UpdatedGoalData, 'id'> = { }
 
-  if (typeof type === 'string') {
-    data.type = parseInt(type)
+  if (typeof type === 'number') {
+    data.type = type
   }
-  if (typeof goal === 'string') {
-    data.goal = parseInt(goal)
+  if (typeof value === 'number') {
+    data.value = value
   }
-  if (typeof year === 'string') {
-    data.year = parseInt(year)
+  if (typeof year === 'number') {
+    data.year = year
   }
 
   return data
