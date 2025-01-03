@@ -43,6 +43,13 @@ export function Games() {
   // render games
   return (
     <>
+      <div className="title-with-link for-game">
+        <h1>Games</h1>
+        <Link page={{ name: 'AddGame' }}>
+          Add game
+        </Link>
+      </div>
+
       <div className="flex space-between mt-lg">
         <div className="form-control">
           <label>Order by</label>
@@ -55,13 +62,9 @@ export function Games() {
             )}
           </select>
         </div>
-
-        <Link page={{ name: 'AddGame' }}>
-          Add game
-        </Link>
       </div>
 
-      <table>
+      <table className="mb-lg">
         <thead>
           <tr>
             <th>Name</th>
@@ -79,6 +82,10 @@ export function Games() {
           )}
         </tbody>
       </table>
+
+      <div>
+        <span className="text-muted">{view.games.length} total games</span>
+      </div>
 
     </>
   )

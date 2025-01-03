@@ -8,7 +8,7 @@ import { ApiNewPlaythroughDto, toNewPlaythroughData, toPlaythroughQueryOptions }
 import { config } from './config'
 import { InvalidParamsError } from './InvalidParamsError'
 import { toStatsQuery } from './stats'
-import { getGoalYear, toNewGoalData, toUpdatedGoalData } from './goals'
+import { toGoalsQuery, toNewGoalData, toUpdatedGoalData } from './goals'
 
 
 // setup express app
@@ -129,8 +129,8 @@ app.get(`${Route.GOALS}/:id`, async function (req, res) {
   res.json({ data: goal })
 })
 app.get(Route.GOALS, async function (req, res) {
-  const year = getGoalYear(req)
-  const goals = await goalService.getGoals(year)
+  const query = toGoalsQuery(req)
+  const goals = await goalService.getGoals(query)
   res.json({ data: goals })
 })
 app.post(Route.GOALS, async function (req, res) {

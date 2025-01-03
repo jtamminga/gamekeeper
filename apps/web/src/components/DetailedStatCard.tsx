@@ -4,6 +4,7 @@ import type { PlayerId } from '@gamekeeper/core'
 
 type Props = {
   name: string
+  year: number
   thisYear: string
   allTime: string
   playerId?: PlayerId
@@ -12,6 +13,7 @@ type Props = {
 
 export function DetailedStatCard({
   name,
+  year,
   playerId,
   thisYear,
   allTime
@@ -20,7 +22,7 @@ export function DetailedStatCard({
     <div className={'detailed-stat-card ' + (playerId ? playerColorClass(playerId) : '')}>
       <div>{name}</div>
       <div>
-        <span>2024</span>
+        <span>{year}</span>
         <span>{thisYear}</span>
       </div>
       <div>

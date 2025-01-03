@@ -1,5 +1,5 @@
 import type { InsightsRepository } from '@repos'
-import type { Logger, StatsService } from '@services'
+import type { GoalsQuery, Logger, StatsService } from '@services'
 import type { Gameplay } from '@domains/gameplay'
 import { Goals } from './goal'
 import { Stats } from './stats'
@@ -23,8 +23,8 @@ export class Insights {
     this.goals = new Goals(deps)
   }
 
-  public async hydrate(year: number): Promise<void> {
-    await this.goals.hydrate(year)
+  public async hydrate(query: GoalsQuery = {}): Promise<void> {
+    await this.goals.hydrate(query)
   }
 
 }

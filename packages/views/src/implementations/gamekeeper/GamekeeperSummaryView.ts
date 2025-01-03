@@ -18,7 +18,6 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
 
     const [
       numPlaysThisYear,
-      numPlaysLastYear,
       numPlaysAllTime,
       numPlaysByMonthThisYear,
       overallWinratesThisYear,
@@ -28,7 +27,6 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
       winratesThisYear,
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
-      stats.numPlaythroughs({ year: year - 1 }),
       stats.numPlaythroughs({}),
       stats.playsByMonth({ year }),
       stats.overallWinrates({ year }),
@@ -37,10 +35,10 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
       stats.numPlaysByDate({ year }),
       stats.winrates({ year }),
       this.gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS }),
-      this.gamekeeper.insights.goals.hydrate(year)
+      this.gamekeeper.insights.goals.hydrate({ year })
     ])
 
-    const priorityGoal = this.gamekeeper.insights.goals.topPriority
+    const priorityGoal = this.gamekeeper.insights.goals.topPriority(year)
     if (priorityGoal) {
       await priorityGoal.load()
     }
@@ -67,7 +65,6 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
       priorityGoal: priorityGoal ? formatGoal(priorityGoal) : undefined,
       numUniqueGamesPlayedThisYear,
       numPlaysThisYear: totalPlays(numPlaysThisYear),
-      numPlaysLastYear: totalPlays(numPlaysLastYear),
       numPlaysAllTime: totalPlays(numPlaysAllTime),
       daysSinceLastPlaythrough: latestPlaythrough
         ? differenceInDays(Date.now(), latestPlaythrough.playedOn)

@@ -10,7 +10,6 @@ export type BarChartData = {
 export interface SummaryView {
   priorityGoal?: FormattedGoal
   numPlaysThisYear: number
-  numPlaysLastYear: number
   numPlaysAllTime: number
   numPlaysByMonth: BarChartData
   numUniqueGamesPlayedThisYear: number

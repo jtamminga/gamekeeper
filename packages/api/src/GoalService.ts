@@ -1,6 +1,7 @@
-import { GoalData, GoalId, GoalService, GoalType, NewGoalData, UpdatedGoalData } from '@gamekeeper/core'
+import { GoalData, GoalId, GoalService, GoalsQuery, GoalType, NewGoalData, UpdatedGoalData } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { Route } from '@gamekeeper/views'
+import { toCleanQuery } from './utils'
 
 
 // types
@@ -19,8 +20,8 @@ export class ApiGoalService extends ApiService implements GoalService {
     return this.transform(newGoal)
   }
 
-  public async getGoals(year: number): Promise<readonly GoalData[]> {
-    const goals = await this.apiClient.get<ApiGoalDto[]>(Route.GOALS, { year: year.toString() })
+  public async getGoals(query: GoalsQuery): Promise<readonly GoalData[]> {
+    const goals = await this.apiClient.get<ApiGoalDto[]>(Route.GOALS, toCleanQuery(query))
     return goals.map(this.transform)
   }
 

@@ -13,9 +13,21 @@ export function EditGoal({ goalId }: Props) {
   const router = useRouter()
   const goal = insights.goals.get(goalId)
 
+  async function onDelete() {
+    if (confirm('Are you sure you want to delete?')) {
+      await insights.goals.remove(goalId)
+      history.back()
+    }
+  }
+
   return (
     <>
-      <h1>{goal.name}</h1>
+      <div className="title-with-link">
+        <h1>{goal.name}</h1>
+        <a onClick={onDelete} className="danger">
+          delete
+        </a>
+      </div>
 
       <GoalForm
         submitText="Update"

@@ -3,6 +3,7 @@ import type { FormattedPlayerStat, FormattedPlaythroughs, FormattedScoreStats, F
 
 
 export interface GameView {
+  year: number
   game: Game
   gameTypeLabel: string
   weightLabel: string | undefined

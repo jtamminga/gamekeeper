@@ -1,17 +1,7 @@
 import { Request } from 'express'
 import { InvalidParamsError } from './InvalidParamsError'
-import { NewGoalData, UpdatedGoalData } from '@gamekeeper/core'
+import { GoalsQuery, NewGoalData, UpdatedGoalData } from '@gamekeeper/core'
 
-
-export function getGoalYear(req: Request): number {
-  const { year } = req.query
-
-  if (typeof year !== 'string') {
-    throw new InvalidParamsError('year is required')
-  }
-
-  return parseInt(year)
-}
 
 export function toNewGoalData(req: Request): NewGoalData {
   const { type, value, year } = req.body
@@ -51,4 +41,15 @@ export function toUpdatedGoalData(req: Request): Omit<UpdatedGoalData, 'id'> {
   }
 
   return data
+}
+
+export function toGoalsQuery(req: Request): GoalsQuery {
+  const { year } = req.query
+  
+  const query: GoalsQuery = {}
+  if (typeof year === 'number') {
+    query.year = year
+  }
+
+  return query
 }

@@ -1,4 +1,4 @@
-import { GoalData, GoalId, GoalService, GoalType, NewGoalData, NotFoundError, UpdatedGoalData } from '@gamekeeper/core'
+import { GoalData, GoalId, GoalService, GoalsQuery, GoalType, NewGoalData, NotFoundError, UpdatedGoalData } from '@gamekeeper/core'
 import { DbService } from './DbService'
 
 
@@ -18,8 +18,11 @@ export class DbGoalService extends DbService implements GoalService {
     return this.transform({ ...goal, id })
   }
 
-  public async getGoals(year: number): Promise<readonly GoalData[]> {
-    const query = 'SELECT g.* FROM goals g WHERE g.year = ?'
+  public async getGoals({ year }: GoalsQuery = {}): Promise<readonly GoalData[]> {
+    let query = 'SELECT g.* FROM goals g'
+    if (year !== undefined) {
+      query += ' WHERE g.year = ?'
+    }
     const goals = await this._dataService.all<DbGoalDto>(query, year)
     return goals.map(goal => this.transform(goal))
   }

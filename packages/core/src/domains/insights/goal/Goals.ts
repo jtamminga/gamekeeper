@@ -1,6 +1,6 @@
 import type { Goal } from './Goal'
 import type { InsightsDeps } from '../Insights'
-import { GoalId, NewGoalData } from '@services'
+import { GoalId, GoalsQuery, NewGoalData } from '@services'
 
 
 export class Goals {
@@ -9,13 +9,13 @@ export class Goals {
     private _deps: InsightsDeps
   ) { }
 
-  public async hydrate(year: number): Promise<Goals> {
-    await this._deps.repo.hydrateGoals(year)
+  public async hydrate(query: GoalsQuery = {}): Promise<Goals> {
+    await this._deps.repo.hydrateGoals(query)
     return this
   }
 
-  public all(): ReadonlyArray<Goal> {
-    return this._deps.repo.goals
+  public all(query: GoalsQuery = {}): ReadonlyArray<Goal> {
+    return this._deps.repo.getGoals(query)
   }
 
   public get(id: GoalId): Goal {
@@ -26,7 +26,11 @@ export class Goals {
     return this._deps.repo.createGoal(data)
   }
 
-  public get topPriority(): Goal | undefined {
-    return this.all()[0]
+  public async remove(id: GoalId): Promise<void> {
+    await this._deps.repo.removeGoal(id)
+  }
+
+  public topPriority(year: number): Goal | undefined {
+    return this.all({ year })[0]
   }
 }

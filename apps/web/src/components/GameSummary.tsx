@@ -75,10 +75,11 @@ function renderScoreStats({ average, best }: FormattedScoreStats) {
   )
 }
 
-function renderYearVsTotalStats({ numPlaythroughs, winrates }: GameView) {
+function renderYearVsTotalStats({ numPlaythroughs, winrates, year }: GameView) {
   return (
     <>
       <DetailedStatCard
+        year={year}
         name={numPlaythroughs.name}
         thisYear={numPlaythroughs.valueThisYear}
         allTime={numPlaythroughs.valueAllTime}
@@ -86,6 +87,7 @@ function renderYearVsTotalStats({ numPlaythroughs, winrates }: GameView) {
       {winrates.map((stat, index) =>
         <DetailedStatCard
           key={`stat-${index}`}
+          year={year}
           name={stat.name}
           playerId={stat.playerId}
           thisYear={stat.valueThisYear}

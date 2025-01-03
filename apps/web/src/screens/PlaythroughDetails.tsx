@@ -11,9 +11,10 @@ export function PlaythroughDetails({ playthroughId }: Props) {
 
   const { gameplay } = useGamekeeper()
 
-  function onDelete() {
+  async function onDelete() {
     if (confirm('Are you sure you want to delete?')) {
-      gameplay.playthroughs.remove(playthroughId)
+      await gameplay.playthroughs.remove(playthroughId)
+      history.back()
     }
   }
 

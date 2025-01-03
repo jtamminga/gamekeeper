@@ -77,6 +77,7 @@ export class GamekeeperGameView implements HydratableView<GameView> {
     }
 
     return {
+      year,
       game,
       gameTypeLabel,
       weightLabel,
