@@ -83,9 +83,14 @@ a.danger {
   display: flex;
   align-items: baseline;
   gap: var(--space-md);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 .page-subtitle > h2 + h3 {
-  color: var(--color-gray)
+  color: var(--color-gray);
+}
+.page-subtitle > h1, .page-subtitle > h2, .page-subtitle > h3 {
+  margin: 0;
 }
 
 .title-with-link {

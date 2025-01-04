@@ -1,5 +1,4 @@
 import { GameView } from '@def/views'
-import { HydratableView } from './HydratableView'
 import { GameId, GameKeeper, VsGame } from '@gamekeeper/core'
 import { FormattedPlayerStat, FormattedScoreStats, FormattedStat } from '@def/models'
 import { formatNumber, formatPercent, formatPlaythroughs } from '../formatters'
@@ -10,15 +9,14 @@ import { toNumPlaysPerDay } from '../transforms'
 const NUM_HISTORICAL_PLAYTHROUGHS = 5
 
 
-export class GamekeeperGameView implements HydratableView<GameView> {
+export class GameViewFactory {
 
   public constructor(
     private readonly gamekeeper: GameKeeper,
-    private readonly gameId: GameId, 
   ) { }
 
-  public async hydrate(): Promise<GameView> {
-    const game = this.gamekeeper.gameplay.games.get(this.gameId)
+  public async create(gameId: GameId): Promise<GameView> {
+    const game = this.gamekeeper.gameplay.games.get(gameId)
     const gameStats = this.gamekeeper.insights.stats.forGame(game)
     const year = new Date().getFullYear()
     const gameTypeLabel = game instanceof VsGame

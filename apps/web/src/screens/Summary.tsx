@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
 import { TopPlayedGames } from '@app/components/TopPlayedGames'
 import { useRouter, useSummaryView } from '@app/hooks'
@@ -5,7 +6,8 @@ import { useRouter, useSummaryView } from '@app/hooks'
 
 export function Summary() {
 
-  const view = useSummaryView()
+  const [viewingYear, setViewingYear] = useState(new Date().getFullYear())
+  const view = useSummaryView(viewingYear)
   const { setPage } = useRouter()
 
   // render loading while waiting
@@ -14,6 +16,9 @@ export function Summary() {
   }
 
   const {
+    year,
+    currentYear,
+    isCurrentYear,
     priorityGoal,
     daysSinceLastPlaythrough,
     numPlaysThisYear,
@@ -29,10 +34,15 @@ export function Summary() {
     topPlayedGames
   } = view
 
-  const curYear = new Date().getFullYear()
-
   return (
     <>
+      {!isCurrentYear &&
+        <div className="title-with-link">
+          <h1>{year} summary</h1>
+          <a onClick={() => setViewingYear(currentYear)}>Current year</a>
+        </div>
+      }
+
       {priorityGoal &&
         <>
           <div className="page-subtitle">
@@ -44,66 +54,61 @@ export function Summary() {
         </>
       }
       
-
       <div className="page-subtitle">
         <h2>Overall</h2>
-        <h3>{curYear}</h3>
+        <h3>{year}</h3>
       </div>
-
       <StatCard
         value={numPlaysThisYear}
         description="games played"
       />
-
       {winnerThisYear &&
         <StatCard
           value={winnerThisYear.winrate}
           description={<>best winrate <PlayerColor playerId={winnerThisYear.playerId}>{winnerThisYear.player}</PlayerColor></>}
         />
       }
-
       <StatCard
         value={numUniqueGamesPlayedThisYear}
         description="unique games played"
       />
-
       <PlaysByMonth
-        year={curYear}
+        year={year}
         data={numPlaysByMonth}
         onMonthClick={(fromDate, toDate, month) =>
-          setPage({ name: 'Playthroughs', props: { fromDate, toDate, desc: `${month} ${curYear}` }})
+          setPage({ name: 'Playthroughs', props: { fromDate, toDate, desc: `${month} ${year}` }})
         }
       />
 
-      <div className="page-subtitle">
-        <h2>Recent stats</h2>
-        <h3>latest {latestNumPlaythorughs} games</h3>
-      </div>
-
-      {latestWinner &&
-        <StatCard
-          value={latestWinner.winrate}
-          description={<>winrate lately <PlayerColor playerId={latestWinner.playerId}>{latestWinner.player}</PlayerColor></>}
-        />
+      {isCurrentYear &&
+        <>
+          <div className="page-subtitle">
+            <h2>Recent stats</h2>
+            <h3>latest {latestNumPlaythorughs} games</h3>
+          </div>
+          {latestWinner &&
+            <StatCard
+              value={latestWinner.winrate}
+              description={<>winrate lately <PlayerColor playerId={latestWinner.playerId}>{latestWinner.player}</PlayerColor></>}
+            />
+          }
+          <StatCard
+            value={daysSinceLastPlaythrough}
+            description="days since last game"
+          />
+          <PlaythroughsList
+            className="mt-lg"
+            formattedPlaythroughs={latestPlaythroughs}
+          />
+        </>
       }
-
-      <StatCard
-        value={daysSinceLastPlaythrough}
-        description="days since last game"
-      />
-
-      <PlaythroughsList
-        className="mt-lg"
-        formattedPlaythroughs={latestPlaythroughs}
-      />
 
       {topPlayedGames.length > 0 &&
         <>
           <div className="page-subtitle">
             <h2>Most played games</h2>
-            <h3>{curYear}</h3>
+            <h3>{year}</h3>
           </div>
-
           <TopPlayedGames
             topPlayed={topPlayedGames}
           />
@@ -112,25 +117,29 @@ export function Summary() {
 
       <div className="page-subtitle">
         <h2>Plays per day</h2>
-        <h3>{curYear}</h3>
+        <h3>{year}</h3>
       </div>
-
       <div className="mb-lg">
         <StatCard
           value={avgPlaysPerDayThisYear}
           description="Average plays per day"
         />
-
         <StatCard
           value={mostPlaysInDayThisYear}
           description="Most plays in one day"
         />
       </div>
-
       <CalendarGraph
         countPerDay={numPlaysPerDayThisYear.plays}
         firstDay={numPlaysPerDayThisYear.firstDate}
       />
+
+      <div className="text-muted mt-lg">
+        go to <a onClick={() => setViewingYear(viewingYear - 1)}>previous year</a>
+        {year < currentYear &&
+          <> or <a onClick={() => setViewingYear(viewingYear + 1)}>next year</a></>
+        }
+      </div>
     </>
   )
 }

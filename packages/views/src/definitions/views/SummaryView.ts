@@ -8,6 +8,10 @@ export type BarChartData = {
   labels: string[]
 }
 export interface SummaryView {
+  year: number
+  currentYear: number
+  isCurrentYear: boolean
+  isPastYear: boolean
   priorityGoal?: FormattedGoal
   numPlaysThisYear: number
   numPlaysAllTime: number

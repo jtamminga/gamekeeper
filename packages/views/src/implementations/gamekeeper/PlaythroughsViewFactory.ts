@@ -1,5 +1,4 @@
 import { PlaythroughsView } from '@def/views'
-import { HydratableView } from './HydratableView'
 import { GameKeeper, PlaythroughQueryOptions } from '@gamekeeper/core'
 import { formatPlaythroughs } from '../formatters'
 
@@ -7,22 +6,21 @@ import { formatPlaythroughs } from '../formatters'
 const MAX_PLAYTHROUGHS = 100
 
 
-export class GamekeeperPlaythroughsView implements HydratableView<PlaythroughsView> {
+export class PlaythroughsViewFactory {
   public constructor(
     private readonly gamekeeper: GameKeeper,
-    private readonly options: PlaythroughQueryOptions,
   ) { }
   
-  public async hydrate(): Promise<PlaythroughsView> {
+  public async create(options: PlaythroughQueryOptions): Promise<PlaythroughsView> {
     const playthroughs = await this.gamekeeper.gameplay.playthroughs
-      .hydrate({ limit: MAX_PLAYTHROUGHS, ...this.options })
+      .hydrate({ limit: MAX_PLAYTHROUGHS, ...options })
 
     return {
-      game: this.options.gameId
-        ? this.gamekeeper.gameplay.games.get(this.options.gameId)
+      game: options.gameId
+        ? this.gamekeeper.gameplay.games.get(options.gameId)
         : undefined,
       playthroughs: formatPlaythroughs(
-        playthroughs.all(this.options),
+        playthroughs.all(options),
         { gameNames: true }
       )
     }

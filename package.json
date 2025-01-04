@@ -8,6 +8,9 @@
     "apps/*"
   ],
   "packageManager": "yarn@4.0.2",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "install:api": "yarn workspaces foreach -Rpt --from 'apps/api' run install",
     "install:web": "yarn workspaces foreach -Rpt --from 'apps/web' run install",
@@ -19,10 +22,10 @@
     "build:views": "yarn workspace @gamekeeper/views run build",
     "dev:web": "yarn workspace @gamekeeper/web dev",
     "dev:api": "yarn workspace @gamekeeper/api start",
-    "dev:all": "npm-run-all --parallel dev:web dev:api",
+    "dev:all": "npm-run-all --parallel dev:web dev:api --print-label",
     "test": "yarn workspace @gamekeeper/testing test"
   },
   "devDependencies": {
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "4.1.5"
   }
 }

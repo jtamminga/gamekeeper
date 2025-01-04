@@ -1,13 +1,12 @@
 import { GamesView } from '@def/views'
 import { GameKeeper, GameType, VsGame } from '@gamekeeper/core'
-import { HydratableView } from './HydratableView'
 import { formatDate } from '../formatters'
 
 
-export class GamekeeperGamesView implements HydratableView<GamesView> {
+export class GamesViewFactory {
   public constructor(private gamekeeper: GameKeeper) { }
 
-  public async hydrate(): Promise<GamesView> {
+  public async create(): Promise<GamesView> {
     const [
       numPlays,
       lastPlayed

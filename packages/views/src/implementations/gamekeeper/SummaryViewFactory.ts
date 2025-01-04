@@ -1,5 +1,4 @@
 import { SummaryView } from '@def/views'
-import { HydratableView } from './HydratableView'
 import { ArrayUtils, GameKeeper, StatsResult } from '@gamekeeper/core'
 import { toNumPlaysPerDay } from '../transforms'
 import { differenceInDays } from 'date-fns'
@@ -9,12 +8,13 @@ import { formatGoal, formatNumber, formatPercent, formatPlaythroughs, formatWinr
 const NUM_LATEST_PLAYTHROUGHTS = 10
 
 
-export class GamekeeperSummaryView implements HydratableView<SummaryView> {
+export class SummaryViewFactory {
   public constructor(private readonly gamekeeper: GameKeeper) { }
 
-  public async hydrate(): Promise<SummaryView> {
-    const {stats} = this.gamekeeper.insights
-    const year = new Date().getFullYear()
+  public async create(year?: number): Promise<SummaryView> {
+    const { stats } = this.gamekeeper.insights
+    const currentYear = new Date().getFullYear()
+    year = year ?? currentYear
 
     const [
       numPlaysThisYear,
@@ -62,6 +62,10 @@ export class GamekeeperSummaryView implements HydratableView<SummaryView> {
       .slice(0, 5)
 
     const view: SummaryView = {
+      year,
+      currentYear,
+      isCurrentYear: year === currentYear,
+      isPastYear: year < currentYear,
       priorityGoal: priorityGoal ? formatGoal(priorityGoal) : undefined,
       numUniqueGamesPlayedThisYear,
       numPlaysThisYear: totalPlays(numPlaysThisYear),

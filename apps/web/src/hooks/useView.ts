@@ -4,16 +4,16 @@ import { viewService } from '@app/bootstrap'
 import { GamesView, GameView, PlaythroughsView, SummaryView } from '@gamekeeper/views'
 
 
-export function useSummaryView() {
+export function useSummaryView(year?: number) {
   const [view, setView] = useState<SummaryView>()
 
   useEffect(() => {
     async function fetchData() {
-      const view = await viewService.getSummaryView()
+      const view = await viewService.getSummaryView(year)
       setView(view)
     }
     fetchData()
-  }, [])
+  }, [year])
 
   return view
 }
