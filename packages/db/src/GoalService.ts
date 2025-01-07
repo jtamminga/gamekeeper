@@ -1,5 +1,6 @@
 import { GoalData, GoalId, GoalService, GoalsQuery, GoalType, NewGoalData, NotFoundError, UpdatedGoalData } from '@gamekeeper/core'
 import { DbService } from './DbService'
+import { UserId, whereUserId } from './User'
 
 
 export interface DbGoalDto {
@@ -12,24 +13,27 @@ export interface DbGoalDto {
 
 export class DbGoalService extends DbService implements GoalService {
 
-  public async addGoal(goal: NewGoalData): Promise<GoalData> {
-    const query = `INSERT INTO goals (type, year, value) VALUES (?, ?, ?)`
-    const id = await this._dataService.insert(query, goal.type, goal.year, goal.value)
+  public async addGoal(goal: NewGoalData, userId?: UserId): Promise<GoalData> {
+    const query = `INSERT INTO goals (user_id, type, year, value) VALUES (?, ?, ?, ?)`
+    const id = await this._dataService.insert(query, userId, goal.type, goal.year, goal.value)
     return this.transform({ ...goal, id })
   }
 
-  public async getGoals({ year }: GoalsQuery = {}): Promise<readonly GoalData[]> {
-    let query = 'SELECT g.* FROM goals g'
+  public async getGoals({ year }: GoalsQuery = {}, userId?: UserId): Promise<readonly GoalData[]> {
+    let query = `SELECT g.* FROM goals g WHERE g.${whereUserId(userId, ':user_id')}`
     if (year !== undefined) {
-      query += ' WHERE g.year = ?'
+      query += ' AND g.year = :year'
     }
-    const goals = await this._dataService.all<DbGoalDto>(query, year)
+    const goals = await this._dataService.all<DbGoalDto>(query, {
+      ':user_id': userId,
+      ':year': year
+    })
     return goals.map(goal => this.transform(goal))
   }
 
-    public async getGoal(id: GoalId): Promise<GoalData> {
-      const query = 'SELECT * FROM goals WHERE id = ?'
-      const dto = await this._dataService.get<DbGoalDto>(query, id)
+    public async getGoal(id: GoalId, userId?: UserId): Promise<GoalData> {
+      const query = `SELECT * FROM goals WHERE id = ? AND ${whereUserId(userId)}`
+      const dto = await this._dataService.get<DbGoalDto>(query, id, userId)
   
       if (!dto) {
         throw new NotFoundError(`cannot find goal with id "${id}"`)
@@ -38,7 +42,7 @@ export class DbGoalService extends DbService implements GoalService {
       return this.transform(dto)
     }
 
-  public async updateGoal(updatedGoal: UpdatedGoalData): Promise<GoalData> {
+  public async updateGoal(updatedGoal: UpdatedGoalData, userId?: UserId): Promise<GoalData> {
     const mapping: Record<string, string> = {
       type: 'type',
       value: 'value',
@@ -54,14 +58,14 @@ export class DbGoalService extends DbService implements GoalService {
     const updatedValues = mappedKeys.map(key =>
       updatedGoal[key as keyof UpdatedGoalData])
 
-    const query = `UPDATE goals SET ${setStatements} WHERE id = ?`
-    await this._dataService.run(query, ...updatedValues, updatedGoal.id)
+    const query = `UPDATE goals SET ${setStatements} WHERE id = ? AND ${whereUserId(userId)}`
+    await this._dataService.run(query, ...updatedValues, updatedGoal.id, userId)
     return this.getGoal(updatedGoal.id)
   }
 
-  public async removeGoal(id: GoalId): Promise<void> {
-    const query = `DELETE FROM goals WHERE id = ?`
-    await this._dataService.run(query, id)
+  public async removeGoal(id: GoalId, userId?: UserId): Promise<void> {
+    const query = `DELETE FROM goals WHERE id = ? AND ${whereUserId(userId)}`
+    await this._dataService.run(query, id, userId)
   }
 
   private transform(goal: DbGoalDto): GoalData {

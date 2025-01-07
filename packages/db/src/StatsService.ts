@@ -1,11 +1,12 @@
 import {
   GameId,
-  PlaythroughService,
   StatsQuery,
   StatsResultData
 } from '@gamekeeper/core'
 import { DataService } from './DataService'
 import { SimpleStatsService } from './SimpleStatsService'
+import { DbPlaythroughService } from './PlaythroughService'
+import { UserId, whereUserId } from './User'
 
 
 // types
@@ -28,12 +29,12 @@ export class DbStatsService extends SimpleStatsService {
 
   public constructor(
     private _dataService: DataService,
-    playthroughService: PlaythroughService
+    playthroughService: DbPlaythroughService
   ) {
     super(playthroughService)
   }
 
-  public override async getNumPlays({ gameId, year }: StatsQuery = {}): Promise<StatsResultData<number>> {
+  public override async getNumPlays({ gameId, year }: StatsQuery = {}, userId?: UserId): Promise<StatsResultData<number>> {
     
     // create base query
     let query = `
@@ -44,7 +45,7 @@ export class DbStatsService extends SimpleStatsService {
     `
 
     // add to query based on params
-    const conditions: string[] = []
+    const conditions = [`p.${whereUserId(userId, ':user_id')}`]
     if (gameId) {
       conditions.push('p.game_id = :game_id')
     }
@@ -65,7 +66,8 @@ export class DbStatsService extends SimpleStatsService {
     const dtos = await this._dataService.all<NumPlaysPerGameDto>(query, {
       ':game_id': gameId,
       ':from_date': dateRange?.fromDate.toISOString(),
-      ':to_date': dateRange?.toDate.toISOString()
+      ':to_date': dateRange?.toDate.toISOString(),
+      ':user_id': userId
     })
 
     // convert to records
@@ -78,7 +80,7 @@ export class DbStatsService extends SimpleStatsService {
     return result
   }
 
-  public override async getLastPlayed({ gameId, year }: StatsQuery = {}): Promise<StatsResultData<Date | undefined>> {
+  public override async getLastPlayed({ gameId, year }: StatsQuery = {}, userId?: UserId): Promise<StatsResultData<Date | undefined>> {
     // create base query
     let query = `
       SELECT
@@ -88,7 +90,7 @@ export class DbStatsService extends SimpleStatsService {
     `
 
     // add to query based on params
-    const conditions: string[] = []
+    const conditions = [`p.${whereUserId(userId, ':user_id')}`]
     if (gameId) {
       conditions.push('p.game_id = :game_id')
     }
@@ -109,7 +111,8 @@ export class DbStatsService extends SimpleStatsService {
     const dtos = await this._dataService.all<LastPlayPerGameDto>(query, {
       ':game_id': gameId,
       ':from_date': dateRange?.fromDate.toISOString(),
-      ':to_date': dateRange?.toDate.toISOString()
+      ':to_date': dateRange?.toDate.toISOString(),
+      ':user_id': userId
     })
 
     // convert to records
@@ -122,7 +125,7 @@ export class DbStatsService extends SimpleStatsService {
     return result
   }
 
-  public override async getNumPlaysByMonth({ gameId, year }: StatsQuery = {}): Promise<number[]> {
+  public override async getNumPlaysByMonth({ gameId, year }: StatsQuery = {}, userId?: UserId): Promise<number[]> {
     let query = `
       SELECT
         strftime('%m', p.played_on) AS month,
@@ -132,7 +135,7 @@ export class DbStatsService extends SimpleStatsService {
     `
 
     // add to query based on params
-    const conditions: string[] = []
+    const conditions = [`p.${whereUserId(userId, ':user_id')}`]
     if (gameId) {
       conditions.push('p.game_id = :game_id')
     }
@@ -153,6 +156,7 @@ export class DbStatsService extends SimpleStatsService {
     const dtos = await this._dataService.all<NumPlaysPerMonthDto>(query, {
       ':game_id': gameId,
       ':year': year?.toString(),
+      ':user_id': userId
     })
 
     // change to map, key representing month (0 based), value representing num plays

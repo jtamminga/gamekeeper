@@ -16,8 +16,8 @@ export class ApiServices implements Services {
   public readonly goalService: GoalService
   public readonly statsService: StatsService
 
-  public constructor(baseUrl: string) {
-    const apiClient = new ApiClient(baseUrl)
+  public constructor(baseUrl: string, token?: string) {
+    const apiClient = new ApiClient(baseUrl, token)
     const cachingClient = new ApiCachingClient(apiClient)
 
     this.gameService = new ApiGameService(cachingClient)

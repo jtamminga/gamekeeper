@@ -1,19 +1,19 @@
+import type { Services } from '@gamekeeper/core'
 import { DataService } from './DataService'
 import { DbGameService } from './GameService'
 import { DbPlayerService } from './PlayerService'
 import { DbPlaythroughService } from './PlaythroughService'
-import { GameService, GoalService, PlayerService, PlaythroughService, Services, StatsService } from '@gamekeeper/core'
 import { DbStatsService } from './StatsService'
 import { DbGoalService } from './GoalService'
 
 
 export class DbServices implements Services {
 
-  public readonly gameService: GameService
-  public readonly playerService: PlayerService
-  public readonly playthroughService: PlaythroughService
-  public readonly goalService: GoalService
-  public readonly statsService: StatsService
+  public readonly gameService: DbGameService
+  public readonly playerService: DbPlayerService
+  public readonly playthroughService: DbPlaythroughService
+  public readonly goalService: DbGoalService
+  public readonly statsService: DbStatsService
 
   public constructor(path: string) {
     const dataService = new DataService(path)

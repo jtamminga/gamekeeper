@@ -2,13 +2,14 @@ import 'express-async-errors'
 import cors from 'cors'
 import express, { NextFunction, Request, Response } from 'express'
 import { GameId, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, PlaythroughId, UpdatedGameData, PlayerId, UpdatedGoalData, GoalId } from '@gamekeeper/core'
-import { DbServices } from '@gamekeeper/db-services'
+import { DbServices, UserId } from '@gamekeeper/db-services'
 import { GamekeeperViewService, Route } from '@gamekeeper/views'
 import { ApiNewPlaythroughDto, toNewPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
 import { config } from './config'
 import { InvalidParamsError } from './InvalidParamsError'
 import { toStatsQuery } from './stats'
 import { toGoalsQuery, toNewGoalData, toUpdatedGoalData } from './goals'
+import { auth, UnauthorizedError } from 'express-oauth2-jwt-bearer'
 
 
 // setup express app
@@ -16,6 +17,16 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 app.use(logging)
+
+if (config.authEnabled) {
+  const jwtCheck = auth({
+    audience: config.auth0.audience,
+    issuerBaseURL: config.auth0.issuerBaseURL,
+    tokenSigningAlg: 'RS256'
+  });
+  
+  app.use(jwtCheck)
+}
 
 // create and extract services
 const dbServices = new DbServices(config.dbPath)
@@ -34,28 +45,32 @@ const {
 
 
 // get all games
-app.get(Route.GAMES, async function (_, res) {
-  const games = await gameService.getGames()
+app.get(Route.GAMES, async function (req, res) {
+  const userId = getUserId(req)
+  const games = await gameService.getGames(userId)
   res.json({ data: games })
 })
 
 // get game by id
 app.get(`${Route.GAMES}/:id`, async function (req, res) {
-  const game = await gameService.getGame(req.params.id as GameId)
+  const userId = getUserId(req)
+  const game = await gameService.getGame(req.params.id as GameId, userId)
   res.json({ data: game })
 })
 
 // create game
 app.post(Route.GAMES, async function (req, res) {
+  const userId = getUserId(req)
   const data = req.body as NewGameData
-  const game = await gameService.addGame(data)
+  const game = await gameService.addGame(data, userId)
   res.json({ data: game })
 })
 
 // update game
 app.patch(`${Route.GAMES}/:id`, async function (req, res) {
+  const userId = getUserId(req)
   const data = req.body as Omit<UpdatedGameData, 'id'>
-  const game = await gameService.updateGame({ ...data, id: req.params.id as GameId })
+  const game = await gameService.updateGame({ ...data, id: req.params.id as GameId }, userId)
   res.json({ data: game })
 })
 
@@ -66,21 +81,24 @@ app.patch(`${Route.GAMES}/:id`, async function (req, res) {
 
 
 // get all players
-app.get(Route.PLAYERS, async function (_, res) {
-  const players = await playerService.getPlayers()
+app.get(Route.PLAYERS, async function (req, res) {
+  const userId = getUserId(req)
+  const players = await playerService.getPlayers(userId)
   res.json({ data: players })
 })
 
 // create player
 app.post(Route.PLAYERS, async function (req, res) {
+  const userId = getUserId(req)
   const data = req.body as NewPlayerData
-  const player = await playerService.addPlayer(data)
+  const player = await playerService.addPlayer(data, userId)
   res.json({ data: player })
 })
 
 app.patch(`${Route.PLAYERS}/:id`, async function (req, res) {
+  const userId = getUserId(req)
   const data = req.body as Omit<UpdatedGameData, 'id'>
-  const player = await playerService.updatePlayer({ ...data, id: req.params.id as PlayerId })
+  const player = await playerService.updatePlayer({ ...data, id: req.params.id as PlayerId }, userId)
   res.json({ data: player })
 })
 
@@ -92,29 +110,33 @@ app.patch(`${Route.PLAYERS}/:id`, async function (req, res) {
 
 // get specific playthrough
 app.get(`${Route.PLAYTHROUGHS}/:id`, async function(req, res) {
-  const playthrough = await playthroughService.getPlaythrough(req.params.id as PlaythroughId)
+  const userId = getUserId(req)
+  const playthrough = await playthroughService.getPlaythrough(req.params.id as PlaythroughId, userId)
   res.json({ data: playthrough })
 })
 
 // get playthroughs
 app.get(Route.PLAYTHROUGHS, async function (req, res) {
+  const userId = getUserId(req)
   const query = toPlaythroughQueryOptions(req)
-  const playthroughs = await playthroughService.getPlaythroughs(query)
+  const playthroughs = await playthroughService.getPlaythroughs(query, userId)
   res.json({ data: playthroughs })
 })
 
 // create playthrough
 app.post(Route.PLAYTHROUGHS, async function (req, res) {
+  const userId = getUserId(req)
   const dto = req.body as ApiNewPlaythroughDto
   const data = toNewPlaythroughData(dto)
 
-  const playthrough = await playthroughService.addPlaythrough(data)
+  const playthrough = await playthroughService.addPlaythrough(data, userId)
   res.json({ data: playthrough })
 })
 
 // remove playthrough
 app.delete(`${Route.PLAYTHROUGHS}/:id`, async function(req, res) {
-  await playthroughService.removePlaythrough(req.params.id as PlaythroughId)
+  const userId = getUserId(req)
+  await playthroughService.removePlaythrough(req.params.id as PlaythroughId, userId)
   res.json({ data: null })
 })
 
@@ -125,26 +147,31 @@ app.delete(`${Route.PLAYTHROUGHS}/:id`, async function(req, res) {
 
 
 app.get(`${Route.GOALS}/:id`, async function (req, res) {
-  const goal = await goalService.getGoal(req.params.id as GoalId)
+  const userId = getUserId(req)
+  const goal = await goalService.getGoal(req.params.id as GoalId, userId)
   res.json({ data: goal })
 })
 app.get(Route.GOALS, async function (req, res) {
+  const userId = getUserId(req)
   const query = toGoalsQuery(req)
-  const goals = await goalService.getGoals(query)
+  const goals = await goalService.getGoals(query, userId)
   res.json({ data: goals })
 })
 app.post(Route.GOALS, async function (req, res) {
+  const userId = getUserId(req)
   const data = toNewGoalData(req)
-  const goal = await goalService.addGoal(data)
+  const goal = await goalService.addGoal(data, userId)
   res.json({ data: goal })
 })
 app.patch(`${Route.GOALS}/:id`, async function (req, res) {
+  const userId = getUserId(req)
   const data = toUpdatedGoalData(req)
-  const goal = await goalService.updateGoal({ ...data, id: req.params.id as GoalId })
+  const goal = await goalService.updateGoal({ ...data, id: req.params.id as GoalId }, userId)
   res.json({ data: goal })
 })
 app.delete(`${Route.GOALS}/:id`, async function (req, res) {
-  await goalService.removeGoal(req.params.id as GoalId)
+  const userId = getUserId(req)
+  await goalService.removeGoal(req.params.id as GoalId, userId)
   res.json({ data: null })
 })
 
@@ -155,43 +182,51 @@ app.delete(`${Route.GOALS}/:id`, async function (req, res) {
 
 
 app.get(Route.STATS.LAST_PLAYTHROUGHS, async function (req, res) {
+  const userId = getUserId(req)
   const query = toStatsQuery(req)
-  const stats = await statsService.getLastPlayed(query)
+  const stats = await statsService.getLastPlayed(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.NUM_PLAYTHROUGHS, async function (req, res) {
+  const userId = getUserId(req)
   const query = toStatsQuery(req)
-  const stats = await statsService.getNumPlays(query)
+  const stats = await statsService.getNumPlays(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.WINRATES, async function (req, res) {
+  const userId = getUserId(req)
   const query = toStatsQuery(req)
-  const stats = await statsService.getWinrates(query)
+  const stats = await statsService.getWinrates(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.PLAYS_BY_MONTH, async function (req, res) {
+  const userId = getUserId(req)
   const query = toStatsQuery(req)
-  const stats = await statsService.getNumPlaysByMonth(query)
+  const stats = await statsService.getNumPlaysByMonth(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.OVERALL_WINRATES, async function (req, res) {
+  const userId = getUserId(req)
   const query = toStatsQuery(req)
-  const stats = await statsService.getOverallWinrates(query)
+  const stats = await statsService.getOverallWinrates(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.NUM_UNIQUE_GAMES_PLAYED, async function (req, res) {
+  const userId = getUserId(req)
   const query = toStatsQuery(req)
-  const stats = await statsService.getNumUniqueGamesPlayed(query.year)
+  const stats = await statsService.getNumUniqueGamesPlayed(query.year, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.SCORE_STATS, async function (req, res) {
+  const userId = getUserId(req)
   const query = toStatsQuery(req)
-  const stats = await statsService.getScoreStats(query)
+  const stats = await statsService.getScoreStats(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.NUM_PLAYS_BY_DATE, async function (req, res) {
+  const userId = getUserId(req)
   const query = toStatsQuery(req)
-  const stats = await statsService.getNumPlaysByDate(query)
+  const stats = await statsService.getNumPlaysByDate(query, userId)
   res.json({ data: stats })
 })
 
@@ -254,9 +289,13 @@ function errorHandler(err: Error, req: Request, res: Response, next: NextFunctio
     res.status(404)
     res.json({ error: 'could not find resource' })
   }
+  else if (err instanceof UnauthorizedError) {
+    res.status(401)
+    res.json({ error: 'unauthorized' })
+  }
   else {
     res.status(500)
-    res.json({ error: 'Something went wrong' })
+    res.json({ error: 'something went wrong' })
   }
 
   next(err)
@@ -273,4 +312,8 @@ function logging(req: Request, res: Response, next: NextFunction) {
     console.info(` > body:`, req.body)
   }
   next()
+}
+
+function getUserId(req: Request): UserId | undefined {
+  return req.auth?.payload.sub as UserId | undefined
 }

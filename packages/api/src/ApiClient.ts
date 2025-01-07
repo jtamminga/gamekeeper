@@ -20,7 +20,7 @@ export type ApiResponse<T> = {
 
 export class ApiClient implements IApiClient {
 
-  public constructor(private baseUrl: string) { }
+  public constructor(private baseUrl: string, private token?: string) { }
 
   public async get<T>(path: string, query?: Record<string, string>): Promise<T> {
     const fullPath = query
@@ -28,14 +28,14 @@ export class ApiClient implements IApiClient {
       : path
 
     return this.handledFetch(fullPath, {
-      ...BASE_OPTIONS,
+      ...this.generateOptions(),
       method: 'GET',
     })
   }
 
   public async post<T>(path: string, data: any): Promise<T> {
     return this.handledFetch(path, {
-      ...BASE_OPTIONS,
+      ...this.generateOptions(),
       method: 'POST',
       body: JSON.stringify(data)
     })
@@ -43,7 +43,7 @@ export class ApiClient implements IApiClient {
 
   public async patch<T>(path: string, data: any): Promise<T> {
     return this.handledFetch(path, {
-      ...BASE_OPTIONS,
+      ...this.generateOptions(),
       method: 'PATCH',
       body: JSON.stringify(data)
     })
@@ -51,7 +51,7 @@ export class ApiClient implements IApiClient {
 
   public async delete(path: string): Promise<void> {
     return this.handledFetch(path, {
-      ...BASE_OPTIONS,
+      ...this.generateOptions(),
       method: 'DELETE',
     })
   }
@@ -73,6 +73,16 @@ export class ApiClient implements IApiClient {
       }
 
       throw new ApiError(500, 'could not reach server')
+    }
+  }
+
+  private generateOptions(): RequestInit {
+    return {
+      ...BASE_OPTIONS,
+      headers: {
+        ...BASE_HEADERS,
+        ...(this.token ? { 'Authorization': `Bearer ${this.token}` } : {})
+      }
     }
   }
 }

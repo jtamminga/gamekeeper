@@ -1,35 +1,32 @@
-import { initialize } from './bootstrap'
-import { Layout } from './Layout'
-import { Loading } from './components'
-import { useEffect, useState } from 'react'
 import { RouterContainer } from './Router'
+import { AuthProvider } from './bootstrap-components'
+import { Flow } from './Flow'
 
 
 // base app
 export default function App() {
   
   // keep track of whether the app is hydrated
-  const [hydrated, setHydrated] = useState(false)
+  // const [hydrated, setHydrated] = useState(false)
 
   // hydrate the app
-  useEffect(() => {
-    async function hydrateApp() {
-      await initialize()
-      setHydrated(true)
-    }
+  // useEffect(() => {
+  //   async function hydrateApp() {
+  //     await initialize()
+  //     setHydrated(true)
+  //   }
 
-    hydrateApp()
-  }, [])
+  //   hydrateApp()
+  // }, [])
 
   // render
   return (
     <>
-      <RouterContainer>
-        {hydrated
-          ? <Layout />
-          : <Loading />
-        }
-      </RouterContainer>
+      <AuthProvider>
+        <RouterContainer>
+          <Flow />
+        </RouterContainer>
+      </AuthProvider>
     </>
   )
 }

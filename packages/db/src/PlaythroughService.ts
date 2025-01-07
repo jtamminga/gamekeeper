@@ -1,5 +1,6 @@
 import { DbService } from './DbService'
-import { BasePlaythroughData, CoopPlaythroughData, GameId, GameType, NotFoundError, PlayerId, PlaythroughData, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreData, VsPlaythroughData } from '@gamekeeper/core'
+import { BasePlaythroughData, CoopPlaythroughData, GameId, GameType, NewPlaythroughData, NotFoundError, PlayerId, PlaythroughData, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreData, VsPlaythroughData } from '@gamekeeper/core'
+import { UserId, whereUserId } from './User'
 
 
 // type
@@ -21,7 +22,7 @@ type DbScoreDto = {
 // repository
 export class DbPlaythroughService extends DbService implements PlaythroughService {
 
-  public async getPlaythrough(id: PlaythroughId): Promise<PlaythroughData> {
+  public async getPlaythrough(id: PlaythroughId, userId?: UserId): Promise<PlaythroughData> {
     const query = `
       SELECT
         p.id,
@@ -33,10 +34,10 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
         p.result
       FROM playthroughs p
       JOIN games g ON g.id = p.game_id
-      WHERE p.id=?
+      WHERE p.id=? AND p.${whereUserId(userId)}
     `
 
-    const dto = await this._dataService.get<DbPlaythroughDto>(query, id)
+    const dto = await this._dataService.get<DbPlaythroughDto>(query, id, userId)
     if (!dto) {
       throw new NotFoundError(`cannot find game with id "${id}"`)
     }
@@ -45,7 +46,8 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
   }
 
   public async getPlaythroughs(
-    options: PlaythroughQueryOptions = {}
+    options: PlaythroughQueryOptions = {},
+    userId?: UserId
   ): Promise<readonly PlaythroughData[]> {
 
     const {limit, fromDate, toDate, gameId} = options
@@ -64,7 +66,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       JOIN games g ON g.id = p.game_id
     `
 
-    const conditions: string[] = []
+    const conditions: string[] = [`p.${whereUserId(userId, ':user_id')}`]
     if (fromDate) {
       conditions.push('p.played_on >= :from_date')
     }
@@ -74,10 +76,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
     if (gameId) {
       conditions.push('p.game_id = :game_id')
     }
-    if (conditions.length > 0) {
-      query += ' WHERE ' + conditions.join(' AND ')
-    }
-
+    query += ' WHERE ' + conditions.join(' AND ')
     query += ' ORDER BY p.played_on DESC'
     if (limit) {
       query += ' LIMIT :limit'
@@ -88,22 +87,24 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       ':limit': limit,
       ':from_date': fromDate?.toISOString(),
       ':to_date': toDate?.toISOString(),
-      ':game_id': gameId
+      ':game_id': gameId,
+      ':user_id': userId
     })
 
     return dtos.map(dto => this.toData(dto))
   }
 
-  public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughData> {
+  public async addPlaythrough(playthrough: NewPlaythroughData, userId?: UserId): Promise<PlaythroughData> {
     const dto = this.toDto(playthrough)
 
     const query = `
       INSERT INTO playthroughs
-      (game_id, played_on, players, scores, result)
-      VALUES (?, ?, ?, ?, ?)
+      (user_id, game_id, played_on, players, scores, result)
+      VALUES (?, ?, ?, ?, ?, ?)
     `
 
     const values = [
+      userId,
       dto.gameId,
       dto.playedOn,
       dto.players,
@@ -115,9 +116,9 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
     return this.toData({ ...dto, id })
   }
 
-  public async removePlaythrough(id: PlaythroughId): Promise<void> {
-    const query = `DELETE FROM playthroughs WHERE id=?`
-    return this._dataService.run(query, id)
+  public async removePlaythrough(id: PlaythroughId, userId?: UserId): Promise<void> {
+    const query = `DELETE FROM playthroughs WHERE id=? AND ${whereUserId(userId)}`
+    return this._dataService.run(query, id, userId)
   }
 
   private toData(playthrough: DbPlaythroughDto): PlaythroughData {
@@ -155,14 +156,14 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
     throw new Error(`unsupported game type "${playthrough.gameType}"`)
   }
   
-  private toDto(playthrough: VsPlaythroughData | CoopPlaythroughData): Omit<DbPlaythroughDto, 'id'> {
+  private toDto(playthrough: NewPlaythroughData): Omit<DbPlaythroughDto, 'id'> {
     const base = {
       gameId: Number(playthrough.gameId),
       playedOn: playthrough.playedOn.toISOString(),
       players: JSON.stringify(playthrough.playerIds)
     }
   
-    if (VsPlaythroughData.guard(playthrough)) {
+    if (VsPlaythroughData.guardNew(playthrough)) {
       return {
         ...base,
         gameType: GameType.VS,

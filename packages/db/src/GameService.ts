@@ -1,5 +1,6 @@
 import { DbService } from './DbService'
-import { NotFoundError, GameService, GameData, GameId, GameType, ScoringType, UpdatedGameData } from '@gamekeeper/core'
+import { NotFoundError, GameService, GameData, GameId, GameType, ScoringType, UpdatedGameData, NewGameData } from '@gamekeeper/core'
+import { UserId, whereUserId } from './User'
 
 
 // types
@@ -15,15 +16,15 @@ export interface DbGameDto {
 // game service
 export class DbGameService extends DbService implements GameService {
 
-  public async getGames(): Promise<readonly GameData[]> {
-    const query = 'SELECT g.* FROM games g ORDER BY g.name'
-    const games = await this._dataService.all<DbGameDto>(query)
+  public async getGames(userId?: UserId): Promise<readonly GameData[]> {
+    const query = `SELECT g.* FROM games g WHERE g.${whereUserId(userId)} ORDER BY g.name`
+    const games = await this._dataService.all<DbGameDto>(query, userId)
     return games.map(game => this.transform(game))
   }
 
-  public async getGame(id: GameId): Promise<GameData> {
-    const query = 'SELECT * FROM games WHERE id=?'
-    const dto = await this._dataService.get<DbGameDto>(query, id)
+  public async getGame(id: GameId, userId?: UserId): Promise<GameData> {
+    const query = `SELECT * FROM games WHERE id=? AND ${whereUserId(userId)}`
+    const dto = await this._dataService.get<DbGameDto>(query, id, userId)
 
     if (!dto) {
       throw new NotFoundError(`cannot find game with id "${id}"`)
@@ -32,13 +33,13 @@ export class DbGameService extends DbService implements GameService {
     return this.transform(dto)
   }
 
-  public async addGame(game: GameData): Promise<GameData> {
-    const query = 'INSERT INTO games (name, type, scoring, weight) VALUES (?, ?, ?, ?)'
-    const id = await this._dataService.insert(query, game.name, game.type, game.scoring, game.weight)
+  public async addGame(game: NewGameData, userId?: UserId): Promise<GameData> {
+    const query = 'INSERT INTO games (user_id, name, type, scoring, weight) VALUES (?, ?, ?, ?, ?)'
+    const id = await this._dataService.insert(query, userId, game.name, game.type, game.scoring, game.weight)
     return this.transform({ ...game, id })
   }
   
-  public async updateGame(updatedGame: UpdatedGameData): Promise<GameData> {
+  public async updateGame(updatedGame: UpdatedGameData, userId?: UserId): Promise<GameData> {
     const mapping: Record<string, string> = {
       name: 'name',
       type: 'type',
@@ -55,9 +56,9 @@ export class DbGameService extends DbService implements GameService {
     const updatedValues = mappedKeys.map(key =>
       updatedGame[key as keyof UpdatedGameData])
 
-    const query = `UPDATE games SET ${setStatements} WHERE id = ?`
-    await this._dataService.run(query, ...updatedValues, updatedGame.id)
-    return this.getGame(updatedGame.id)
+    const query = `UPDATE games SET ${setStatements} WHERE id = ? AND ${whereUserId(userId)}`
+    await this._dataService.run(query, ...updatedValues, updatedGame.id, userId)
+    return this.getGame(updatedGame.id, userId)
   }
 
   private transform(game: DbGameDto): GameData {

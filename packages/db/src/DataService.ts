@@ -1,6 +1,8 @@
 import { open, Database } from 'sqlite'
 import sqlite3 from 'sqlite3'
 
+sqlite3.verbose()
+
 
 export class DataService {
 
@@ -15,6 +17,10 @@ export class DataService {
       filename: this._path,
       driver: sqlite3.Database
     })
+
+    // this._db.on('trace', (sql: any) => {
+    //   console.debug('SQL:', sql)
+    // })
   }
 
   private async db(): Promise<Database> {

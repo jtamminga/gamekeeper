@@ -1,7 +1,7 @@
 import { ApiServices } from '@gamekeeper/api-services'
 import { GameKeeper, GameKeeperFactory } from '@gamekeeper/core'
 import { GamekeeperViewService, ViewService } from '@gamekeeper/views'
-import { StaticViewService } from './StaticViewService'
+import { useAuth0 } from '@auth0/auth0-react'
 
 
 const apiUrl = import.meta.env.VITE_API_URL
@@ -9,24 +9,33 @@ if (apiUrl === undefined) {
   throw new Error('API_URL not defined')
 }
 
-const staticMode = import.meta.env.VITE_STATIC_DATA === 'true'
+const authEnabled = import.meta.env.VITE_AUTH === 'true'
 
 let gamekeeper: GameKeeper
 let viewService: ViewService
 
-if (staticMode) {
-  viewService = new StaticViewService()
-} else {
-  const apiServices = new ApiServices(apiUrl)
+async function initialize(token?: string) {
+  console.log('[bootstrap] initializing app')
+  if (token) {
+    console.log('[bootstrap] token:', token)
+  }
+  const apiServices = new ApiServices(apiUrl, token)
   gamekeeper = GameKeeperFactory.create(apiServices)
   viewService = new GamekeeperViewService(gamekeeper)
+
+  await gamekeeper.gameplay.hydrate({ limit: 10 })
 }
 
-async function initialize() {
-  if (!staticMode) {
-    await gamekeeper.gameplay.hydrate({ limit: 10 })
-  }
-}
+const useAuth = authEnabled
+  ? useAuth0
+  : () => ({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      error: undefined,
+      logout: () => { },
+      loginWithRedirect: () => { },
+      getAccessTokenSilently: () => Promise.resolve(undefined),
+    })
 
-
-export { initialize, gamekeeper, viewService }
+export { initialize, gamekeeper, viewService, authEnabled, useAuth }

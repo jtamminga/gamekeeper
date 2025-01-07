@@ -8,6 +8,7 @@ export function Settings() {
       <h1>Settings</h1>
       
       <div className="link-list">
+        <Link page={{ name: 'Profile'}}>Profile</Link>
         <Link page={{ name: 'Players' }}>Manage Players</Link>
         <Link page={{ name: 'Goals' }}>Manage Goals</Link>
       </div>

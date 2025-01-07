@@ -50,9 +50,15 @@ export namespace VsPlaythroughData {
   export function guard(data: PlaythroughData): data is VsPlaythroughData {
     return data.type === 'vs'
   }
+  export function guardNew(data: NewPlaythroughData): data is NewVsPlaythroughData {
+    return data.type === 'vs'
+  }
 }
 export namespace CoopPlaythroughData {
   export function guard(data: PlaythroughData): data is CoopPlaythroughData {
+    return data.type === 'coop'
+  }
+  export function guardNew(data: NewPlaythroughData): data is NewCoopPlaythroughData {
     return data.type === 'coop'
   }
 }
