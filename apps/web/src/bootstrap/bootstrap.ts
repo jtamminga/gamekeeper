@@ -29,7 +29,7 @@ async function initialize(token?: string) {
 const useAuth = authEnabled
   ? useAuth0
   : () => ({
-      isAuthenticated: false,
+      isAuthenticated: true,
       isLoading: false,
       user: null,
       error: undefined,
