@@ -6,17 +6,17 @@ header {
   display: flex;
   justify-content: center;
   padding: var(--space-md) var(--space-lg);
+  z-index: 100;
 }
 
 header > nav {
   display: flex;
   width: 100%;
-  padding: var(--space-md);
   max-width: var(--max-width);
   min-width: var(--min-width);
 
   border-radius: var(--border-radius);
-  background-color: rgb(0 0 0 / 33%);
+  background-color: rgba(0, 0, 0, 0.651);
 }
 
 header > nav > .inner-links {
@@ -31,4 +31,7 @@ header > nav > a.record {
   padding: 2px 14px;
   border-radius: 6px;
   color: white;
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
+  margin-right: var(--space-md);
 }

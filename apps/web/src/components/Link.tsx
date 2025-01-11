@@ -14,7 +14,7 @@ export function Link({ page, children }: Props) {
   const {setPage} = useRouter()
 
   return (
-    <a onClick={() => setPage(page)}>
+    <a role="link" onClick={() => setPage(page)}>
       {children}
     </a>
   )

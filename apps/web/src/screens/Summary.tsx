@@ -39,7 +39,7 @@ export function Summary() {
       {!isCurrentYear &&
         <div className="title-with-link">
           <h1>{year} summary</h1>
-          <a onClick={() => setViewingYear(currentYear)}>Current year</a>
+          <a role="button" onClick={() => setViewingYear(currentYear)}>Current year</a>
         </div>
       }
 
@@ -135,9 +135,9 @@ export function Summary() {
       />
 
       <div className="text-muted mt-lg">
-        go to <a onClick={() => setViewingYear(viewingYear - 1)}>previous year</a>
+        go to <a role="button" onClick={() => setViewingYear(viewingYear - 1)}>previous year</a>
         {year < currentYear &&
-          <> or <a onClick={() => setViewingYear(viewingYear + 1)}>next year</a></>
+          <> or <a role="button" onClick={() => setViewingYear(viewingYear + 1)}>next year</a></>
         }
       </div>
     </>

@@ -14,22 +14,26 @@ export function Header() {
       <nav>
         <div className="inner-links">
           <a
+            role="link"
             className={page.name === 'Summary' ? 'active' : undefined}
             onClick={() => setPage({ name: 'Summary' })}
           >summary</a>
 
           <a
+            role="link"
             className={page.name === 'Games' ? 'active' : undefined}
             onClick={() => setPage({ name: 'Games' })}
           >games</a>
 
           <a
+            role="link"
             className={page.name === 'Settings' ? 'active' : undefined}
             onClick={() => setPage({ name: 'Settings' })}
           >settings</a>
         </div>
 
         <a
+          role="button"
           className={'record' + (page.name === 'AddPlaythrough' ? ' active' : '')}
           onClick={() => setPage({ name: 'AddPlaythrough', props: { gameId } })}
         >record</a>
