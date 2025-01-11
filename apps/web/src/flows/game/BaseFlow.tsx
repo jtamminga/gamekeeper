@@ -134,7 +134,7 @@ export function BaseFlow({ onComplete }: Props) {
       <button
         onClick={onNext}
       >
-        Next
+        Create
       </button>
     </>
   )

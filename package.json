@@ -12,8 +12,6 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "install:api": "yarn workspaces foreach -Rpt --from 'apps/api' run install",
-    "install:web": "yarn workspaces foreach -Rpt --from 'apps/web' run install",
     "build:core": "yarn workspace @gamekeeper/core build",
     "build:packages": "yarn workspaces foreach -Rpt --from 'packages/*' run build",
     "build:all": "yarn workspaces foreach -Rpt --from 'apps/*' run build",

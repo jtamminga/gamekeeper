@@ -1,6 +1,6 @@
 import { SetupFlow } from '@app/flows'
 
 
-export function InitialSetup() {
+export function Setup() {
   return <SetupFlow />
 }

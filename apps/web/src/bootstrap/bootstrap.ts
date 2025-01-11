@@ -26,6 +26,11 @@ async function initialize(token?: string) {
   await gamekeeper.gameplay.hydrate({ limit: 10 })
 }
 
+// function constants
+// this is so that function instances don't change between renders
+const NOOP = () => { }
+const getAccessToken = () => Promise.resolve(undefined)
+
 const useAuth = authEnabled
   ? useAuth0
   : () => ({
@@ -33,9 +38,9 @@ const useAuth = authEnabled
       isLoading: false,
       user: null,
       error: undefined,
-      logout: () => { },
-      loginWithRedirect: () => { },
-      getAccessTokenSilently: () => Promise.resolve(undefined),
+      logout: NOOP,
+      loginWithRedirect: NOOP,
+      getAccessTokenSilently: getAccessToken,
     })
 
 export { initialize, gamekeeper, viewService, authEnabled, useAuth }

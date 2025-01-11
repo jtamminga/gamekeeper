@@ -18,7 +18,7 @@ app.use(express.json())
 app.use(cors())
 app.use(logging)
 
-if (config.authEnabled) {
+if (config.authEnabled && config.auth0) {
   const jwtCheck = auth({
     audience: config.auth0.audience,
     issuerBaseURL: config.auth0.issuerBaseURL,
@@ -26,6 +26,7 @@ if (config.authEnabled) {
   });
   
   app.use(jwtCheck)
+  console.info('auth enabled')
 }
 
 // create and extract services

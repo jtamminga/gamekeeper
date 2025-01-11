@@ -12,29 +12,27 @@ export function Header() {
   return (
     <header>
       <nav>
-        <div className="nav-links">
-          <div className="inner-links">
-            <a
-              className={page.name === 'Summary' ? 'active' : undefined}
-              onClick={() => setPage({ name: 'Summary' })}
-            >summary</a>
-
-            <a
-              className={page.name === 'Games' ? 'active' : undefined}
-              onClick={() => setPage({ name: 'Games' })}
-            >games</a>
-
-            <a
-              className={page.name === 'Settings' ? 'active' : undefined}
-              onClick={() => setPage({ name: 'Settings' })}
-            >settings</a>
-          </div>
+        <div className="inner-links">
+          <a
+            className={page.name === 'Summary' ? 'active' : undefined}
+            onClick={() => setPage({ name: 'Summary' })}
+          >summary</a>
 
           <a
-            className={'record' + (page.name === 'AddPlaythrough' ? ' active' : '')}
-            onClick={() => setPage({ name: 'AddPlaythrough', props: { gameId } })}
-          >record</a>
+            className={page.name === 'Games' ? 'active' : undefined}
+            onClick={() => setPage({ name: 'Games' })}
+          >games</a>
+
+          <a
+            className={page.name === 'Settings' ? 'active' : undefined}
+            onClick={() => setPage({ name: 'Settings' })}
+          >settings</a>
         </div>
+
+        <a
+          className={'record' + (page.name === 'AddPlaythrough' ? ' active' : '')}
+          onClick={() => setPage({ name: 'AddPlaythrough', props: { gameId } })}
+        >record</a>
       </nav>
     </header>
   )

@@ -5,27 +5,46 @@ export type AppConfig = {
   port: string
   dbPath: string
   authEnabled: boolean
-  auth0: {
+  auth0?: {
     audience: string
     issuerBaseURL: string
   }
 }
 
 
-if (process.env.PORT === undefined) {
-  throw new Error('port not specified')
+const {
+  PORT,
+  DB_PATH,
+  AUTH_ENABLED,
+  AUTH0_AUDIENCE,
+  AUTH0_ISSUER_BASE_URL
+} = process.env
+
+if (PORT === undefined) {
+  throw new Error('PORT not specified')
 }
-if (process.env.DB_PATH === undefined) {
-  throw new Error('database path not specified')
+if (DB_PATH === undefined) {
+  throw new Error('DB_PATH not specified')
 }
 
+const config: AppConfig = {
+  port: PORT,
+  dbPath: DB_PATH,
+  authEnabled: AUTH_ENABLED === 'true',
+}
 
-export const config: AppConfig = {
-  port: process.env.PORT,
-  dbPath: process.env.DB_PATH,
-  authEnabled: process.env.AUTH_ENABLED === 'true',
-  auth0: {
-    audience: process.env.AUTH0_AUDIENCE!,
-    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL!
+if (AUTH_ENABLED) {
+  if (AUTH0_AUDIENCE === undefined) {
+    throw new Error('AUTH0_AUDIENCE not defined')
+  }
+  if (AUTH0_ISSUER_BASE_URL === undefined) {
+    throw new Error('AUTH0_ISSUER_BASE_URL not defined')
+  }
+
+  config.auth0 = {
+    audience: AUTH0_AUDIENCE,
+    issuerBaseURL: AUTH0_ISSUER_BASE_URL
   }
 }
+
+export { config }

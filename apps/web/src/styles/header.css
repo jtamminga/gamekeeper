@@ -11,6 +11,7 @@ header {
 header > nav {
   display: flex;
   width: 100%;
+  padding: var(--space-md);
   max-width: var(--max-width);
   min-width: var(--min-width);
 
@@ -18,22 +19,16 @@ header > nav {
   background-color: rgb(0 0 0 / 33%);
 }
 
-header > nav > .nav-links {
-  display: flex;
-  width: 100%;
-}
-
-header > nav > .nav-links > .inner-links {
+header > nav > .inner-links {
   flex-grow: 1;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
 }
 
-header > nav > .nav-links a.record {
+header > nav > a.record {
   background: linear-gradient(45deg, #686fff, #243adc);
   padding: 2px 14px;
   border-radius: 6px;
   color: white;
-  margin: var(--space-md);
 }

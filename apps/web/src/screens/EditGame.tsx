@@ -1,15 +1,15 @@
-import { Link } from '@app/components'
-import { useGamekeeper, useRouter } from '@app/hooks'
-import { type GameId } from '@gamekeeper/core'
 import { useMemo, useState } from 'react'
+import { useGamekeeper, useRouter } from '@app/hooks'
+import type { CallbackPageProps } from '@app/routing'
+import type { GameId } from '@gamekeeper/core'
 
 
 type Props = {
   gameId: GameId
-}
+} & CallbackPageProps
 
 
-export function EditGame({ gameId }: Props) {
+export function EditGame({ gameId, callback = { name: 'GameDetails', props: { gameId }} }: Props) {
 
   const { gameplay } = useGamekeeper()
   const game = useMemo(() => gameplay.games.get(gameId), [gameId, gameplay])
@@ -25,7 +25,7 @@ export function EditGame({ gameId }: Props) {
         : Number.parseFloat(weight)
     })
 
-    router.toGame(gameId)
+    router.setPage(callback)
   }
 
   return (
@@ -61,10 +61,6 @@ export function EditGame({ gameId }: Props) {
         >
           Update
         </button>
-
-        <Link page={{ name: 'GameDetails', props: { gameId }}}>
-          Back
-        </Link>
       </form>
     </>
   )

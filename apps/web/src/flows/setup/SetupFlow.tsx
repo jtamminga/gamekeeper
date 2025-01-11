@@ -1,14 +1,16 @@
 import { useRouter } from '@app/hooks'
+import { PlayerSetup } from './PlayerSetup'
+import { GameSetup } from './GameSetup'
 
 
 export function SetupFlow() {
-  const { completed, setPage } = useRouter()
+  const { completed } = useRouter()
 
   return (
     <>
-      <p>in setup</p>
-      <button onClick={() => setPage({ name: 'Players' })}>Add players</button>
-      <button onClick={() => completed()}>skip</button>
+      <PlayerSetup />
+      <GameSetup />
+      <button onClick={() => completed()}>Next</button>
     </>
   )
 }

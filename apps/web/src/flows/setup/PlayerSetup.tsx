@@ -1,48 +1,33 @@
-import { PlayerForm } from '@app/components'
+import { Link } from '@app/components'
 import { useGamekeeper } from '@app/hooks'
-import { Action, Player } from '@gamekeeper/core'
-import { useState } from 'react'
+import { backToSetup } from './callbackProps'
 
 
-type Props = {
-  onComplete: Action
-}
-
-
-export function PlayerSetup({ onComplete }: Props) {
+export function PlayerSetup() {
   const { gameplay } = useGamekeeper()
   const players = gameplay.players.all()
-  const [player, setPlayer] = useState<Player>()
-  const [showList, setShowList] = useState(false)
-
-  function editPlayer(player: Player) {
-    setPlayer(player)
-    setShowList(false)
-  }
-
-  if (showList) {
-    return (
-      <div>
+  
+  return (
+    <div className="mb-lg">
+      <div className="title-with-link">
+        <h2>Players</h2>
+        <Link page={{ name: 'AddPlayer', props: backToSetup }}>Add player</Link>
+      </div>
+      {players.length === 0 &&
+        <div>
+          Add you and others that play games
+        </div>
+      }
+      {players.length > 0 &&
         <div className="link-list">
-          {players.map(player => 
-            <a onClick={() => editPlayer(player)}>{player.name}</a>
+          {players.map(player =>
+            <Link key={player.id} page={{ name: 'EditPlayer', props: { playerId: player.id, ...backToSetup }}}>
+              {player.name}
+            </Link>
           )}
         </div>
-        <button onClick={onComplete}>Next</button>
-      </div>
-    )
-  }
-  else {
-    return (
-      <PlayerForm
-        player={player}
-        submitText={player ? 'Update' : 'Create'}
-        onComplete={async data => {
-          await gameplay.players.create(data)
-          setShowList(true)
-        }}
-      />
-    )
-  }
+      }
+    </div>
+  )
   
 }

@@ -1,24 +1,26 @@
 import { BaseFlow } from './BaseFlow'
-import { GameAdded } from './GameAdded'
-import { useGamekeeper } from '@app/hooks'
-import { useState } from 'react'
-import type { Game, NewGameData } from '@gamekeeper/core'
+import { useGamekeeper, useRouter } from '@app/hooks'
+import type { NewGameData } from '@gamekeeper/core'
+import type { Page } from '@app/routing'
+
+
+type Props = {
+  callback: Page
+}
 
 
 /**
  * Flow for adding a new game
  */
-export function GameFlow() {
+export function GameFlow({ callback }: Props) {
 
+  const router = useRouter()
   const { gameplay } = useGamekeeper()
-  const [game, setGame] = useState<Game>()
 
   async function addGame(gameData: NewGameData) {
-    const game = await gameplay.games.create(gameData)
-    setGame(game)
+    await gameplay.games.create(gameData)
+    router.setPage(callback)
   }
 
-  return game === undefined
-    ? <BaseFlow onComplete={addGame} />
-    : <GameAdded game={game} />
+  return <BaseFlow onComplete={addGame} />
 }

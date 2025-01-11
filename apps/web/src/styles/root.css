@@ -33,7 +33,7 @@
   min-width: var(--min-width);
   margin: 0 auto;
   padding: var(--space-lg);
-  padding-top: 54px;
+  padding-top: 58px;
 }
 
 body {
@@ -66,6 +66,11 @@ a.danger {
   flex-direction: column;
   gap: var(--space-md);
 }
+.link-list > a {
+  padding: 0.6em 1.2em;
+  background-color: var(--dark-gray-accent);
+  border-radius: var(--border-radius);
+}
 
 .player-score-inputs {
   margin-bottom: var(--space-sm);
@@ -96,14 +101,20 @@ a.danger {
 .title-with-link {
   display: flex;
   align-items: center;
+}
+.title-with-link:has(h1) {
   margin-top: var(--space-lg);
   margin-bottom: var(--space-lg);
+}
+.title-with-link:has(h2) {
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 .title-with-link.for-game {
   margin-bottom: var(--space-md);
 }
-.title-with-link h1 {
-  margin: 0;
+.title-with-link > h1,h2 {
+  margin: 0 !important;
   flex-grow: 1;
 }
 
