@@ -1,14 +1,11 @@
-import { RouterContainer } from './Router'
 import { AuthProvider } from './bootstrap'
-import { AuthFlow } from './AuthFlow'
+import { AuthFlow } from '@app/flows'
 
 
 export default function App() {
   return (
     <AuthProvider>
-      <RouterContainer>
-        <AuthFlow />
-      </RouterContainer>
+      <AuthFlow />
     </AuthProvider>
   )
 }

@@ -1,21 +1,14 @@
-import { useGamekeeper } from '@app/hooks'
-import { Players } from '@app/screens'
-import { useState } from 'react'
+import { useRouter } from '@app/hooks'
 
 
 export function SetupFlow() {
+  const { completed, setPage } = useRouter()
 
-  const { gameplay } = useGamekeeper()
-  const setupPlayers = gameplay.players.all().length === 0
-  const [step, setStep] = useState()
-
-  if (setupPlayers) {
-    return (
-      <>
-        <h2>Setup 1 of 2</h2>
-        <Players />
-        <button onClick={() => console.log('next')}>Next</button>
-      </>
-    )
-  }
+  return (
+    <>
+      <p>in setup</p>
+      <button onClick={() => setPage({ name: 'Players' })}>Add players</button>
+      <button onClick={() => completed()}>skip</button>
+    </>
+  )
 }

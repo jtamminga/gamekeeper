@@ -1,4 +1,4 @@
-import { useRouter } from './hooks'
+import { useRouter } from '@app/hooks'
 
 
 export function Header() {

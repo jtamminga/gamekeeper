@@ -17,6 +17,7 @@ import {
   GamePlaythroughs,
   Games,
   Goals,
+  InitialSetup,
   Landing,
   Players,
   PlaythroughDetails,
@@ -30,6 +31,7 @@ import {
 // all possible pages
 export type Page =
   | { name: 'Landing' }
+  | { name: 'Setup' }
   | { name: 'Profile' }
   | { name: 'Summary' }
   | { name: 'AddPlaythrough', props?: { gameId?: GameId } }
@@ -88,5 +90,7 @@ export function router(page: Page) {
       return <AddGoal />
     case 'EditGoal':
       return <EditGoal {...page.props} />
+    case 'Setup':
+      return <InitialSetup />
   }
 }

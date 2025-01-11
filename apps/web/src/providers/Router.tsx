@@ -1,26 +1,29 @@
 import { ReactNode, createContext, useCallback, useEffect, useState } from 'react'
-import type { Callback } from '@gamekeeper/core'
-import type { Page } from './routing'
+import type { Action, Callback } from '@gamekeeper/core'
+import type { Page } from '@app/routing'
 
 
 // types
 type RouterContextType = {
   context: Page
   setContext: Callback<Page>
+  completed: Action
 }
 type RouterContainerProps = {
+  initialPage: Page
   children: ReactNode
+  onComplete?: Action
 }
 
 
 // context
-export const RouterContext = createContext<RouterContextType>({ context: { name: 'Summary' }, setContext: () => {} })
+export const RouterContext = createContext<RouterContextType>({ context: { name: 'Summary' }, setContext: () => {}, completed: () => {} })
 
 
 // provider
-export function RouterContainer({ children }: RouterContainerProps) {
+export function RouterProvider({ children, initialPage, onComplete }: RouterContainerProps) {
 
-  const [context, setContext] = useState<Page>({ name: 'Summary' })
+  const [context, setContext] = useState<Page>(initialPage)
 
   const handleContextChange = useCallback((page: Page) => {
     history.pushState(page, page.name, `?page=${page.name}`)
@@ -36,7 +39,7 @@ export function RouterContainer({ children }: RouterContainerProps) {
       }
       // default to stats page
       else {
-        setContext({ name: 'Summary' })
+        setContext(initialPage)
       }
     }
 
@@ -45,7 +48,7 @@ export function RouterContainer({ children }: RouterContainerProps) {
   }, [])
 
   return (
-    <RouterContext.Provider value={{ context, setContext: handleContextChange }}>
+    <RouterContext.Provider value={{ context, setContext: handleContextChange, completed: () => onComplete?.() }}>
       {children}
     </RouterContext.Provider>
   )

@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react'
-import { initialize, useAuth } from './bootstrap'
-import { Loading } from './components'
+import { initialize, useAuth } from '@app/bootstrap'
+import { Loading } from '@app/components'
 
 
 type Props = {

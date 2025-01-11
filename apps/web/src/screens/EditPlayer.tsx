@@ -22,7 +22,7 @@ export function EditPlayer({ playerId }: Props) {
         player={player}
         onComplete={async data => {
           await player.update(data)
-          router.setPage({ name: 'Players'})
+          router.setPage({ name: 'Players' })
         }}
       />
     </>
