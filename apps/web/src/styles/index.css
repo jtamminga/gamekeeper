@@ -1,6 +1,7 @@
 @import 'root';
 @import 'typography';
 @import 'utilities';
+@import 'loading';
 @import 'header';
 @import 'button';
 @import 'form';

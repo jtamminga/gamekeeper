@@ -1,4 +1,5 @@
 export * from './Goal'
 export * from './GoalFactory'
 export * from './Goals'
-export * from './PlaythroughsGoal'
+export * from './NumberOfPlaysGoal'
+export * from './UniqueGamesPlayedGoal'

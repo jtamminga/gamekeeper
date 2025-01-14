@@ -67,6 +67,4 @@ export abstract class Goal extends Entity<GoalId> {
 
   public abstract toData(): GoalData
 
-  public abstract name: string
-
 }

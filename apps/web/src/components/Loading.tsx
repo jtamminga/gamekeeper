@@ -1,5 +1,5 @@
 export function Loading() {
   return (
-    <div>loading...</div>
+    <div className="loading">loading</div>
   )
 }

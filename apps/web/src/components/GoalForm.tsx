@@ -1,4 +1,5 @@
 import type { NewGoalData, GoalData } from '@gamekeeper/core'
+import { nameForGoalType, descriptionForGoalType } from '@gamekeeper/views'
 import { useState } from 'react'
 
 
@@ -12,17 +13,21 @@ type Props = {
 
 export function GoalForm({ goal, onComplete, submitText, disableType }: Props) {
 
+  const currentYear = new Date().getFullYear()
   const [loading, setLoading] = useState(false)
 
   const [type, setType] = useState(goal?.type.toString() ?? '1')
   const [value, setValue] = useState(goal?.value.toString() ?? '')
-  const [year, setYear] = useState(goal?.year.toString() ?? '')
+  const [year, setYear] = useState(goal?.year.toString() ?? currentYear.toString())
+
 
   async function onNext() {
-    // make sure there is a name
-    // if (name.length === 0) {
-    //   return
-    // }
+    if (value.length === 0) {
+      return
+    }
+    if (year.length === 0) {
+      return
+    }
 
     setLoading(true)
     await onComplete({
@@ -44,17 +49,15 @@ export function GoalForm({ goal, onComplete, submitText, disableType }: Props) {
           disabled={disableType}
         >
           <option disabled>Select type</option>
-          <option value="1">Number of game plays</option>
+          <option value="1">{nameForGoalType(1)}</option>
+          <option value="2">{nameForGoalType(2)}</option>
         </select>
-      </div>
 
-      <div className="form-control">
-        <label>Goal</label>
-        <input
-          type="number"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-        />
+        {type &&
+          <p className="text-muted">
+            {descriptionForGoalType(parseInt(type))}
+          </p>
+        }
       </div>
 
       <div className="form-control">
@@ -63,6 +66,15 @@ export function GoalForm({ goal, onComplete, submitText, disableType }: Props) {
           type="number"
           value={year}
           onChange={e => setYear(e.target.value)}
+        />
+      </div>
+
+      <div className="form-control">
+        <label>Goal</label>
+        <input
+          type="number"
+          value={value}
+          onChange={e => setValue(e.target.value)}
         />
       </div>
 

@@ -2,16 +2,12 @@ import { Goal } from './Goal'
 import { GoalType, type GameId, type GoalData } from '@services'
 
 
-export class PlaythroughsGoal extends Goal {
-
-  public get name(): string {
-    return 'Games played'
-  }
+export class NumberOfPlaysGoal extends Goal {
 
   public toData(): GoalData {
     return {
       ...this.getBaseData(),
-      type: GoalType.NumPlays
+      type: GoalType.NumberOfPlays
     }
   }
 

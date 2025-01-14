@@ -1,5 +1,6 @@
 import { Link, Loading } from '@app/components'
 import { useGamekeeper } from '@app/hooks'
+import { nameForGoalType } from '@gamekeeper/views'
 import { useEffect, useState } from 'react'
 
 
@@ -12,7 +13,7 @@ export function Goals() {
       await insights.goals.hydrate()
       setLoading(false)
     })()
-  }, [])
+  }, [insights.goals])
 
   if (loading) {
     return <Loading />
@@ -43,7 +44,7 @@ export function Goals() {
                   key={goal.id}
                   page={{ name: 'EditGoal', props: { goalId: goal.id } }}
                 >
-                  {goal.name}
+                  {nameForGoalType(goal.toData().type)}
                 </Link>
               </td>
               <td className="num">{goal.value}</td>
