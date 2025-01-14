@@ -1,4 +1,4 @@
-import type { Game, GameplayDeps, Player } from '@domains/gameplay'
+import type { Game, Gameplay, GameplayDeps, Player } from '@domains/gameplay'
 import type { NewBasePlaythroughData, NewPlaythroughData } from '@services'
 
 
@@ -15,4 +15,17 @@ export abstract class PlaythroughFlow<TGame extends Game = Game> {
   }
 
   public abstract build(): NewPlaythroughData
+
+  public static defaultPlayerSelection({ playthroughs, players }: Gameplay): ReadonlyArray<Player> {
+    const lastPlaythrough = playthroughs.last()
+    let _players = players.all()
+
+    if (lastPlaythrough) {
+      // only include players that are still valid (not deleted)
+      _players = lastPlaythrough.players
+        .filter(player => _players.includes(player))
+    }
+
+    return _players
+  }
 }

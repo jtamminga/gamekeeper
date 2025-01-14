@@ -24,6 +24,10 @@ export class Playthroughs {
     return this._deps.repo.getPlaythroughs({ limit, gameId })
   }
 
+  public last(gameId?: GameId): Playthrough | undefined {
+    return this._deps.repo.getPlaythroughs({ limit: 1, gameId })[0]
+  }
+
   public get(id: PlaythroughId): Playthrough {
     return this._deps.repo.getPlaythrough(id)
   }
