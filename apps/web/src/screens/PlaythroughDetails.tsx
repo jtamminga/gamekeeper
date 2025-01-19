@@ -1,4 +1,4 @@
-import { PlayerColor } from '@app/components'
+import { PlayerColor, StatCard } from '@app/components'
 import { useGamekeeper, usePlaythroughView } from '@app/hooks'
 import type { PlaythroughId } from '@gamekeeper/core'
 
@@ -22,18 +22,26 @@ export function PlaythroughDetails({ playthroughId }: Props) {
 
   return (
     <>
-      <h1>Playthrough</h1>
+      <h1>{view.game}</h1>
+      <h2>Playthrough</h2>
 
-      <div className="pill">{view.playedOn}</div>
+      <div className="">{view.playedOn}</div>
 
-      The winner was <PlayerColor playerId={view.winnerId}>{view.winner}</PlayerColor>
+      <h3>Winner</h3>
+      <div className="callout">
+        The winner <PlayerColor playerId={view.winnerId}>{view.winner}</PlayerColor>
+      </div>
 
+      <h3>Scores</h3>
       {view.scores &&
-        <ul>
+        <div className="mb-lg">
           {view.scores.map(score =>
-            <div>{score.name} {score.score}</div>
+            <StatCard
+              value={score.score}
+              description={<PlayerColor playerId={score.playerId}>{score.name}</PlayerColor>}
+            />
           )}
-        </ul>
+        </div>
       }
 
       <div>

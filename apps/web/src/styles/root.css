@@ -123,6 +123,13 @@ a.danger {
   margin-bottom: var(--space-lg);
 }
 
+.callout {
+  padding: 30px var(--space-md);
+  background-color: var(--dark-gray-accent);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--space-md);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
