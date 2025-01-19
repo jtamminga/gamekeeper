@@ -1,5 +1,5 @@
 import type { Goal } from '@domains/insights'
-import type { GoalId, GoalsQuery, NewGoalData } from '@services'
+import type { GoalData, GoalId, GoalsQuery, NewGoalData } from '@services'
 
 
 export interface InsightsRepository {
@@ -10,7 +10,7 @@ export interface InsightsRepository {
   getGoal(id: GoalId): Goal
   getGoals(query?: GoalsQuery): ReadonlyArray<Goal> 
   createGoal(data: NewGoalData): Promise<Goal>
-  updateGoal(goal: Goal): Promise<void>
+  updateGoal(goal: GoalData): Promise<void>
   removeGoal(id: GoalId): Promise<void>
 
 }

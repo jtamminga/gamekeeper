@@ -2,6 +2,7 @@ import { type PlaythroughFlow, PlaythroughFlowFactory } from './flow'
 import type { GameId, NewBasePlaythroughData, NewPlaythroughData, PlaythroughId, PlaythroughQueryOptions } from '@services'
 import type { GameplayDeps } from '../Gameplay'
 import type { Playthrough } from './Playthrough'
+import { PlaythroughValidation } from './PlaythroughValidation'
 
 
 // class
@@ -33,6 +34,7 @@ export class Playthroughs {
   }
 
   public async create(data: NewPlaythroughData): Promise<Playthrough> {
+    PlaythroughValidation.create(data)
     return this._deps.repo.createPlaythrough(data)
   }
 
@@ -41,6 +43,7 @@ export class Playthroughs {
   }
 
   public startFlow(data: NewBasePlaythroughData): PlaythroughFlow {
+    PlaythroughValidation.startFlow(data)
     return PlaythroughFlowFactory.create(this._deps, data)
   }
 

@@ -45,8 +45,8 @@ export class MemoryInsightsRepository implements InsightsRepository {
     return this.bindGoal(goalData)
   }
 
-  public async updateGoal(goal: Goal): Promise<void> {
-    await this._services.goalService.updateGoal(goal.toData())
+  public async updateGoal(goal: GoalData): Promise<void> {
+    await this._services.goalService.updateGoal(goal)
   }
 
   public async removeGoal(id: GoalId): Promise<void> {

@@ -61,8 +61,8 @@ export class MemoryGameplayRepository implements GameplayRepository {
     return this.bindPlayer(playerData)
   }
 
-  public async updatePlayer(player: Player): Promise<void> {
-    await this._services.playerService.updatePlayer(player.toData())
+  public async updatePlayer(player: PlayerData): Promise<void> {
+    await this._services.playerService.updatePlayer(player)
   }
 
   private bindPlayer(data: PlayerData): Player {
@@ -106,8 +106,8 @@ export class MemoryGameplayRepository implements GameplayRepository {
     return this.bindGame(gameData)
   }
 
-  public async updateGame(game: Game): Promise<void> {
-    await this._services.gameService.updateGame(game.toData())
+  public async updateGame(game: GameData): Promise<void> {
+    await this._services.gameService.updateGame(game)
   }
 
   private bindGame(data: GameData): Game {

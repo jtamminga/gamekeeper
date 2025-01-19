@@ -49,10 +49,9 @@ export abstract class Goal extends Entity<GoalId> {
     this._progress = await this.determineProgress()
   }
 
-  public async update(data: Omit<UpdatedGoalData, 'id'>): Promise<void> {
+  public update(data: Omit<UpdatedGoalData, 'id'>): void {
     this._value = data.value ?? this._value
     this._year = data.year ?? this._year
-    await this._deps.repo.updateGoal(this)
   }
 
   protected getBaseData(): Omit<GoalData, 'type'> {

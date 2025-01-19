@@ -17,9 +17,8 @@ export class Player extends Entity<PlayerId> implements Serializable<PlayerData>
     return this._name
   }
 
-  public async update(data: Omit<UpdatedPlayerData, 'id'>): Promise<void> {
+  public update(data: Omit<UpdatedPlayerData, 'id'>): void {
     this._name = data.name ?? this._name
-    await this._deps.repo.updatePlayer(this)
   }
 
   public toData(): PlayerData {

@@ -1,4 +1,4 @@
-import type { GameId, PlaythroughQueryOptions } from '@gamekeeper/core'
+import type { GameId, PlaythroughId, PlaythroughQueryOptions } from '@gamekeeper/core'
 import { useEffect, useState } from 'react'
 import { viewService } from '@app/bootstrap'
 import { GamesView, GameView, PlaythroughsView, SummaryView } from '@gamekeeper/views'
@@ -58,4 +58,8 @@ export function usePlaythroughsView({ fromDate, toDate, gameId, limit }: Playthr
   }, [fromDate, toDate, gameId, limit])
 
   return view
+}
+
+export function usePlaythroughView(id: PlaythroughId) {
+  return viewService.getPlaythroughView(id)
 }

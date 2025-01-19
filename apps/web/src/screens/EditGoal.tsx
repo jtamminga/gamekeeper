@@ -1,6 +1,7 @@
 import { GoalForm } from '@app/components'
 import { useGamekeeper, useRouter } from '@app/hooks'
 import type { GoalId } from '@gamekeeper/core'
+import { nameForGoalType } from '@gamekeeper/views'
 
 
 type Props = {
@@ -23,7 +24,7 @@ export function EditGoal({ goalId }: Props) {
   return (
     <>
       <div className="title-with-link">
-        <h1>{goal.name}</h1>
+        <h1>{nameForGoalType(goal.toData().type)}</h1>
         <a onClick={onDelete} className="danger">
           delete
         </a>
@@ -33,7 +34,8 @@ export function EditGoal({ goalId }: Props) {
         submitText="Update"
         goal={goal.toData()}
         onComplete={async data => {
-          await goal.update(data)
+          goal.update(data)
+          await insights.goals.save(goal)
           router.setPage({ name: 'Goals'})
         }}
         disableType

@@ -1,6 +1,7 @@
 import { type NewVsPlaythroughData, type PlayerId, ScoringType } from '@services'
 import type { Player, Scores, VsGame } from '@domains/gameplay'
 import { PlaythroughFlow } from './PlaythroughFlow'
+import { InvalidState } from '@core'
 
 
 export class VsFlow extends PlaythroughFlow<VsGame> {
@@ -25,14 +26,14 @@ export class VsFlow extends PlaythroughFlow<VsGame> {
 
   public get isImplicitWinner(): boolean {
     if (this.implicitWinner === undefined) {
-      throw new Error('invalid state')
+      throw new InvalidState('winner', 'invalid state')
     }
     return this.implicitWinner
   }
 
   public setScores(scores: Scores): VsFlow {
     if (this.game.scoring === ScoringType.NO_SCORE) {
-      throw new Error('cannot add scoring to this game')
+      throw new InvalidState('scoring', 'cannot add scoring to this game')
     }
 
     this.scores = scores
@@ -54,7 +55,7 @@ export class VsFlow extends PlaythroughFlow<VsGame> {
 
   public build(): NewVsPlaythroughData {
     if (this.winnerId === undefined) {
-      throw new Error('winner must be specified')
+      throw new InvalidState('winner', 'winner must be specified')
     }
 
     const { gameId, playedOn, playerIds } = this.data

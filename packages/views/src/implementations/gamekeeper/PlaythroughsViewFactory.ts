@@ -8,7 +8,7 @@ const MAX_PLAYTHROUGHS = 100
 
 export class PlaythroughsViewFactory {
   public constructor(
-    private readonly gamekeeper: GameKeeper,
+    private readonly gamekeeper: GameKeeper
   ) { }
   
   public async create(options: PlaythroughQueryOptions): Promise<PlaythroughsView> {

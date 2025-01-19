@@ -2,7 +2,8 @@ import type { PlayerId } from '@gamekeeper/core'
 
 export interface FormattedStat {
   name: string
-  valueAllTime: string,
+  hasStats: boolean
+  valueAllTime: string
   valueThisYear: string
 }
 export interface FormattedPlayerStat extends FormattedStat {

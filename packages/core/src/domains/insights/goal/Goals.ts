@@ -1,6 +1,7 @@
 import type { Goal } from './Goal'
 import type { InsightsDeps } from '../Insights'
 import { GoalId, GoalsQuery, NewGoalData } from '@services'
+import { GoalValidator } from './GoalValidator'
 
 
 export class Goals {
@@ -23,7 +24,14 @@ export class Goals {
   }
 
   public async create(data: NewGoalData): Promise<Goal> {
+    GoalValidator.create(data)
     return this._deps.repo.createGoal(data)
+  }
+
+  public async save(goal: Goal): Promise<void> {
+    const updatedData = goal.toData()
+    GoalValidator.update(updatedData)
+    this._deps.repo.updateGoal(updatedData)
   }
 
   public async remove(id: GoalId): Promise<void> {

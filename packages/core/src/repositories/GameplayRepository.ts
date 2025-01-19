@@ -1,5 +1,5 @@
 import type { Game, Player, Playthrough } from '@domains/gameplay'
-import type { GameId, NewGameData, NewPlayerData, NewPlaythroughData, PlayerId, PlaythroughId, PlaythroughQueryOptions } from '@services'
+import type { GameData, GameId, NewGameData, NewPlayerData, NewPlaythroughData, PlayerData, PlayerId, PlaythroughId, PlaythroughQueryOptions } from '@services'
 
 
 export interface GameplayRepository {
@@ -10,14 +10,14 @@ export interface GameplayRepository {
   getPlayer(id: PlayerId): Player
   getPlayers(ids: ReadonlyArray<PlayerId>): ReadonlyArray<Player>
   createPlayer(data: NewPlayerData): Promise<Player>
-  updatePlayer(player: Player): Promise<void>
+  updatePlayer(player: PlayerData): Promise<void>
 
   // games
   games: ReadonlyArray<Game>
   hydrateGames(): Promise<ReadonlyArray<Game>>
   getGame(id: GameId): Game
   createGame(data: NewGameData): Promise<Game>
-  updateGame(game: Game): Promise<void>
+  updateGame(game: GameData): Promise<void>
   
   // playthroughs
   playthroughs: ReadonlyArray<Playthrough>

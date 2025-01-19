@@ -45,11 +45,9 @@ export abstract class Game<T extends Playthrough = Playthrough>
     return this._deps.repo.getPlaythroughs({ gameId: this.id }) as T[]
   }
 
-  public async update(data: Omit<UpdatedGameData, 'id'>): Promise<void> {
+  public update(data: Omit<UpdatedGameData, 'id'>): void {
     this._name = data.name ?? this._name
     this._weight = data.weight ?? this._weight
-    
-    await this._deps.repo.updateGame(this)
   }
 
   public abstract toData(): GameData

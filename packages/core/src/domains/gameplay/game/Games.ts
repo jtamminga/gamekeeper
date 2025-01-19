@@ -1,6 +1,7 @@
 import type { GameplayDeps } from '../Gameplay'
 import type { Game } from './Game'
 import type { GameData, GameId, NewGameData } from '@services'
+import { GameValidation } from './GameValidation'
 
 
 export class Games {
@@ -23,7 +24,14 @@ export class Games {
   }
 
   public async create(data: NewGameData): Promise<Game> {
+    GameValidation.create(data)
     return this._deps.repo.createGame(data)
+  }
+
+  public async save(game: Game): Promise<void> {
+    const updatedData = game.toData()
+    GameValidation.update(updatedData)
+    await this._deps.repo.updateGame(updatedData)
   }
 
   public toData(): ReadonlyArray<GameData> {

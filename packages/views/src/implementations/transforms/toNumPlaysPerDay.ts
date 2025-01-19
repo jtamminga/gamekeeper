@@ -8,13 +8,16 @@ import { addDays, isBefore, isSameDay, startOfWeek } from 'date-fns'
  * @param year what year this is for
  */
 export function toNumPlaysPerDay(playsByDate: PlaysByDateDto[], year: number): { plays: number[], firstDate: Date } {
+  const today = new Date()
   const firstDate = startOfWeek(new Date(year, 0))
+  const lastDate = today.getFullYear() === year
+    ? today
+    : new Date(year + 1, 0)
   let curDay = firstDate
-
   let index = 0
-  const today = Date.now()
   const result: number[] = []
-  while(isBefore(curDay, today)) {
+  
+  while(isBefore(curDay, lastDate)) {
     if (isSameDay(curDay, playsByDate[index]?.date)) {
       result.push(playsByDate[index].plays)
       index++

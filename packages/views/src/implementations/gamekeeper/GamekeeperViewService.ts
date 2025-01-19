@@ -1,10 +1,11 @@
-import { SummaryView, GameView, GamesView, PlaythroughsView } from '@def/views'
+import { SummaryView, GameView, GamesView, PlaythroughsView, PlaythroughView } from '@def/views'
 import { ViewService } from '@def/ViewService'
-import { GameId, GameKeeper, PlaythroughQueryOptions } from '@gamekeeper/core'
+import { GameId, GameKeeper, PlaythroughId, PlaythroughQueryOptions } from '@gamekeeper/core'
 import { SummaryViewFactory } from './SummaryViewFactory'
 import { GameViewFactory } from './GameViewFactory'
 import { GamesViewFactory } from './GamesViewFactory'
 import { PlaythroughsViewFactory } from './PlaythroughsViewFactory'
+import { PlaythroughViewFactory } from './PlaythroughViewFactory'
 
 export class GamekeeperViewService implements ViewService {
 
@@ -12,12 +13,14 @@ export class GamekeeperViewService implements ViewService {
   private gameViewFactory: GameViewFactory
   private gamesViewFactory: GamesViewFactory
   private playthroughsViewFactory: PlaythroughsViewFactory
+  private playthroughViewFactory: PlaythroughViewFactory
 
   public constructor(gamekeeper: GameKeeper) {
     this.summaryViewFactory = new SummaryViewFactory(gamekeeper)
     this.gameViewFactory = new GameViewFactory(gamekeeper)
     this.gamesViewFactory = new GamesViewFactory(gamekeeper)
     this.playthroughsViewFactory = new PlaythroughsViewFactory(gamekeeper)
+    this.playthroughViewFactory = new PlaythroughViewFactory(gamekeeper)
   }
 
   public async getSummaryView(year?: number): Promise<SummaryView> {
@@ -34,6 +37,10 @@ export class GamekeeperViewService implements ViewService {
 
   public async getPlaythroughsView(options: PlaythroughQueryOptions): Promise<PlaythroughsView> {
     return this.playthroughsViewFactory.create(options)
+  }
+
+  public getPlaythroughView(id: PlaythroughId): PlaythroughView {
+    return this.playthroughViewFactory.create(id)
   }
   
 }

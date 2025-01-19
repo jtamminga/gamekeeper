@@ -18,12 +18,13 @@ export function EditGame({ gameId, callback = { name: 'GameDetails', props: { ga
   const router = useRouter()
 
   async function onUpdate() {
-    await game.update({
+    game.update({
       name,
       weight: weight === undefined
         ? undefined
         : Number.parseFloat(weight)
     })
+    await gameplay.games.save(game)
 
     router.setPage(callback)
   }

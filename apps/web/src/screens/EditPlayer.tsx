@@ -22,7 +22,8 @@ export function EditPlayer({ playerId, callback = { name: 'Players' } }: Props) 
         submitText="Update"
         player={player}
         onComplete={async data => {
-          await player.update(data)
+          player.update(data)
+          await gameplay.players.save(player)
           router.setPage(callback)
         }}
       />
