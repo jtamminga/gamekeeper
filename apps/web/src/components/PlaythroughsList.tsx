@@ -58,8 +58,8 @@ export function PlaythroughsList({ formattedPlaythroughs, className }: Props) {
             </td>
 
             {/* scores */}
-            {scores &&
-              <td>{renderScores(playthrough.scores!)}</td>
+            {scores && playthrough.scores &&
+              <td>{renderScores(playthrough.scores)}</td>
             }
 
           </tr>  

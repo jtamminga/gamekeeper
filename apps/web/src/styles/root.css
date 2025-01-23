@@ -124,7 +124,7 @@ a.danger {
 }
 
 .callout {
-  padding: 30px var(--space-md);
+  padding: 30px 50px;
   background-color: var(--dark-gray-accent);
   border-radius: var(--border-radius);
   margin-bottom: var(--space-md);
