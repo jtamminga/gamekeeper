@@ -12,7 +12,7 @@ export function Goal({ goal }: Props) {
   const expected = (goal.expectedProgressPercentage * 100) + '%'
 
   return (
-    <div className="goal-card">
+    <div className={'goal-card ' + goal.state}>
       <div className="goal-title">
         <span>{goal.name}</span>
         <div>{goal.progress} / {goal.value}</div>
@@ -21,7 +21,9 @@ export function Goal({ goal }: Props) {
         <div className="progress-bar">
           <div className="inner-bar" style={{ width: progress }}></div>
         </div>
-        <div className="expected" style={{ left: expected }}></div>
+        { goal.active &&
+          <div className="expected" style={{ left: expected }}></div>
+        }
       </div>
     </div>
   )

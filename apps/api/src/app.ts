@@ -18,6 +18,9 @@ app.use(express.json())
 app.use(cors())
 app.use(logging)
 
+// static files for certs
+app.use(express.static('public', { dotfiles: 'allow' }))
+
 if (config.authEnabled && config.auth0) {
   const jwtCheck = auth({
     audience: config.auth0.audience,

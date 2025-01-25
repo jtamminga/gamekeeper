@@ -10,6 +10,14 @@
   gap: var(--space-md);
 }
 
+.goal-card.completed .progress-bar-container .progress-bar .inner-bar {
+  background-color: var(--color-success);
+}
+
+.goal-card.failed .progress-bar-container .progress-bar .inner-bar {
+  background-color: var(--color-danger);
+}
+
 .goal-card .goal-title {
   display: flex;
   justify-content: space-between;

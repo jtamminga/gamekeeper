@@ -2,13 +2,20 @@ import { FormattedGoal } from '@def/models'
 import { Goal, GoalType } from '@gamekeeper/core'
 
 export function formatGoal(goal: Goal): FormattedGoal {
+  const curYear = new Date().getFullYear()
   const goalType = goal.toData().type
+  const active = goal.year === curYear
 
   return {
     name: nameForGoalType(goalType),
+    active,
     description: descriptionForGoalType(goalType),
     value: goal.value,
-    state: goal.progress >= goal.value ? 'completed' : 'active',
+    state: goal.progress >= goal.value
+      ? 'completed'
+      : active
+        ? 'in-progress'
+        : 'failed',
     progress: goal.progress,
     percentageDone: goal.percentageDone,
     expectedProgressPercentage: goal.expectedProgressPercentage

@@ -13,6 +13,7 @@
   --dark-gray: #242424;
   --dark-gray-accent: #303030;
   --color-danger: #b75151;
+  --color-success: green;
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -113,7 +114,8 @@ a.danger {
 .title-with-link.for-game {
   margin-bottom: var(--space-md);
 }
-.title-with-link > h1,h2 {
+.title-with-link > h1,
+.title-with-link > h2 {
   margin: 0 !important;
   flex-grow: 1;
 }

@@ -2,7 +2,8 @@ export interface FormattedGoal {
   readonly name: string
   readonly description: string
   readonly value: number
-  readonly state: 'active' | 'completed' | 'failed'
+  readonly active: boolean
+  readonly state: 'in-progress' | 'completed' | 'failed'
   readonly progress: number
   readonly percentageDone: number
   readonly expectedProgressPercentage: number
