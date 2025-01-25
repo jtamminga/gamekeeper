@@ -1,5 +1,7 @@
 import 'express-async-errors'
 import cors from 'cors'
+import https from 'https'
+import fs from 'fs'
 import express, { NextFunction, Request, Response } from 'express'
 import { GameId, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, PlaythroughId, UpdatedGameData, PlayerId, UpdatedGoalData, GoalId } from '@gamekeeper/core'
 import { DbServices, UserId } from '@gamekeeper/db-services'
@@ -18,9 +20,7 @@ app.use(express.json())
 app.use(cors())
 app.use(logging)
 
-// static files for certs
-app.use(express.static('public', { dotfiles: 'allow' }))
-
+// enable auth if configured
 if (config.authEnabled && config.auth0) {
   const jwtCheck = auth({
     audience: config.auth0.audience,
@@ -270,8 +270,22 @@ app.get('/stats', async function (req, res) {
 // note: error handling has to be after app.get
 app.use(errorHandler)
 
-// start listening
-app.listen(config.port)
+// enable https server if configured
+if (config.httpsEnabled && config.https) {
+  const { keyPath, certPath, caPath } = config.https
+  const key = fs.readFileSync(keyPath, 'utf8')
+  const cert = fs.readFileSync(certPath, 'utf8')
+  const ca = fs.readFileSync(caPath, 'utf8')
+
+  // start listening with https
+  https.createServer({ key, cert, ca }, app).listen(config.port)
+  console.info('created https server')
+}
+// start http server otherwise
+else {
+  app.listen(config.port)
+}
+
 console.info(`listening on ${config.port}`)
 
 

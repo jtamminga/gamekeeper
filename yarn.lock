@@ -581,6 +581,7 @@ __metadata:
     express: "npm:^4.18.2"
     express-async-errors: "npm:^3.1.1"
     express-oauth2-jwt-bearer: "npm:^1.6.0"
+    https: "npm:^1.0.0"
     tsc-alias: "npm:^1.8.8"
     typescript: "npm:^5.2.2"
   languageName: unknown
@@ -5494,6 +5495,13 @@ __metadata:
     agent-base: "npm:^7.0.2"
     debug: "npm:4"
   checksum: 7735eb90073db087e7e79312e3d97c8c04baf7ea7ca7b013382b6a45abbaa61b281041a98f4e13c8c80d88f843785bcc84ba189165b4b4087b1e3496ba656d77
+  languageName: node
+  linkType: hard
+
+"https@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "https@npm:1.0.0"
+  checksum: e36eb4c38f09264bb273925b2d658c38bb8dda655cdff679b75dc45ccac26b1520fadcf00be677ccc4432a62f44a408b522f66cfc802ce30f4effe75decfd554
   languageName: node
   linkType: hard
 

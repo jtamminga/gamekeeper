@@ -9,6 +9,12 @@ export type AppConfig = {
     audience: string
     issuerBaseURL: string
   }
+  httpsEnabled: boolean
+  https?: {
+    keyPath: string
+    certPath: string
+    caPath: string
+  }
 }
 
 
@@ -17,7 +23,11 @@ const {
   DB_PATH,
   AUTH_ENABLED,
   AUTH0_AUDIENCE,
-  AUTH0_ISSUER_BASE_URL
+  AUTH0_ISSUER_BASE_URL,
+  HTTPS_ENABLED,
+  PRIVATE_KEY_PATH,
+  CERTIFICATE_PATH,
+  CA_PATH
 } = process.env
 
 if (PORT === undefined) {
@@ -31,9 +41,10 @@ const config: AppConfig = {
   port: PORT,
   dbPath: DB_PATH,
   authEnabled: AUTH_ENABLED === 'true',
+  httpsEnabled: HTTPS_ENABLED === 'true'
 }
 
-if (AUTH_ENABLED) {
+if (config.authEnabled) {
   if (AUTH0_AUDIENCE === undefined) {
     throw new Error('AUTH0_AUDIENCE not defined')
   }
@@ -44,6 +55,24 @@ if (AUTH_ENABLED) {
   config.auth0 = {
     audience: AUTH0_AUDIENCE,
     issuerBaseURL: AUTH0_ISSUER_BASE_URL
+  }
+}
+
+if (config.httpsEnabled) {
+  if (PRIVATE_KEY_PATH === undefined) {
+    throw new Error('PRIVATE_KEY_PATH not defined')
+  }
+  if (CERTIFICATE_PATH === undefined) {
+    throw new Error('CERTIFICATE_PATH not defined')
+  }
+  if (CA_PATH === undefined) {
+    throw new Error('CA_PATH not defined')
+  }
+
+  config.https = {
+    keyPath: PRIVATE_KEY_PATH,
+    certPath: CERTIFICATE_PATH,
+    caPath: CA_PATH
   }
 }
 
