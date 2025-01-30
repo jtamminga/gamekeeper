@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Callback, GameId, PlayerId, PlaythroughFlow } from '@gamekeeper/core'
-import { DateSelect, GameSelect, PlayerSelect } from '@app/components'
+import { DateSelect, GameSelect, Link, PlayerSelect } from '@app/components'
 import { useGamekeeper, useRouter } from '@app/hooks'
 
 
@@ -29,6 +29,9 @@ export function BaseFlow({ onComplete }: Props) {
   const [gameId, setGameId] = useState<GameId | undefined>(initialGameId)
   const [playedOn, setPlayedOn] = useState(new Date())
 
+  const noPlayers = gameplay.players.all().length === 0
+  const noGames = gameplay.games.all().length === 0
+
   function onNext() {
     if (!gameId) {
       return
@@ -47,8 +50,25 @@ export function BaseFlow({ onComplete }: Props) {
     onComplete(flow)
   }
 
+  if (noGames || noPlayers) {
+    return (
+      <>
+        <p className="text-muted mb-md">Before you can record you need players and games in the system.</p>
+        <div className="link-list">
+          {noPlayers &&
+            <Link page={{ name: 'AddPlayer' }}>Add player</Link>
+          }
+
+          {noGames &&
+            <Link page={{ name: 'AddGame' }}>Add game</Link>
+          }
+        </div>
+      </>
+    )
+  }
+
   return (
-    <div>
+    <>
 
       <PlayerSelect
         playerIds={playerIds}
@@ -70,6 +90,6 @@ export function BaseFlow({ onComplete }: Props) {
         onClick={onNext}
       >Next</button>
 
-    </div>
+    </>
   )
 }

@@ -50,43 +50,52 @@ export function Games() {
         </Link>
       </div>
 
-      <div className="flex space-between mt-lg">
-        <div className="form-control">
-          <label>Order by</label>
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value)}
-          >
-            {Object.keys(sortByOptions).map(sortById =>
-              <option key={sortById} value={sortById}>{sortByOptions[sortById].label}</option>
-            )}
-          </select>
+      {games.length === 0 &&
+        <div className="empty mt-lg mb-lg">
+          Add some games from your collection      
         </div>
-      </div>
+      }
 
-      <table className="mb-lg">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th className="num">{ showWeight ? 'Weight' : 'Plays' }</th>
-            <th className="num">Last Played</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortGames(games, gameOptions).map(game =>
-            <tr key={game.id} onClick={() => toGame(game.id)}>
-              <td>{game.name}</td>
-              <td className="num">{ showWeight ? (game.weight ?? "-") : game.numPlays}</td>
-              <td className="num">{ game.lastPlayedFormatted ?? <span>never played</span> }</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      {games.length > 0 &&
+        <>
+          <div className="flex space-between mt-lg">
+            <div className="form-control">
+              <label>Order by</label>
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+              >
+                {Object.keys(sortByOptions).map(sortById =>
+                  <option key={sortById} value={sortById}>{sortByOptions[sortById].label}</option>
+                )}
+              </select>
+            </div>
+          </div>
 
-      <div>
-        <span className="text-muted">{view.games.length} total games</span>
-      </div>
+          <table className="mb-lg">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th className="num">{ showWeight ? 'Weight' : 'Plays' }</th>
+                <th className="num">Last Played</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortGames(games, gameOptions).map(game =>
+                <tr key={game.id} onClick={() => toGame(game.id)}>
+                  <td>{game.name}</td>
+                  <td className="num">{ showWeight ? (game.weight ?? "-") : game.numPlays}</td>
+                  <td className="num">{ game.lastPlayedFormatted ?? <span>never played</span> }</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
 
+          <div>
+            <span className="text-muted">{view.games.length} total games</span>
+          </div>
+        </>
+      }
     </>
   )
 

@@ -37,8 +37,8 @@
 .mt-lg {
   margin-top: var(--space-lg);
 }
-.grow {
-  flex-grow: 1;
+.-mt-lg {
+  margin-top: calc(var(--space-lg) * -1);
 }
 
 .mr-sm {
@@ -54,4 +54,8 @@
 .my-0 {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.grow {
+  flex-grow: 1;
 }

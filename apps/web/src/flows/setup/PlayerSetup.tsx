@@ -14,8 +14,8 @@ export function PlayerSetup() {
         <Link page={{ name: 'AddPlayer', props: backToSetup }}>Add player</Link>
       </div>
       {players.length === 0 &&
-        <div>
-          Add you and others that play games
+        <div className="empty">
+          Add you and your mates
         </div>
       }
       {players.length > 0 &&

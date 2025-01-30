@@ -14,8 +14,8 @@ export function GameSetup() {
         <Link page={{ name: 'AddGame', props: backToSetup }}>Add game</Link>
       </div>
       {games.length === 0 &&
-        <div>
-          Add some games in your collection to get started      
+        <div className="empty">
+          Add some games from your collection      
         </div>
       }
       {games.length > 0 &&

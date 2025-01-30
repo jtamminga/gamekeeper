@@ -126,10 +126,16 @@ a.danger {
 }
 
 .callout {
-  padding: 30px 50px;
+  padding: var(--space-lg) 1.2em;
   background-color: var(--dark-gray-accent);
   border-radius: var(--border-radius);
   margin-bottom: var(--space-md);
+}
+
+.empty {
+  padding: 0.6em 1.2em;
+  border-radius: var(--border-radius);
+  border: 1px dashed var(--color-gray);
 }
 
 @media (prefers-color-scheme: light) {

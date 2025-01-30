@@ -2,6 +2,7 @@ import type { GameplayDeps } from '../Gameplay'
 import type { NewPlayerData, PlayerData, PlayerId } from '@services'
 import type { Player } from './Player'
 import { PlayerValidation } from './PlayerValidation'
+import { LimitError } from '@core'
 
 
 export class Players {
@@ -25,6 +26,10 @@ export class Players {
 
   public async create(data: NewPlayerData): Promise<Player> {
     PlayerValidation.create(data)
+    if (this._deps.repo.players.length >= 10) {
+      throw new LimitError('limit of 10 players')
+    }
+
     return this._deps.repo.createPlayer(data)
   }
 

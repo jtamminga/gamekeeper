@@ -80,7 +80,7 @@ export function Summary() {
         }
       />
 
-      {isCurrentYear &&
+      {isCurrentYear && latestPlaythroughs.playthroughs.length > 0 &&
         <>
           <div className="page-subtitle">
             <h2>Recent stats</h2>
