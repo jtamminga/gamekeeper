@@ -8,6 +8,7 @@ import { UserId, whereUserId } from './User'
 export interface DbPlayerDto {
   id: number
   name: string
+  color?: number
 }
 
 
@@ -16,8 +17,8 @@ export class DbPlayerService extends DbService implements PlayerService {
 
   public async addPlayer(player: NewPlayerData, userId?: UserId): Promise<PlayerData> {
     // save to database
-    const query = 'INSERT INTO players (name, user_id) VALUES (?, ?)'
-    const id = await this._dataService.insert(query, player.name, userId)
+    const query = 'INSERT INTO players (name, color, user_id) VALUES (?, ?)'
+    const id = await this._dataService.insert(query, player.name, player.color, userId)
     
     return this.transform({ ...player, id })
   }
@@ -39,16 +40,36 @@ export class DbPlayerService extends DbService implements PlayerService {
   }
 
   public async updatePlayer(player: UpdatedPlayerData, userId?: UserId): Promise<PlayerData> {
-    const query = `UPDATE players SET name = ? WHERE id = ? AND ${whereUserId(userId)}`
-    await this._dataService.run(query, player.name, player.id, userId)
+    const mapping: Record<string, string> = {
+      name: 'name',
+      color: 'color'
+    }
+
+    const mappedKeys = Object.keys(player)
+      .map(key => mapping[key])
+      .filter(key => key !== undefined)
+    const setStatements = mappedKeys
+      .map(key => `${key} = ?`)
+      .join(',')
+    const updatedValues = mappedKeys.map(key =>
+      player[key as keyof UpdatedPlayerData])
+
+    const query = `UPDATE players SET ${setStatements} WHERE id = ? AND ${whereUserId(userId)}`
+    await this._dataService.run(query, ...updatedValues, player.id, userId)
     return this.getPlayer(player.id, userId)
   }
 
   private transform(player: DbPlayerDto): PlayerData {
-    return {
+    const data: PlayerData = {
       id: player.id.toString() as PlayerId,
       name: player.name
     }
+
+    if (player.color !== undefined) {
+      data.color = player.color
+    }
+
+    return data
   }
   
 }

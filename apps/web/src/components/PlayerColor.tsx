@@ -1,4 +1,5 @@
 import { playerColorClass } from '@app/helpers'
+import { useGamekeeper } from '@app/hooks'
 import type { PlayerId } from '@gamekeeper/core'
 import type { ReactNode } from 'react'
 
@@ -13,7 +14,12 @@ type Props = {
  * Colorize text based on the player
  */
 export function PlayerColor({ playerId, children }: Props) {
+  const { gameplay } = useGamekeeper()
+  const color = playerId
+    ? gameplay.players.get(playerId).color
+    : undefined
+
   return (
-    <span className={playerColorClass(playerId)}>{children}</span>
+    <span className={playerColorClass(color)}>{children}</span>
   )
 }

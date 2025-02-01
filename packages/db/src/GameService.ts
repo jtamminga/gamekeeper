@@ -68,7 +68,7 @@ export class DbGameService extends DbService implements GameService {
       type: game.type as GameType,
       scoring: game.scoring as ScoringType,
     }
-  
+
     if (game.weight !== undefined && game.weight !== null) {
       data.weight = game.weight
     }

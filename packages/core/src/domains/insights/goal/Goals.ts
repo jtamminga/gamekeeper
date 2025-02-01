@@ -2,6 +2,7 @@ import type { Goal } from './Goal'
 import type { InsightsDeps } from '../Insights'
 import { GoalId, GoalsQuery, NewGoalData } from '@services'
 import { GoalValidator } from './GoalValidator'
+import { InvalidState, LimitError } from '@core'
 
 
 export class Goals {
@@ -24,7 +25,14 @@ export class Goals {
   }
 
   public async create(data: NewGoalData): Promise<Goal> {
-    GoalValidator.create(data)
+    const result = GoalValidator.create(data)
+    if (!result.valid) {
+      throw new InvalidState(result.errors)
+    }
+    if (this._deps.repo.goals.length > 100) {
+      throw new LimitError('Cannot create more than 100 goals')
+    }
+    
     return this._deps.repo.createGoal(data)
   }
 

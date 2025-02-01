@@ -13,6 +13,7 @@ export function PlayerForm({ player, onComplete, submitText }: Props) {
 
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState(player?.name ?? '')
+  const [color, setColor] = useState(player?.color?.toString() ?? '')
 
   async function onNext() {
     // make sure there is a name
@@ -20,8 +21,15 @@ export function PlayerForm({ player, onComplete, submitText }: Props) {
       return
     }
 
+    const updatedPlayer: NewPlayerData = {
+      name
+    }
+    if (color !== '') {
+      updatedPlayer.color = parseInt(color)
+    }
+
     setLoading(true)
-    await onComplete({ name })
+    await onComplete(updatedPlayer)
     setLoading(false)
   }
 
@@ -35,6 +43,19 @@ export function PlayerForm({ player, onComplete, submitText }: Props) {
           value={name}
           onChange={e => setName(e.target.value)}
         />
+      </div>
+
+      <div className="form-control">
+        <label>Color</label>
+        <select value={color} onChange={e => setColor(e.target.value)}>
+          <option value="" disabled>Select color</option>
+          <option value="1">Green</option>
+          <option value="2">Orange</option>
+          <option value="3">Blue</option>
+          <option value="4">Purple</option>
+          <option value="5">Red</option>
+          <option value="6">Yellow</option>
+        </select>
       </div>
 
       <button

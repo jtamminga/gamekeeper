@@ -1,4 +1,5 @@
 import { playerColorClass } from '@app/helpers'
+import { useGamekeeper } from '@app/hooks'
 import type { PlayerId } from '@gamekeeper/core'
 
 
@@ -18,8 +19,13 @@ export function DetailedStatCard({
   thisYear,
   allTime
 }: Props) {
+  const { gameplay } = useGamekeeper()
+  const color = playerId
+    ? gameplay.players.get(playerId).color
+    : undefined
+
   return (
-    <div className={'detailed-stat-card ' + (playerId ? playerColorClass(playerId) : '')}>
+    <div className={'detailed-stat-card ' + (color ? playerColorClass(color) : '')}>
       <div>{name}</div>
       <div>
         <span>{year}</span>

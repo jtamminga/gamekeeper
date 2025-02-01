@@ -7,6 +7,7 @@ import { Route } from '@gamekeeper/views'
 export interface ApiPlayerDto {
   id: string
   name: string
+  color?: number
 }
 
 
@@ -31,7 +32,8 @@ export class ApiPlayerService extends ApiService implements PlayerService {
   private transform(player: ApiPlayerDto): PlayerData {
     return {
       id: player.id as PlayerId,
-      name: player.name
+      name: player.name,
+      color: player.color
     }
   }
 

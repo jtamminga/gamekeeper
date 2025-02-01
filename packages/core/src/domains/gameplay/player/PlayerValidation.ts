@@ -1,19 +1,25 @@
-import { InvalidState } from '@core'
+import { createValidationResult, mergeValidationResults, ValidationResult } from '@core'
 import type { NewPlayerData, PlayerData } from '@services'
 
 export namespace PlayerValidation {
 
-  export function create(data: NewPlayerData): void {
+  export function create(data: NewPlayerData): ValidationResult {
+    const errors: string[] = []
     if (!data.name) {
-      throw new InvalidState('name')
+      errors.push('name is required')
     }
+
+    return createValidationResult(errors)
   }
 
-  export function update(data: PlayerData): void {
+  export function update(data: PlayerData): ValidationResult {
+    const errors: string[] = []
     if (!data.id) {
-      throw new InvalidState('id')
+      errors.push('id is required')
     }
-    create(data)
+    
+    const result = create(data)
+    return mergeValidationResults(errors, result)
   }
 
 }

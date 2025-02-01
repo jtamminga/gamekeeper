@@ -1,8 +1,9 @@
+import { InvalidState } from '@core'
+import { PlaythroughValidation } from './PlaythroughValidation'
 import { type PlaythroughFlow, PlaythroughFlowFactory } from './flow'
 import type { GameId, NewBasePlaythroughData, NewPlaythroughData, PlaythroughId, PlaythroughQueryOptions } from '@services'
 import type { GameplayDeps } from '../Gameplay'
 import type { Playthrough } from './Playthrough'
-import { PlaythroughValidation } from './PlaythroughValidation'
 
 
 // class
@@ -34,7 +35,11 @@ export class Playthroughs {
   }
 
   public async create(data: NewPlaythroughData): Promise<Playthrough> {
-    PlaythroughValidation.create(data)
+    const result = PlaythroughValidation.create(data)
+    if (!result.valid) {
+      throw new InvalidState(result.errors)
+    }
+
     return this._deps.repo.createPlaythrough(data)
   }
 
@@ -43,7 +48,11 @@ export class Playthroughs {
   }
 
   public startFlow(data: NewBasePlaythroughData): PlaythroughFlow {
-    PlaythroughValidation.startFlow(data)
+    const result = PlaythroughValidation.startFlow(data)
+    if (!result.valid) {
+      throw new InvalidState(result.errors)
+    }
+    
     return PlaythroughFlowFactory.create(this._deps, data)
   }
 

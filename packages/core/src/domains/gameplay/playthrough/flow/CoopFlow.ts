@@ -11,7 +11,7 @@ export class CoopFlow extends PlaythroughFlow<CoopGame> {
 
   public setScore(score: number): CoopFlow {
     if (this.game.scoring === ScoringType.NO_SCORE) {
-      throw new InvalidState('scoring', 'cannot add scoring to this game')
+      throw new InvalidState(['score is not allowed for this game'])
     }
 
     this.score = score
@@ -25,7 +25,7 @@ export class CoopFlow extends PlaythroughFlow<CoopGame> {
 
   public build(): NewCoopPlaythroughData {
     if (this.playersWon === undefined) {
-      throw new InvalidState('playersWon', 'winner must be specified')
+      throw new InvalidState(['winner must be set'])
     }
 
     return {

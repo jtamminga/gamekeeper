@@ -1,26 +1,33 @@
-import { InvalidState } from '@core'
+import { createValidationResult, mergeValidationResults, ValidationResult } from '@core'
 import { GameData, GameType, NewGameData } from '@services'
 
 export namespace GameValidation {
-  export function create(data: NewGameData): void {
+  export function create(data: NewGameData): ValidationResult {
+    const errors: string[] = []
+
     if (!data.name) {
-      throw new InvalidState('name')
+      errors.push('name is required')
     }
     if (data.scoring === undefined || data.scoring < 1 || data.scoring > 3 ) {
-      throw new InvalidState('scoring')
+      errors.push('scoring must be between 1 and 3')
     }
     if (data.type !== GameType.VS && data.type !== GameType.COOP) {
-      throw new InvalidState('type')
+      errors.push('type must be either vs or coop')
     }
     if (data.weight !== undefined && (data.weight < 0 || data.weight > 5)) {
-      throw new InvalidState('weight')
+      errors.push('weight must be between 0 and 5')
     }
+
+    return createValidationResult(errors)
   }
 
-  export function update(data: GameData): void {
+  export function update(data: GameData): ValidationResult {
+    const errors: string[] = []
     if (!data.id) {
-      throw new InvalidState('id')
+      errors.push('id is required')
     }
-    create(data)
+
+    const result = create(data)
+    return mergeValidationResults(errors, result)
   }
 }

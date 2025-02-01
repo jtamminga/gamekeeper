@@ -55,9 +55,9 @@ export abstract class Game<T extends Playthrough = Playthrough>
   protected toBaseData(): Omit<GameData, 'type'> {
     return {
       id: this.id,
-      name: this.name,
-      scoring: this.scoring,
-      weight: this.weight
+      name: this._name,
+      scoring: this._scoring,
+      weight: this._weight
     }
   }
 

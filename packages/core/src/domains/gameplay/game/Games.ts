@@ -1,8 +1,8 @@
+import { InvalidState, LimitError } from '@core'
+import { GameValidation } from './GameValidation'
 import type { GameplayDeps } from '../Gameplay'
 import type { Game } from './Game'
 import type { GameData, GameId, NewGameData } from '@services'
-import { GameValidation } from './GameValidation'
-import { LimitError } from '@core'
 
 
 export class Games {
@@ -25,7 +25,10 @@ export class Games {
   }
 
   public async create(data: NewGameData): Promise<Game> {
-    GameValidation.create(data)
+    const result = GameValidation.create(data)
+    if (!result.valid) {
+      throw new InvalidState(result.errors)
+    }
     if (this._deps.repo.games.length >= 100) {
       throw new LimitError('limit of 100 games')
     }
@@ -35,7 +38,11 @@ export class Games {
 
   public async save(game: Game): Promise<void> {
     const updatedData = game.toData()
-    GameValidation.update(updatedData)
+    const result = GameValidation.update(updatedData)
+    if (!result.valid) {
+      throw new InvalidState(result.errors)
+    }
+    
     await this._deps.repo.updateGame(updatedData)
   }
 

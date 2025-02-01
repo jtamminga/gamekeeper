@@ -1,13 +1,24 @@
-.player-1 {
-  color: #5264ff;
+.player-color-none {
+  color: #5f5f5f;
 }
 
-.player-2 {
+.player-color-green {
+  color: #58a158;
+}
+.player-color-orange {
   color: #bd760b;
 }
-
-.player-none {
-  color: #5f5f5f;
+.player-color-blue {
+  color: #5264ff;
+}
+.player-color-purple {
+  color: #9b77af;
+}
+.player-color-red {
+  color: #ad5c5c;
+}
+.player-color-yellow {
+  color: #b9b978;
 }
 
 .player-scores > .dash {

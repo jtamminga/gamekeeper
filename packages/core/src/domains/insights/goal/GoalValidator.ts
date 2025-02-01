@@ -1,30 +1,37 @@
-import { InvalidState } from '@core'
+import { createValidationResult, mergeValidationResults, ValidationResult } from '@core'
 import { GoalData, NewGoalData } from '@services'
 
 export namespace GoalValidator {
-  export function create(data: NewGoalData) {
+  export function create(data: NewGoalData): ValidationResult {
+    const errors: string[] = []
+
     if (data.type === undefined) {
-      throw new InvalidState('type')
+      errors.push('type is required')
     }
     if (data.value === undefined) {
-      throw new InvalidState('value')
+      errors.push('value is required')
     }
-    if (data.value > 0) {
-      throw new InvalidState('value', 'must be a positive number')
+    if (data.value <= 0) {
+      errors.push('value must be greater than 0')
     }
     if (data.year === undefined) {
-      throw new InvalidState('year')
+      errors.push('year is required')
     }
     const curYear = new Date().getFullYear()
     if (data.year < curYear) {
-      throw new InvalidState('year', 'cannot be in the past')
+      errors.push('year must be greater than or equal to current year')
     }
+
+    return createValidationResult(errors)
   }
 
-  export function update(data: GoalData) {
+  export function update(data: GoalData): ValidationResult {
+    const errors: string[] = []
     if (!data.id) {
-      throw new InvalidState('id')
+      errors.push('id is required')
     }
-    create(data)
+
+    const result = create(data)
+    return mergeValidationResults(errors, result)
   }
 }
