@@ -65,7 +65,7 @@ export class DbPlayerService extends DbService implements PlayerService {
       name: player.name
     }
 
-    if (player.color !== undefined) {
+    if (player.color) {
       data.color = player.color
     }
 
