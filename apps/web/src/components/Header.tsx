@@ -10,7 +10,7 @@ export function Header() {
     : undefined
   
   return (
-    <header>
+    <header className="app-header">
       <nav>
         <div className="inner-links">
           <a

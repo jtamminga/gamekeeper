@@ -1,0 +1,24 @@
+header.landing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+section {
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+section.hero {
+  /* margin-top: var(--space-lg); */
+  background-color: var(--brand-primary);
+  padding: var(--space-lg);
+  border-radius: var(--border-radius);
+}
+
+img.screenshot {
+  width: 100%;
+  border-radius: var(--border-radius);
+  /* box-shadow: 0px 0px 20px var(--brand-primary); */
+  border: 1px solid var(--brand-primary);
+}

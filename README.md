@@ -1,5 +1,5 @@
 # Gamekeeper
-Boardgame tracker: keep a record of games played throughout the year. Handy for checking how often you play games as well as when you played them last.
+Boardgame keeper: keep a record of games played throughout the year. Handy for checking how often you play games as well as when you played them last.
 
 Includes goals, play tracking, game list, winrates, etc.
 

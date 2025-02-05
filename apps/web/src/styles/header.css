@@ -1,4 +1,4 @@
-header {
+header.app-header {
   position: fixed;
   top: 0px;
   left: 0px;
@@ -9,7 +9,7 @@ header {
   z-index: 100;
 }
 
-header > nav {
+header.app-header > nav {
   display: flex;
   width: 100%;
   max-width: var(--max-width);
@@ -19,14 +19,14 @@ header > nav {
   background-color: rgba(0, 0, 0, 0.651);
 }
 
-header > nav > .inner-links {
+header.app-header > nav > .inner-links {
   flex-grow: 1;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
 }
 
-header > nav > a.record {
+header.app-header > nav > a.record {
   background: linear-gradient(45deg, #686fff, #243adc);
   padding: 2px 14px;
   border-radius: 6px;

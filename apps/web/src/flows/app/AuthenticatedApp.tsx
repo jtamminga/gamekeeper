@@ -1,7 +1,7 @@
+import { useState } from 'react'
 import { useGamekeeper } from '@app/hooks'
 import { MainLayout, SetupLayout } from '@app/layouts'
 import { RouterProvider } from '@app/providers'
-import { useState } from 'react'
 
 
 export function AuthenticatedAppFlow() {
