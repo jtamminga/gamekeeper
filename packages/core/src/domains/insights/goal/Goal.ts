@@ -1,7 +1,7 @@
 import { Entity } from '@domains'
 import { getDayOfYear } from 'date-fns'
-import type { GoalData, GoalId, UpdatedGoalData } from '@services'
 import { InsightsDeps } from '../Insights'
+import type { GoalData, GoalId, GoalType, UpdatedGoalData } from '@services'
 
 
 export abstract class Goal extends Entity<GoalId> {
@@ -16,6 +16,8 @@ export abstract class Goal extends Entity<GoalId> {
     this._value = data.value
     this._year = data.year
   }
+
+  public abstract get type(): GoalType
 
   public get value(): number {
     return this._value

@@ -52,7 +52,7 @@ export function Goals() {
                     key={goal.id}
                     page={{ name: 'EditGoal', props: { goalId: goal.id } }}
                   >
-                    {nameForGoalType(goal.toData().type)}
+                    {nameForGoalType(goal.type)}
                   </Link>
                 </td>
                 <td className="num">{goal.value}</td>

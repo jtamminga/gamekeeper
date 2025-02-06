@@ -1,4 +1,5 @@
 export interface FormattedGoal {
+  readonly id: string
   readonly name: string
   readonly description: string
   readonly value: number

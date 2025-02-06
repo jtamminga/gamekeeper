@@ -1,8 +1,10 @@
-import { InvalidState, LimitError } from '@core'
-import { PlayerValidation } from './PlayerValidation'
+import { LimitError } from '@core'
+import { NewPlayerData, PlayerData, PlayerId } from '@services'
 import type { GameplayDeps } from '../Gameplay'
-import type { NewPlayerData, PlayerData, PlayerId } from '@services'
 import type { Player } from './Player'
+
+
+const MAX_PLAYERS = 10
 
 
 export class Players {
@@ -25,12 +27,9 @@ export class Players {
   }
 
   public async create(data: NewPlayerData): Promise<Player> {
-    const result = PlayerValidation.create(data)
-    if (!result.valid) {
-      throw new InvalidState(result.errors)
-    }
-    if (this._deps.repo.players.length >= 10) {
-      throw new LimitError('limit of 10 players')
+    NewPlayerData.throwIfInvalid(data)
+    if (this._deps.repo.players.length >= MAX_PLAYERS) {
+      throw new LimitError(`Cannot create more than ${MAX_PLAYERS} players`)
     }
 
     return this._deps.repo.createPlayer(data)
@@ -38,10 +37,7 @@ export class Players {
 
   public async save(player: Player): Promise<void> {
     const updatedData = player.toData()
-    const result = PlayerValidation.update(updatedData)
-    if (!result.valid) {
-      throw new InvalidState(result.errors)
-    }
+    PlayerData.throwIfInvalid(updatedData)
     
     await this._deps.repo.updatePlayer(updatedData)
   }

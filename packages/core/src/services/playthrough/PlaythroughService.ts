@@ -7,6 +7,7 @@ export type PlaythroughQueryOptions = {
   fromDate?: Date
   toDate?: Date
   gameId?: GameId
+  year?: number
 }
 
 export interface PlaythroughService {

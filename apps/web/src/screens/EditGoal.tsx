@@ -24,7 +24,7 @@ export function EditGoal({ goalId }: Props) {
   return (
     <>
       <div className="title-with-link">
-        <h1>{nameForGoalType(goal.toData().type)}</h1>
+        <h1>{nameForGoalType(goal.type)}</h1>
         <a onClick={onDelete} className="danger">
           delete
         </a>

@@ -12,7 +12,7 @@ export interface SummaryView {
   currentYear: number
   isCurrentYear: boolean
   isPastYear: boolean
-  priorityGoal?: FormattedGoal
+  goals: FormattedGoal[]
   numPlaysThisYear: number
   numPlaysAllTime: number
   numPlaysByMonth: BarChartData

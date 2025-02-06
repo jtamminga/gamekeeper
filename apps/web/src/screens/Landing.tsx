@@ -20,7 +20,7 @@ export function Landing() {
       </section>
 
       <section>
-        <p className="mb-md text-center">View stats as you play through out the year</p>
+        <p className="mb-md text-center">View stats as you play throughout the year</p>
         <img className="screenshot" src="/screenshots/overall-stats.png" />
       </section>
 

@@ -173,6 +173,9 @@ export class MemoryGameplayRepository implements GameplayRepository {
     if (options?.limit !== undefined) {
       playthroughs = playthroughs.slice(0, options.limit)
     }
+    if (options?.year !== undefined) {
+      playthroughs = playthroughs.filter(p => p.playedOn.getFullYear() === options.year)
+    }
     
     return playthroughs
   }

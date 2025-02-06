@@ -19,7 +19,7 @@ export function Summary() {
     year,
     currentYear,
     isCurrentYear,
-    priorityGoal,
+    goals,
     daysSinceLastPlaythrough,
     numPlaysThisYear,
     winnerThisYear,
@@ -43,14 +43,14 @@ export function Summary() {
         </div>
       }
 
-      {priorityGoal &&
+      {goals.length > 0 &&
         <>
           <div className="page-subtitle">
             <h2>Goals</h2>
           </div>
-          {priorityGoal &&
-            <Goal goal={priorityGoal} />
-          }
+          {goals.map(goal =>
+            <Goal key={goal.id} goal={goal} />
+          )}
         </>
       }
       

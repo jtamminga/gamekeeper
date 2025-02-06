@@ -38,9 +38,9 @@ export class SummaryViewFactory {
       this.gamekeeper.insights.goals.hydrate({ year })
     ])
 
-    const priorityGoal = this.gamekeeper.insights.goals.topPriority(year)
-    if (priorityGoal) {
-      await priorityGoal.load()
+    const goals = this.gamekeeper.insights.goals.all({ year })
+    if (goals.length > 0) {
+      await Promise.all(goals.map(goal => goal.load()))
     }
     const latestPlaythrough = this.gamekeeper.gameplay.playthroughs.all()[0]
     const winningWinrate = overallWinratesThisYear.highest
@@ -66,7 +66,7 @@ export class SummaryViewFactory {
       currentYear,
       isCurrentYear: year === currentYear,
       isPastYear: year < currentYear,
-      priorityGoal: priorityGoal ? formatGoal(priorityGoal) : undefined,
+      goals: goals.map(formatGoal),
       numUniqueGamesPlayedThisYear,
       numPlaysThisYear: totalPlays(numPlaysThisYear),
       numPlaysAllTime: totalPlays(numPlaysAllTime),

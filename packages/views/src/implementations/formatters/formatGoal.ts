@@ -7,6 +7,7 @@ export function formatGoal(goal: Goal): FormattedGoal {
   const active = goal.year === curYear
 
   return {
+    id: goal.id,
     name: nameForGoalType(goalType),
     active,
     description: descriptionForGoalType(goalType),

@@ -1,8 +1,11 @@
+import { LimitError } from '@core'
+import { GoalData, GoalId, GoalsQuery, NewGoalData } from '@services'
 import type { Goal } from './Goal'
 import type { InsightsDeps } from '../Insights'
-import { GoalId, GoalsQuery, NewGoalData } from '@services'
-import { GoalValidator } from './GoalValidator'
-import { InvalidState, LimitError } from '@core'
+
+
+const MAX_GOALS_PER_YEAR = 3
+const MAX_GOALS = 100
 
 
 export class Goals {
@@ -25,12 +28,17 @@ export class Goals {
   }
 
   public async create(data: NewGoalData): Promise<Goal> {
-    const result = GoalValidator.create(data)
-    if (!result.valid) {
-      throw new InvalidState(result.errors)
+    NewGoalData.throwIfInvalid(data)
+
+    const goalsForYear = this.all({ year: data.year })
+    if (goalsForYear.length > MAX_GOALS_PER_YEAR) {
+      throw new LimitError(`Cannot create more than ${MAX_GOALS_PER_YEAR} goals per year`)
     }
-    if (this._deps.repo.goals.length > 100) {
-      throw new LimitError('Cannot create more than 100 goals')
+    if (this._deps.repo.goals.length > MAX_GOALS) {
+      throw new LimitError(`Cannot create more than ${MAX_GOALS} goals`)
+    }
+    if (goalsForYear.some(g => g.type === data.type)) {
+      throw new LimitError(`Cannot create more than one goal of the same type per year`)
     }
     
     return this._deps.repo.createGoal(data)
@@ -38,7 +46,7 @@ export class Goals {
 
   public async save(goal: Goal): Promise<void> {
     const updatedData = goal.toData()
-    GoalValidator.update(updatedData)
+    GoalData.throwIfInvalid(updatedData)
     this._deps.repo.updateGoal(updatedData)
   }
 
