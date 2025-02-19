@@ -17,26 +17,29 @@ export type ScoreStatsDto = {
   lowScore: ScoreStatDto
   averageScore: number
 }
+export type PlayStreakDto = { bestStreak: number, bestStart: Date, currentStreak: number }
 export type PlaysByDateDto = { date: Date, plays: number }
-export type StatsResultData<TData> = Record<GameId, Readonly<TData>>
+export type StatPerGame<TData> = Record<GameId, Readonly<TData>>
 
 
 export interface StatsService {
 
-  getNumPlays(query?: StatsQuery): Promise<StatsResultData<number>>
+  getNumPlays(query?: StatsQuery): Promise<StatPerGame<number>>
 
-  getWinrates(query?: StatsQuery): Promise<StatsResultData<WinrateDto[]>>
+  getWinrates(query?: StatsQuery): Promise<StatPerGame<WinrateDto[]>>
 
   getOverallWinrates(query?: StatsQuery): Promise<WinrateDto[]>
 
-  getLastPlayed(query?: StatsQuery): Promise<StatsResultData<Date | undefined>>
+  getLastPlayed(query?: StatsQuery): Promise<StatPerGame<Date | undefined>>
 
   getNumPlaysByMonth(query?: StatsQuery): Promise<number[]>
 
   getNumUniqueGamesPlayed(year?: number): Promise<number>
 
-  getScoreStats(query?: StatsQuery): Promise<StatsResultData<ScoreStatsDto | undefined>>
+  getScoreStats(query?: StatsQuery): Promise<StatPerGame<ScoreStatsDto | undefined>>
 
   getNumPlaysByDate(query?: StatsQuery): Promise<PlaysByDateDto[]>
+
+  getPlayStreak(query?: StatsQuery): Promise<PlayStreakDto>
 
 }

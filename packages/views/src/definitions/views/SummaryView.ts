@@ -29,6 +29,11 @@ export interface SummaryView {
     player: string
     playerId: PlayerId
   }
+  playStreakThisYear: {
+    bestStreak: number
+    bestStartDate: string
+    currentStreak: number
+  }
   latestNumPlaythorughs: number
   numPlaysPerDayThisYear: {
     plays: number[]

@@ -1,5 +1,5 @@
 
-import { endOfYear, isSameDay } from 'date-fns'
+import { addDays, endOfYear, isSameDay } from 'date-fns'
 import {
   ArrayUtils,
   CoopPlaythroughData,
@@ -11,10 +11,11 @@ import {
   ScoreData,
   ScoreStatsDto,
   StatsQuery,
-  StatsResultData,
+  StatPerGame,
   StatsService,
   VsPlaythroughData,
-  WinrateDto
+  WinrateDto,
+  PlayStreakDto
 } from '@gamekeeper/core'
 import { UserId } from './User'
 import { DbPlaythroughService } from './PlaythroughService'
@@ -35,13 +36,13 @@ export class SimpleStatsService implements StatsService {
   // ============================
 
 
-  public async getNumPlays(query: StatsQuery = {}, userId?: UserId): Promise<StatsResultData<number>> {
+  public async getNumPlays(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<number>> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, playthroughs => playthroughs.length)
   }
 
-  public async getWinrates(query: StatsQuery = {}, userId?: UserId): Promise<StatsResultData<WinrateDto[]>> {
+  public async getWinrates(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<WinrateDto[]>> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, this.calculateWinrates)
@@ -52,7 +53,7 @@ export class SimpleStatsService implements StatsService {
     return this.calculateWinrates(playthroughs)
   }
 
-  public async getLastPlayed(query: StatsQuery = {}, userId?: UserId): Promise<StatsResultData<Date | undefined>> {
+  public async getLastPlayed(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<Date | undefined>> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, playthroughs => playthroughs[0]?.playedOn)
@@ -75,7 +76,7 @@ export class SimpleStatsService implements StatsService {
     return uniqueGames.size
   }
   
-  public async getScoreStats(query: StatsQuery = {}, userId?: UserId): Promise<StatsResultData<ScoreStatsDto | undefined>> {
+  public async getScoreStats(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<ScoreStatsDto | undefined>> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, this.calculateScoreStats)
@@ -99,6 +100,40 @@ export class SimpleStatsService implements StatsService {
       }
     }
     return result
+  }
+
+  public async getPlayStreak(query: StatsQuery = {}, userId?: UserId): Promise<PlayStreakDto> {
+    // by default playthroughs are ordered by played_on date desc
+    const playthroughs = [...await this.getPlaythroughs(query, userId)].reverse()
+
+    let bestStreak = 0
+    let currentStreak = 0
+    let bestStart = playthroughs[0]?.playedOn
+    let currentStart = bestStart
+    let lastPlayed = new Date(0) // some arbitrary defined date
+    for (const playthrough of playthroughs) {
+      // if we played the same day then we skip
+      if (isSameDay(lastPlayed, playthrough.playedOn)) {
+        continue
+      }
+      // if we played the next day then we increment the streak
+      else if (isSameDay(playthrough.playedOn, addDays(lastPlayed, 1))) {
+        currentStreak++
+      }
+      // if there was a break in the streak then we start over
+      else {
+        currentStreak = 1
+        currentStart = playthrough.playedOn
+      }
+
+      if (currentStreak > bestStreak) {
+        bestStreak = currentStreak
+        bestStart = currentStart
+      }
+      lastPlayed = playthrough.playedOn
+    }
+
+    return { bestStreak, bestStart, currentStreak }
   }
 
 
@@ -152,9 +187,9 @@ export class SimpleStatsService implements StatsService {
   private forEachGroup<TOut>(
     grouped: Record<GameId, PlaythroughData[]>,
     reduce: (group: PlaythroughData[]) => TOut
-  ): StatsResultData<TOut> {
+  ): StatPerGame<TOut> {
 
-    const result: StatsResultData<TOut> = {}
+    const result: StatPerGame<TOut> = {}
     for (const id in grouped) {
       const gameId = id as GameId
       const group = grouped[gameId]

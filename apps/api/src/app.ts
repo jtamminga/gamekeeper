@@ -233,6 +233,12 @@ app.get(Route.STATS.NUM_PLAYS_BY_DATE, async function (req, res) {
   const stats = await statsService.getNumPlaysByDate(query, userId)
   res.json({ data: stats })
 })
+app.get(Route.STATS.PLAY_STREAK, async function (req, res) {
+  const userId = getUserId(req)
+  const query = toStatsQuery(req)
+  const stats = await statsService.getPlayStreak(query, userId)
+  res.json({ data: stats })
+})
 
 
 //

@@ -31,7 +31,8 @@ export function Summary() {
     numPlaysPerDayThisYear,
     avgPlaysPerDayThisYear,
     mostPlaysInDayThisYear,
-    topPlayedGames
+    topPlayedGames,
+    playStreakThisYear
   } = view
 
   return (
@@ -116,18 +117,24 @@ export function Summary() {
       }
 
       <div className="page-subtitle">
-        <h2>Plays per day</h2>
+        <h2>Game day</h2>
         <h3>{year}</h3>
       </div>
       <div className="mb-lg">
         <StatCard
           value={avgPlaysPerDayThisYear}
-          description="Average plays per day"
+          description="average plays per day"
         />
         <StatCard
           value={mostPlaysInDayThisYear}
-          description="Most plays in one day"
+          description="most plays in one day"
         />
+        {playStreakThisYear.bestStreak > 1 &&
+          <StatCard
+            value={playStreakThisYear.bestStreak}
+            description="best game day streak"
+          />
+        }
       </div>
       <CalendarGraph
         countPerDay={numPlaysPerDayThisYear.plays}

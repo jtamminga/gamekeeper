@@ -1,7 +1,7 @@
 import {
   GameId,
   StatsQuery,
-  StatsResultData
+  StatPerGame
 } from '@gamekeeper/core'
 import { DataService } from './DataService'
 import { SimpleStatsService } from './SimpleStatsService'
@@ -34,7 +34,7 @@ export class DbStatsService extends SimpleStatsService {
     super(playthroughService)
   }
 
-  public override async getNumPlays({ gameId, year }: StatsQuery = {}, userId?: UserId): Promise<StatsResultData<number>> {
+  public override async getNumPlays({ gameId, year }: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<number>> {
     
     // create base query
     let query = `
@@ -71,7 +71,7 @@ export class DbStatsService extends SimpleStatsService {
     })
 
     // convert to records
-    const result: StatsResultData<number> = {}
+    const result: StatPerGame<number> = {}
     for (const dto of dtos) {
       result[dto.gameId.toString() as GameId] = dto.numPlays
     }
@@ -80,7 +80,7 @@ export class DbStatsService extends SimpleStatsService {
     return result
   }
 
-  public override async getLastPlayed({ gameId, year }: StatsQuery = {}, userId?: UserId): Promise<StatsResultData<Date | undefined>> {
+  public override async getLastPlayed({ gameId, year }: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<Date | undefined>> {
     // create base query
     let query = `
       SELECT
@@ -116,7 +116,7 @@ export class DbStatsService extends SimpleStatsService {
     })
 
     // convert to records
-    const result: StatsResultData<Date> = {}
+    const result: StatPerGame<Date> = {}
     for (const dto of dtos) {
       result[dto.gameId.toString() as GameId] = new Date(dto.lastPlay)
     }

@@ -2,7 +2,7 @@ import { SummaryView } from '@def/views'
 import { ArrayUtils, GameKeeper, StatsResult } from '@gamekeeper/core'
 import { toNumPlaysPerDay } from '../transforms'
 import { differenceInDays } from 'date-fns'
-import { formatGoal, formatNumber, formatPercent, formatPlaythroughs, formatWinrate } from '../formatters'
+import { formatDate, formatGoal, formatNumber, formatPercent, formatPlaythroughs, formatWinrate } from '../formatters'
 
 
 const NUM_LATEST_PLAYTHROUGHTS = 10
@@ -25,6 +25,7 @@ export class SummaryViewFactory {
       overallWinratesLatest,
       numPlaysByDateThisYear,
       winratesThisYear,
+      playStreakThisYear
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
       stats.numPlaythroughs({}),
@@ -34,6 +35,8 @@ export class SummaryViewFactory {
       stats.overallWinrates({ latestPlaythroughs: NUM_LATEST_PLAYTHROUGHTS }),
       stats.numPlaysByDate({ year }),
       stats.winrates({ year }),
+      stats.playStreak({ year }),
+      // hydration requirements
       this.gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS }),
       this.gamekeeper.insights.goals.hydrate({ year })
     ])
@@ -76,6 +79,11 @@ export class SummaryViewFactory {
       numPlaysByMonth: {
         thisYear: numPlaysByMonthThisYear,
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      },
+      playStreakThisYear: {
+        bestStreak: playStreakThisYear.bestStreak,
+        bestStartDate: formatDate(playStreakThisYear.bestStart),
+        currentStreak: playStreakThisYear.currentStreak
       },
       latestNumPlaythorughs: NUM_LATEST_PLAYTHROUGHTS,
       latestPlaythroughs: formatPlaythroughs(this.gamekeeper.gameplay.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),

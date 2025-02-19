@@ -1,9 +1,8 @@
 import { GameStats } from './GameStats'
 import { Winrates } from './Winrates'
 import type { Game } from '@domains/gameplay'
-import type { GameId, PlaysByDateDto, StatsQuery } from '@services'
+import type { GameId, PlaysByDateDto, PlayStreakDto, StatsQuery } from '@services'
 import type { InsightsDeps } from '../Insights'
-
 
 
 // types
@@ -73,6 +72,10 @@ export class Stats {
 
   public async numPlaysByDate(query?: OverallStatsQuery): Promise<PlaysByDateDto[]> {
     return this._deps.service.getNumPlaysByDate(query)
+  }
+
+  public async playStreak(query?: OverallStatsQuery): Promise<PlayStreakDto> {
+    return this._deps.service.getPlayStreak(query)
   }
 
 }
