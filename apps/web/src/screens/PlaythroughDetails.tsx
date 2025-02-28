@@ -23,9 +23,18 @@ export function PlaythroughDetails({ playthroughId }: Props) {
   return (
     <>
       <h1>{view.game}</h1>
-      <h2>Playthrough</h2>
 
+      <h3>Played on</h3>
       <div>{view.playedOn}</div>
+
+      <h3>Players</h3>
+      <div className="flex">
+        {view.players.map(player =>
+          <div className="pill" key={player.id}>
+            <PlayerColor playerId={player.id}>{player.name}</PlayerColor>
+          </div>
+        )}
+      </div>
 
       <h3>Winner</h3>
       <div className="callout">

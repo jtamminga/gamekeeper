@@ -15,6 +15,7 @@ export class PlaythroughViewFactory {
 
     return {
       ...formattedPlaythrough,
+      players: playthrough.players.map(player => ({ id: player.id, name: player.name })),
       game: playthrough.game.name
     }
   }
