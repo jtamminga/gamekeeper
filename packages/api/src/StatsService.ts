@@ -12,7 +12,7 @@ type ApiPlaysByDateDto = {
 
 type ApiPlayStreakDto = {
   bestStreak: number
-  bestStart: string
+  bestStart?: string
   currentStreak: number
 }
 
@@ -69,7 +69,7 @@ export class ApiStatsService extends ApiService implements StatsService {
     const result = await this.apiClient.get<ApiPlayStreakDto>(Route.STATS.PLAY_STREAK, toCleanQuery(query))
     return {
       bestStreak: result.bestStreak,
-      bestStart: new Date(result.bestStart),
+      bestStart: result.bestStart ? new Date(result.bestStart) : undefined,
       currentStreak: result.currentStreak
     }
   }

@@ -17,7 +17,7 @@ export class DbPlayerService extends DbService implements PlayerService {
 
   public async addPlayer(player: NewPlayerData, userId?: UserId): Promise<PlayerData> {
     // save to database
-    const query = 'INSERT INTO players (name, color, user_id) VALUES (?, ?)'
+    const query = 'INSERT INTO players (name, color, user_id) VALUES (?, ?, ?)'
     const id = await this._dataService.insert(query, player.name, player.color, userId)
     
     return this.transform({ ...player, id })
