@@ -12,11 +12,16 @@ export function Landing() {
       </header>
 
       <section className="hero">
-        <h1 className="">Are you competitive?</h1>
-        <h2 className="mb-lg">Keep track of wins with friends and family</h2>
+        <h1 className="mt-md">Are you competitive?</h1>
+        <h2 className="mb-lg">Record results of game plays, track winrates, view most played games and other stats</h2>
         <button
           onClick={() => loginWithRedirect({ authorizationParams: { screen_hint: 'signup' }})}
         >Sign up</button>
+      </section>
+
+      <section>
+        <h2>What is this for?</h2>
+        <p>This is to keep track of what boardgames you play the most, who has the best winrates, set goals for the year, and to encourage playing with friends and family.</p>
       </section>
 
       <section>
@@ -26,7 +31,7 @@ export function Landing() {
 
       <section className="mb-0">
         Boardgame keeper is fully open source and available to run locally
-        &nbsp;<a href="https://github.com/jtamminga/gamekeeper">Github repo</a>
+        &nbsp;<a href="https://github.com/jtamminga/gamekeeper" target="_blank">Github repo</a>
       </section>
     </>
   )
