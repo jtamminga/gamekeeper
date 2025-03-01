@@ -82,7 +82,9 @@ export class SummaryViewFactory {
       },
       playStreakThisYear: {
         bestStreak: playStreakThisYear.bestStreak,
-        bestStartDate: formatDate(playStreakThisYear.bestStart),
+        bestStartDate: playStreakThisYear.bestStart
+          ? formatDate(playStreakThisYear.bestStart)
+          : undefined,
         currentStreak: playStreakThisYear.currentStreak
       },
       latestNumPlaythorughs: NUM_LATEST_PLAYTHROUGHTS,

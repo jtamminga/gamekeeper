@@ -31,7 +31,7 @@ export interface SummaryView {
   }
   playStreakThisYear: {
     bestStreak: number
-    bestStartDate: string
+    bestStartDate?: string
     currentStreak: number
   }
   latestNumPlaythorughs: number

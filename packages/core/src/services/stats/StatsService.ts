@@ -17,7 +17,7 @@ export type ScoreStatsDto = {
   lowScore: ScoreStatDto
   averageScore: number
 }
-export type PlayStreakDto = { bestStreak: number, bestStart: Date, currentStreak: number }
+export type PlayStreakDto = { bestStreak: number, bestStart?: Date, currentStreak: number }
 export type PlaysByDateDto = { date: Date, plays: number }
 export type StatPerGame<TData> = Record<GameId, Readonly<TData>>
 
