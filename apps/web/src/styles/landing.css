@@ -14,6 +14,7 @@ section.hero {
   background-color: var(--brand-primary);
   padding: var(--space-lg);
   border-radius: var(--border-radius);
+  background: linear-gradient(var(--brand-primary), #663cc9);
 }
 section.hero h2 {
   font-size: 1.2em;
