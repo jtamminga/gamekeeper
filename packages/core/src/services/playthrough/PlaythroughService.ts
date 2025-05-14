@@ -1,5 +1,5 @@
 import type { GameId } from '../game'
-import type { NewPlaythroughData, PlaythroughData, PlaythroughId } from './PlaythroughData'
+import type { NewPlaythroughData, PlaythroughData, PlaythroughId, UpdatedPlaythroughData } from './PlaythroughData'
 
 
 export type PlaythroughQueryOptions = {
@@ -19,5 +19,7 @@ export interface PlaythroughService {
   addPlaythrough(playthrough: NewPlaythroughData): Promise<PlaythroughData>
 
   removePlaythrough(id: PlaythroughId): Promise<void>
+
+  updatePlaythrough(playthrough: UpdatedPlaythroughData): Promise<PlaythroughData>
 
 }

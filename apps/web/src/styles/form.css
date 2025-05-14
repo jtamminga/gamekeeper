@@ -33,3 +33,8 @@ input, select {
 .form-control label > input[type="radio"] {
   margin-right: var(--space-md);
 }
+
+.form-control .help-text {
+  margin-top: var(--space-md);
+  color: var(--color-gray);
+}

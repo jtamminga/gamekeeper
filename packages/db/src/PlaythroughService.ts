@@ -1,5 +1,5 @@
 import { DbService } from './DbService'
-import { BasePlaythroughData, CoopPlaythroughData, GameId, GameType, NewPlaythroughData, NotFoundError, PlayerId, PlaythroughData, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreData, VsPlaythroughData } from '@gamekeeper/core'
+import { BasePlaythroughData, CoopPlaythroughData, GameId, GameType, NewPlaythroughData, NotFoundError, PlayerId, PlaythroughData, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreData, UpdatedPlaythroughData, VsPlaythroughData } from '@gamekeeper/core'
 import { UserId, whereUserId } from './User'
 
 
@@ -8,10 +8,13 @@ export interface DbPlaythroughDto {
   id: number
   gameId: number
   gameType: number
-  playedOn: string
+  playedOn: string // date
   result: number | null // player id or 1 for win 
   players: string // json
   scores: string | null // json
+  notes: string | null
+  startedOn: string | null // date
+  endedOn: string | null // date
 }
 type DbScoreDto = {
   id: string
@@ -61,7 +64,10 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
         p.played_on as "playedOn",
         p.players,
         p.scores,
-        p.result
+        p.result,
+        p.notes,
+        p.started_on as "startedOn",
+        p.ended_on as "endedOn"
       FROM playthroughs p
       JOIN games g ON g.id = p.game_id
     `
@@ -99,8 +105,8 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
 
     const query = `
       INSERT INTO playthroughs
-      (user_id, game_id, played_on, players, scores, result)
-      VALUES (?, ?, ?, ?, ?, ?)
+      (user_id, game_id, played_on, players, scores, result, notes, started_on, ended_on)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
 
     const values = [
@@ -109,11 +115,36 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       dto.playedOn,
       dto.players,
       dto.scores,
-      dto.result
+      dto.result,
+      dto.notes,
+      dto.startedOn,
+      dto.endedOn
     ]
 
     const id = await this._dataService.insert(query, ...values)
     return this.toData({ ...dto, id })
+  }
+
+  public async updatePlaythrough(playthrough: UpdatedPlaythroughData, userId?: UserId): Promise<PlaythroughData> {
+    const mapping: Record<string, string> = {
+      notes: 'notes',
+      startedOn: 'started_on',
+      endedOn: 'ended_on'
+    }
+
+    const mappedKeys = Object.keys(playthrough)
+      .map(key => mapping[key])
+      .filter(key => key !== undefined)
+    const setStatements = mappedKeys
+      .map(key => `${key} = ?`)
+      .join(',')
+    const updatedValues = mappedKeys.map(key =>
+      playthrough[key as keyof UpdatedPlaythroughData]
+    )
+    
+    const query = `UPDATE playthroughs SET ${setStatements} WHERE id = ? AND ${whereUserId(userId)}`
+    await this._dataService.run(query, ...updatedValues, playthrough.id, userId)
+    return this.getPlaythrough(playthrough.id, userId)
   }
 
   public async removePlaythrough(id: PlaythroughId, userId?: UserId): Promise<void> {
@@ -127,6 +158,15 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       gameId: playthrough.gameId.toString() as GameId,
       playerIds: JSON.parse(playthrough.players) as PlayerId[],
       playedOn: new Date(playthrough.playedOn),
+    }
+    if (playthrough.notes) {
+      basePlaythrough.notes = playthrough.notes
+    }
+    if (playthrough.startedOn) {
+      basePlaythrough.startedOn = new Date(playthrough.startedOn)
+    }
+    if (playthrough.endedOn) {
+      basePlaythrough.endedOn = new Date(playthrough.endedOn)
     }
   
     if (playthrough.gameType === GameType.VS) {
@@ -160,7 +200,10 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
     const base = {
       gameId: Number(playthrough.gameId),
       playedOn: playthrough.playedOn.toISOString(),
-      players: JSON.stringify(playthrough.playerIds)
+      players: JSON.stringify(playthrough.playerIds),
+      notes: playthrough.notes ?? null,
+      startedOn: playthrough.startedOn?.toISOString() ?? null,
+      endedOn: playthrough.endedOn?.toISOString() ?? null
     }
   
     if (VsPlaythroughData.guardNew(playthrough)) {

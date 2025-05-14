@@ -23,19 +23,19 @@ export class GamekeeperViewService implements ViewService {
     this.playthroughViewFactory = new PlaythroughViewFactory(gamekeeper)
   }
 
-  public async getSummaryView(year?: number): Promise<SummaryView> {
+  public getSummaryView(year?: number): Promise<SummaryView> {
     return this.summaryViewFactory.create(year)
   }
 
-  public async getGameView(id: GameId): Promise<GameView> {
+  public getGameView(id: GameId): Promise<GameView> {
     return this.gameViewFactory.create(id)
   }
 
-  public async getGamesView(): Promise<GamesView> {
+  public getGamesView(): Promise<GamesView> {
     return this.gamesViewFactory.create()
   }
 
-  public async getPlaythroughsView(options: PlaythroughQueryOptions): Promise<PlaythroughsView> {
+  public getPlaythroughsView(options: PlaythroughQueryOptions): Promise<PlaythroughsView> {
     return this.playthroughsViewFactory.create(options)
   }
 

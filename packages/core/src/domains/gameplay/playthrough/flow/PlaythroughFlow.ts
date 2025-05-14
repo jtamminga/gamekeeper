@@ -1,4 +1,4 @@
-import type { Game, Gameplay, GameplayDeps, Player } from '@domains/gameplay'
+import type { Game, Gameplay, GameplayDeps, Player, Playthrough } from '@domains/gameplay'
 import type { NewBasePlaythroughData, NewPlaythroughData } from '@services'
 
 
@@ -14,7 +14,11 @@ export abstract class PlaythroughFlow<TGame extends Game = Game> {
     return this.data.playedOn
   }
 
-  public abstract build(): NewPlaythroughData
+  public abstract buildData(): NewPlaythroughData
+
+  public async build(): Promise<Playthrough> {
+    return this.deps.repo.createPlaythrough(this.buildData())
+  }
 
   public static defaultPlayerSelection({ playthroughs, players }: Gameplay): ReadonlyArray<Player> {
     const lastPlaythrough = playthroughs.last()

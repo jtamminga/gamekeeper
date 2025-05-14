@@ -137,6 +137,14 @@ app.post(Route.PLAYTHROUGHS, async function (req, res) {
   res.json({ data: playthrough })
 })
 
+// update playthrough
+// TODO: complete api playthroug patch
+app.patch(`${Route.PLAYTHROUGHS}/:id`, async function (req, res) {
+  const userId = getUserId(req)
+  const playthrough = await playthroughService.updatePlaythrough({ id: req.params.id as PlaythroughId }, userId)
+  return res.json({ data: playthrough })
+})
+
 // remove playthrough
 app.delete(`${Route.PLAYTHROUGHS}/:id`, async function(req, res) {
   const userId = getUserId(req)

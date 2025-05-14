@@ -126,9 +126,12 @@ export function BaseFlow({ onComplete }: Props) {
         <input
           type="number"
           name="weight"
+          min={0}
+          max={5}
           value={weight}
           onChange={e => setWeight(e.target.value)}
         />
+        <p className="help-text">A scale from 0 to 5</p>
       </div>
 
       <button

@@ -3,7 +3,6 @@ import { CoopFlow, Playthrough, PlaythroughFlow as PlaythroughFlowModel, VsFlow 
 import { VsFlowPartial } from './VsFlow'
 import { BaseFlow } from './BaseFlow'
 import { CoopFlowPartial } from './CoopFlow'
-import { useGamekeeper } from '@app/hooks'
 import { PlaythroughAdded } from './PlaythroughAdded'
 import { Loading } from '@app/components'
 import { formatDate } from '@gamekeeper/views'
@@ -14,7 +13,6 @@ import { formatDate } from '@gamekeeper/views'
  */
 export function PlaythroughFlow() {
 
-  const { gameplay } = useGamekeeper()
   const [flow, setFlow] = useState<PlaythroughFlowModel>()
   const [completed, setCompleted] = useState(false)
   const [playthrough, setPlaythrough] = useState<Playthrough>()
@@ -22,8 +20,7 @@ export function PlaythroughFlow() {
   async function onComplete(flow: PlaythroughFlowModel) {
     setCompleted(true)
 
-    const playthroughData = flow.build()
-    const playthrough = await gameplay.playthroughs.create(playthroughData)
+    const playthrough = await flow.build()
     setPlaythrough(playthrough)
   }
 

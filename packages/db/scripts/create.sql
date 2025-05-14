@@ -17,14 +17,17 @@ CREATE TABLE players (
 );
 
 CREATE TABLE playthroughs (
-    id        INTEGER NOT NULL
+    id         INTEGER NOT NULL
                       PRIMARY KEY AUTOINCREMENT,
-    user_id   TEXT,
-    game_id   INTEGER NOT NULL,
-    played_on TEXT    NOT NULL,
-    players   TEXT    NOT NULL,
-    result    INTEGER,
-    scores    TEXT
+    user_id    TEXT,
+    game_id    INTEGER NOT NULL,
+    played_on  TEXT    NOT NULL,
+    players    TEXT    NOT NULL,
+    result     INTEGER,
+    scores     TEXT,
+    notes      TEXT,
+    started_on TEXT,
+    ended_on   TEXT
 );
 
 CREATE TABLE goals (

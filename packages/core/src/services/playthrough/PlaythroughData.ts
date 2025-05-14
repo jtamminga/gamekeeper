@@ -13,8 +13,20 @@ export interface BasePlaythroughData {
   gameId: GameId
   playerIds: ReadonlyArray<PlayerId>
   playedOn: Date
+  notes?: string
+  startedOn?: Date
+  endedOn?: Date
 }
 export type NewBasePlaythroughData = NewData<BasePlaythroughData>
+
+export type UpdatedPlaythroughData = {
+  id: PlaythroughId
+  startedOn?: Date
+  endedOn?: Date
+  notes?: string
+  // scores?: ReadonlyArray<ScoreData>
+  // score?: number
+}
 
 
 // vs types

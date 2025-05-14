@@ -6,7 +6,8 @@ import {
   PlaythroughService,
   ScoreData,
   PlaythroughData,
-  BasePlaythroughData
+  BasePlaythroughData,
+  UpdatedPlaythroughData
 } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { toCleanQuery } from './utils'
@@ -21,6 +22,9 @@ interface ApiPlaythroughDto {
   playerIds: string[]
   type: string
   playedOn: string
+  notes?: string
+  startedOn?: string
+  endedOn?: string
   // vs
   scores?: ScoreData[]
   winnerId?: string | null
@@ -48,6 +52,11 @@ export class ApiPlaythroughService extends ApiService implements PlaythroughServ
     return this.transform(newPlaythrough)
   }
 
+  public async updatePlaythrough(playthrough: UpdatedPlaythroughData): Promise<PlaythroughData> {
+    const updatedPlaythrough = await this.apiClient.patch<ApiPlaythroughDto>(Route.forPlaythrough(playthrough.id), playthrough)
+    return this.transform(updatedPlaythrough)
+  }
+
   public async removePlaythrough(id: PlaythroughId): Promise<void> {
     return this.apiClient.delete(`${Route.PLAYTHROUGHS}/${id}`)
   }
@@ -58,6 +67,15 @@ export class ApiPlaythroughService extends ApiService implements PlaythroughServ
       gameId: dto.gameId.toString() as GameId,
       playerIds: dto.playerIds as PlayerId[],
       playedOn: new Date(dto.playedOn),
+    }
+    if (dto.notes) {
+      basePlaythrough.notes = dto.notes
+    }
+    if (dto.startedOn) {
+      basePlaythrough.startedOn = new Date(dto.startedOn)
+    }
+    if (dto.endedOn) {
+      basePlaythrough.endedOn = new Date(dto.endedOn)
     }
   
     if (dto.type === 'vs') {
@@ -79,7 +97,7 @@ export class ApiPlaythroughService extends ApiService implements PlaythroughServ
     }
   
     else {
-      throw new Error(`supported playthrough type ${dto.type}`)
+      throw new Error(`unsupported playthrough type ${dto.type}`)
     }
   }
 

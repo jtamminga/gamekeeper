@@ -5,6 +5,7 @@ import {
   NewPlaythroughData,
   NewVsPlaythroughData,
   PlayerId,
+  PlaythroughId,
   PlaythroughQueryOptions,
   ScoreData} from '@gamekeeper/core'
 import { Request } from 'express'
@@ -18,6 +19,16 @@ export type ApiNewPlaythroughDto = {
   scores?: ReadonlyArray<ScoreData>
   playersWon?: boolean
   score?: number
+  notes?: string
+  startedOn?: string
+  endedOn?: string
+}
+
+export type ApiUpdatedPlaythroughDto = {
+  id: PlaythroughId,
+  notes?: string
+  startedOn?: string
+  endedOn?: string
 }
 
 
@@ -46,6 +57,15 @@ export function toNewPlaythroughData(dto: ApiNewPlaythroughDto): NewPlaythroughD
     gameId: dto.gameId,
     playerIds: dto.playerIds,
     playedOn: new Date(dto.playedOn)
+  }
+  if (dto.notes) {
+    baseData.notes = dto.notes
+  }
+  if (dto.startedOn) {
+    baseData.startedOn = new Date(dto.startedOn)
+  }
+  if (dto.endedOn) {
+    baseData.endedOn = new Date(dto.endedOn)
   }
 
   if (dto.winnerId !== undefined) {

@@ -23,7 +23,7 @@ export class CoopFlow extends PlaythroughFlow<CoopGame> {
     return this
   }
 
-  public build(): NewCoopPlaythroughData {
+  public buildData(): NewCoopPlaythroughData {
     if (this.playersWon === undefined) {
       throw new InvalidState(['winner must be set'])
     }

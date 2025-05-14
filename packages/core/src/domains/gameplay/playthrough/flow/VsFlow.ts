@@ -53,7 +53,7 @@ export class VsFlow extends PlaythroughFlow<VsGame> {
     return this
   }
 
-  public build(): NewVsPlaythroughData {
+  public buildData(): NewVsPlaythroughData {
     if (this.winnerId === undefined) {
       throw new InvalidState(['winner must be set'])
     }
