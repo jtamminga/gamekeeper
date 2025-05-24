@@ -8,6 +8,14 @@ export class NumberOfPlaysGoal extends Goal {
     return GoalType.NumberOfPlays
   }
 
+  /**
+   * Positive number represents ahead of the current target.
+   * Negative number represents behind the current target.
+   */
+  public get currentlyAheadBy(): number {
+    return this.progress - this.expectedProgress
+  }
+
   public toData(): GoalData {
     return {
       ...this.getBaseData(),

@@ -22,6 +22,16 @@
   display: flex;
   justify-content: space-between;
 }
+.goal-card .goal-title .goal-stats {
+  display: flex;
+  gap: var(--space-md);
+}
+.goal-card .goal-title .goal-stats .ahead {
+  color: var(--color-success);
+}
+.goal-card .goal-title .goal-stats .behind {
+  color: var(--color-danger);
+}
 
 .goal-card .progress-bar-container {
   position: relative;

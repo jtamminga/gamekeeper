@@ -1,14 +1,15 @@
-import { FormattedGoal } from '@def/models'
-import { Goal, GoalType } from '@gamekeeper/core'
+import { FormattedGoal, NumberOfPlaysFormattedGoal } from '@def/models'
+import { Goal, GoalType, NumberOfPlaysGoal } from '@gamekeeper/core'
 
-export function formatGoal(goal: Goal): FormattedGoal {
+export function formatGoal(goal: Goal): FormattedGoal | NumberOfPlaysFormattedGoal {
   const curYear = new Date().getFullYear()
   const goalType = goal.toData().type
   const active = goal.year === curYear
 
-  return {
+  const formatted: FormattedGoal = {
     id: goal.id,
     name: nameForGoalType(goalType),
+    type: goalType,
     active,
     description: descriptionForGoalType(goalType),
     value: goal.value,
@@ -19,7 +20,19 @@ export function formatGoal(goal: Goal): FormattedGoal {
         : 'failed',
     progress: goal.progress,
     percentageDone: goal.percentageDone,
-    expectedProgressPercentage: goal.expectedProgressPercentage
+    expectedProgressPercentage: goal.expectedProgressPercentage,
+    percentageDoneFormatted: (goal.percentageDone * 100).toString() + '%',
+    expectedProgressPercentageFormatted: (goal.expectedProgressPercentage * 100) + '%'
+  }
+
+  if (goal instanceof NumberOfPlaysGoal) {
+    return {
+      ...formatted,
+      currentlyAheadBy: Math.floor(goal.currentlyAheadBy)
+    }
+  }
+  else {
+    return formatted
   }
 }
 
@@ -33,6 +46,7 @@ export function nameForGoalType(type: GoalType): string {
       throw new Error('cannot get name of goal')
   }
 }
+
 export function descriptionForGoalType(type: GoalType): string {
   switch (type) {
     case GoalType.NumberOfPlays:

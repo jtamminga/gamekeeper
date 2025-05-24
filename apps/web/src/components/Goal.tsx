@@ -1,4 +1,4 @@
-import type { FormattedGoal } from '@gamekeeper/views'
+import { FormattedGoal, NumberOfPlaysFormattedGoal } from '@gamekeeper/views'
 
 
 type Props = {
@@ -7,22 +7,67 @@ type Props = {
 
 
 export function Goal({ goal }: Props) {
+  if (NumberOfPlaysFormattedGoal.guard(goal)) {
+    return renderNumPlaysGoal(goal)
+  }
+  else {
+    return renderGenericGoal(goal)
+  }
+}
 
-  const progress = (goal.percentageDone * 100).toString() + '%'
-  const expected = (goal.expectedProgressPercentage * 100) + '%'
+
+function renderGenericGoal(goal: FormattedGoal) {
+  const {
+    state,
+    value,
+    name,
+    progress,
+    percentageDoneFormatted
+  } = goal
 
   return (
-    <div className={'goal-card ' + goal.state}>
+    <div className={'goal-card ' + state}>
       <div className="goal-title">
-        <span>{goal.name}</span>
-        <div>{goal.progress} / {goal.value}</div>
+        <span>{name}</span>
+        <div>{progress} / {value}</div>
       </div>
       <div className="progress-bar-container">
         <div className="progress-bar">
-          <div className="inner-bar" style={{ width: progress }}></div>
+          <div className="inner-bar" style={{ width: percentageDoneFormatted }}></div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function renderNumPlaysGoal(goal: NumberOfPlaysFormattedGoal) {
+  const {
+    state,
+    value,
+    name,
+    progress,
+    percentageDoneFormatted,
+    expectedProgressPercentageFormatted,
+    currentlyAheadBy
+  } = goal
+
+  return (
+    <div className={'goal-card ' + state}>
+      <div className="goal-title">
+        <span>{name}</span>
+        <div className="goal-stats">
+          <div
+            className={currentlyAheadBy > 0 ? 'ahead' : 'behind'}
+          >{Math.abs(currentlyAheadBy)} {currentlyAheadBy > 0 ? 'ahead' : 'behind'}</div>
+          <div>{progress} / {value}</div>
+        </div>
+      </div>
+      <div className="progress-bar-container">
+        <div className="progress-bar">
+          <div className="inner-bar" style={{ width: percentageDoneFormatted }}></div>
         </div>
         { goal.active &&
-          <div className="expected" style={{ left: expected }}></div>
+          <div className="expected" style={{ left: expectedProgressPercentageFormatted }}></div>
         }
       </div>
     </div>
