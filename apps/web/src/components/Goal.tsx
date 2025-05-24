@@ -51,14 +51,20 @@ function renderNumPlaysGoal(goal: NumberOfPlaysFormattedGoal) {
     currentlyAheadBy
   } = goal
 
+  const currentlyAheadByVerbage = currentlyAheadBy === 0
+    ? 'on target'
+    : currentlyAheadBy > 0
+      ? `${currentlyAheadBy} ahead`
+      : `${Math.abs(currentlyAheadBy)} behind`
+
   return (
     <div className={'goal-card ' + state}>
       <div className="goal-title">
         <span>{name}</span>
         <div className="goal-stats">
           <div
-            className={currentlyAheadBy > 0 ? 'ahead' : 'behind'}
-          >{Math.abs(currentlyAheadBy)} {currentlyAheadBy > 0 ? 'ahead' : 'behind'}</div>
+            className={currentlyAheadBy >= 0 ? 'ahead' : 'behind'}
+          >{currentlyAheadByVerbage}</div>
           <div>{progress} / {value}</div>
         </div>
       </div>
