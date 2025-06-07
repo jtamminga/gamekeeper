@@ -10,7 +10,7 @@ type Props = {
 
 export function GamePlaythroughs({ gameId }: Props) {
 
-  const view = usePlaythroughsView({ gameId })
+  const view = usePlaythroughsView({ gameId }, { scores: true })
   if (!view) {
     return <Loading />
   }

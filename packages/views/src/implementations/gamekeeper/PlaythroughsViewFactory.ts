@@ -1,5 +1,6 @@
-import { PlaythroughsView } from '@def/views'
 import { GameKeeper, PlaythroughQueryOptions } from '@gamekeeper/core'
+import { PlaythroughsView } from '@def/views'
+import { FormatPlaythroughOptions } from '@def/models'
 import { formatPlaythroughs } from '../formatters'
 
 
@@ -11,7 +12,7 @@ export class PlaythroughsViewFactory {
     private readonly gamekeeper: GameKeeper
   ) { }
   
-  public async create(options: PlaythroughQueryOptions): Promise<PlaythroughsView> {
+  public async create(options: PlaythroughQueryOptions, formatOptions: FormatPlaythroughOptions): Promise<PlaythroughsView> {
     const playthroughs = await this.gamekeeper.gameplay.playthroughs
       .hydrate({ limit: MAX_PLAYTHROUGHS, ...options })
 
@@ -21,7 +22,7 @@ export class PlaythroughsViewFactory {
         : undefined,
       playthroughs: formatPlaythroughs(
         playthroughs.all(options),
-        { gameNames: true }
+        formatOptions
       )
     }
   }

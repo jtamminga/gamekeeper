@@ -1,7 +1,7 @@
 import type { GameId, PlaythroughId, PlaythroughQueryOptions } from '@gamekeeper/core'
 import { useEffect, useState } from 'react'
 import { viewService } from '@app/bootstrap'
-import { GamesView, GameView, PlaythroughsView, SummaryView } from '@gamekeeper/views'
+import { FormatPlaythroughOptions, GamesView, GameView, PlaythroughsView, SummaryView } from '@gamekeeper/views'
 
 
 export function useSummaryView(year?: number) {
@@ -46,16 +46,22 @@ export function useGamesView() {
   return view
 }
 
-export function usePlaythroughsView({ fromDate, toDate, gameId, limit }: PlaythroughQueryOptions) {
+export function usePlaythroughsView(
+  { fromDate, toDate, gameId, limit }: PlaythroughQueryOptions,
+  { scores, gameNames }: FormatPlaythroughOptions
+) {
   const [view, setView] = useState<PlaythroughsView>()
 
   useEffect(() => {
     async function fetchData() {
-      const view = await viewService.getPlaythroughsView({ fromDate, toDate, gameId, limit })
+      const view = await viewService.getPlaythroughsView(
+        { fromDate, toDate, gameId, limit },
+        { scores, gameNames }
+      )
       setView(view)
     }
     fetchData()
-  }, [fromDate, toDate, gameId, limit])
+  }, [fromDate, toDate, gameId, limit, scores, gameNames])
 
   return view
 }

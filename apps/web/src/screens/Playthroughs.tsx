@@ -8,7 +8,7 @@ type Props = PlaythroughQueryOptions & { desc?: string }
 
 export function Playthroughs({ gameId, fromDate, toDate, desc = 'All playthroughs' }: Props) {
 
-  const view = usePlaythroughsView({ gameId, fromDate, toDate })
+  const view = usePlaythroughsView({ gameId, fromDate, toDate }, { gameNames: true })
   if (!view) {
     return <Loading />
   }

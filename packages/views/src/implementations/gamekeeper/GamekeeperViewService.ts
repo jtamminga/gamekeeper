@@ -1,4 +1,5 @@
 import { SummaryView, GameView, GamesView, PlaythroughsView, PlaythroughView } from '@def/views'
+import { FormatPlaythroughOptions } from '@def/models'
 import { ViewService } from '@def/ViewService'
 import { GameId, GameKeeper, PlaythroughId, PlaythroughQueryOptions } from '@gamekeeper/core'
 import { SummaryViewFactory } from './SummaryViewFactory'
@@ -35,8 +36,8 @@ export class GamekeeperViewService implements ViewService {
     return this.gamesViewFactory.create()
   }
 
-  public getPlaythroughsView(options: PlaythroughQueryOptions): Promise<PlaythroughsView> {
-    return this.playthroughsViewFactory.create(options)
+  public getPlaythroughsView(options: PlaythroughQueryOptions, formatOptions: FormatPlaythroughOptions): Promise<PlaythroughsView> {
+    return this.playthroughsViewFactory.create(options, formatOptions)
   }
 
   public getPlaythroughView(id: PlaythroughId): PlaythroughView {

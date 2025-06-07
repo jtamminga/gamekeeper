@@ -36,6 +36,11 @@ export function PlaysByMonth({ data, year, onMonthClick }: Props) {
       },
       options: {
         animation: false,
+        layout: {
+          padding: {
+            top: 20
+          }
+        },
         scales: {
           x: {
             grid: {
@@ -43,7 +48,6 @@ export function PlaysByMonth({ data, year, onMonthClick }: Props) {
             }
           },
           y: {
-            grace: 2,
             display: false,
             ticks: {
               display: false
