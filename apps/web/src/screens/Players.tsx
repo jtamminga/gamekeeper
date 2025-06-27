@@ -1,4 +1,4 @@
-import { Link } from '@app/components'
+import { Link, PlayerColor } from '@app/components'
 import { useGamekeeper } from '@app/hooks'
 
 
@@ -28,7 +28,9 @@ export function Players() {
               key={player.id}
               page={{ name: 'EditPlayer', props: { playerId: player.id } }}
             >
-              {player.name}
+              <PlayerColor playerId={player.id}>
+                {player.name}
+              </PlayerColor>
             </Link>
           )}
         </div>
