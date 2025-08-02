@@ -11,7 +11,7 @@ export class PlaythroughViewFactory {
   public create(id: PlaythroughId): PlaythroughView {
     const playthrough = this.gamekeeper.gameplay.playthroughs.get(id)
 
-    const formattedPlaythrough = formatPlaythrough(playthrough, { scores: true })
+    const formattedPlaythrough = formatPlaythrough(playthrough, { scores: true, notes: true })
 
     return {
       ...formattedPlaythrough,

@@ -28,7 +28,7 @@ export function PlaythroughDetails({ playthroughId }: Props) {
       <div>{view.playedOn}</div>
 
       <h3>Players</h3>
-      <div className="flex">
+      <div className="flex flex-wrap gap-md">
         {view.players.map(player =>
           <div className="pill" key={player.id}>
             <PlayerColor playerId={player.id}>{player.name}</PlayerColor>
@@ -53,6 +53,16 @@ export function PlaythroughDetails({ playthroughId }: Props) {
           : <div className="text-muted">no scores recorded</div>
         }
       </div>
+
+      {view.notes &&
+        <>
+          <h3>Notes</h3>
+          <div className="mb-lg notes">
+            {view.notes}
+          </div>
+        </>
+      }
+      
 
       <button onClick={onDelete}>
         Delete

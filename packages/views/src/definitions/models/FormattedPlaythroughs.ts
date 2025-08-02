@@ -10,10 +10,12 @@ export type FormattedPlaythrough = {
   game?: string
   winnerId?: PlayerId
   scores?: FormattedScore[]
+  notes?: string
 }
 export type FormatPlaythroughOptions = {
   gameNames?: boolean
   scores?: boolean
+  notes?: boolean
 }
 export type FormattedPlaythroughs = {
   readonly playthroughs: ReadonlyArray<FormattedPlaythrough>

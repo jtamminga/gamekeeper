@@ -15,6 +15,7 @@ export function formatPlaythroughs(
     options: {
       gameNames: false,
       scores: false,
+      notes: false,
       ...options
     }
   }

@@ -22,6 +22,9 @@ export function formatPlaythrough(
   if (options?.scores) {
     formatted.scores = formatScores(playthrough)
   }
+  if (options?.notes) {
+    formatted.notes = playthrough.notes
+  }
 
   return formatted
 }

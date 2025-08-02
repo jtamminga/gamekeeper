@@ -36,6 +36,10 @@ export abstract class Playthrough
     return this._deps.repo.getPlayers(this.playerIds)
   }
 
+  public get notes(): string | undefined {
+    return this._notes
+  }
+
   public update(data: Omit<UpdatedPlaythroughData, 'id'>): void {
     this._notes = data.notes
   }

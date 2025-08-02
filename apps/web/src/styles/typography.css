@@ -18,3 +18,8 @@ h1, h2, h3 {
 .text-muted {
   color: var(--color-gray)
 }
+
+/* handle newline chars */
+.notes {
+  white-space: pre-line;
+}

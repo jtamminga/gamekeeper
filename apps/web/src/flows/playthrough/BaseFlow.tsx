@@ -28,6 +28,7 @@ export function BaseFlow({ onComplete }: Props) {
   const [playerIds, setPlayerIds] = useState<PlayerId[]>(defaultPlayers)
   const [gameId, setGameId] = useState<GameId | undefined>(initialGameId)
   const [playedOn, setPlayedOn] = useState(new Date())
+  const [notes, setNotes] = useState('')
 
   const noPlayers = gameplay.players.all().length === 0
   const noGames = gameplay.games.all().length === 0
@@ -44,12 +45,14 @@ export function BaseFlow({ onComplete }: Props) {
     const flow = gameplay.playthroughs.startFlow({
       playerIds,
       gameId,
-      playedOn
+      playedOn,
+      notes: notes ? notes : undefined
     })
 
     onComplete(flow)
   }
 
+  // bail if no games or players set
   if (noGames || noPlayers) {
     return (
       <>
@@ -84,6 +87,14 @@ export function BaseFlow({ onComplete }: Props) {
         gameId={gameId}
         onChange={gameId => setGameId(gameId)}
       />
+
+      <div className="form-control">
+        <label>Notes</label>
+        <textarea
+          value={notes}
+          onChange={e => setNotes(e.target.value)}
+        />
+      </div>
 
       <button
         type="button"

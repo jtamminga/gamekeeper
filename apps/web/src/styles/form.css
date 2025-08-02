@@ -8,20 +8,16 @@
   font-weight: bold;
 }
 
-.form-control > .checkbox-label {
-  display: block;
-  margin-bottom: var(--space-sm);
-  cursor: pointer;
-  padding: var(--space-sm) 0;
-}
-
-.form-control > .checkbox-label > input {
-  margin-right: var(--space-md);
-}
-
-input, select {
+input, select, textarea {
   font-size: 1em;
-  padding: var(--space-sm)
+  padding: var(--space-sm);
+  box-sizing: border-box;
+}
+
+.form-control > input,
+.form-control > select,
+.form-control > textarea {
+  width: 100%;
 }
 
 .form-control .list {
@@ -37,4 +33,21 @@ input, select {
 .form-control .help-text {
   margin-top: var(--space-md);
   color: var(--color-gray);
+}
+
+/* player select */
+
+.form-control .player-select-list {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: 1fr 1fr;
+}
+
+.form-control .player-select-list .checkbox-label {
+  display: block;
+  cursor: pointer;
+}
+
+.form-control .player-select-list .checkbox-label > input {
+  margin-right: var(--space-md);
 }

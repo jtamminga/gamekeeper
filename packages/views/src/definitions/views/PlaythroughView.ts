@@ -10,4 +10,5 @@ export interface PlaythroughView {
   winner: string
   winnerId?: PlayerId
   scores?: FormattedScore[]
+  notes?: string
 }

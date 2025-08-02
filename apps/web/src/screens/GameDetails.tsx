@@ -21,7 +21,7 @@ export function GameDetails({ gameId }: Props) {
         <Link page={{ name: 'EditGame', props: { gameId }}}>Edit</Link>
       </div>
 
-      <div className="game-info-bar">
+      <div className="flex flex-wrap gap-md mb-lg">
         <div className="pill">{view.gameTypeLabel}</div>
         {view.weightLabel &&
           <div className="pill">{view.weightLabel}</div>

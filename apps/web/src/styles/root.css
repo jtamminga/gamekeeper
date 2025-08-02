@@ -120,11 +120,6 @@ a.danger {
   flex-grow: 1;
 }
 
-.game-info-bar {
-  display: flex;
-  margin-bottom: var(--space-lg);
-}
-
 .callout {
   padding: var(--space-lg) 1.2em;
   background-color: var(--dark-gray-accent);

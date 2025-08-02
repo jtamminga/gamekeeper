@@ -58,13 +58,9 @@ export class VsFlow extends PlaythroughFlow<VsGame> {
       throw new InvalidState(['winner must be set'])
     }
 
-    const { gameId, playedOn, playerIds } = this.data
-
     return {
-      gameId,
+      ...this.data,
       type: 'vs',
-      playedOn,
-      playerIds,
       winnerId: this.winnerId,
       scores: this.scores && this.scores.size > 0
         ? this.scores.toData()
