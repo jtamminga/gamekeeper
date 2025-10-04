@@ -128,7 +128,7 @@ export class DbStatsService extends SimpleStatsService {
   public override async getNumPlaysByMonth({ gameId, year }: StatsQuery = {}, userId?: UserId): Promise<number[]> {
     let query = `
       SELECT
-        strftime('%m', p.played_on) AS month,
+        strftime('%m', p.played_on, 'localtime') AS month,
         COUNT(p.id) AS numPlays
       FROM playthroughs p
       JOIN games g ON p.game_id = g.id
@@ -140,7 +140,7 @@ export class DbStatsService extends SimpleStatsService {
       conditions.push('p.game_id = :game_id')
     }
     if (year) {
-      conditions.push(`strftime('%Y', p.played_on) = :year`)
+      conditions.push(`strftime('%Y', p.played_on, 'localtime') = :year`)
     }
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ')
