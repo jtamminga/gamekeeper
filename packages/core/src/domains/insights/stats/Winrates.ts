@@ -18,8 +18,12 @@ export class Winrates {
     return highestWinrate
   }
 
-  public for(id: PlayerId): number | undefined {
-    return this.winrates.find(winrate => winrate.player.id === id)?.winrate
+  public for(id: PlayerId): Winrate | undefined {
+    return this.winrates.find(winrate => winrate.player.id === id)
+  }
+
+  public winrateFor(id: PlayerId): number | undefined {
+    return this.for(id)?.winrate
   }
 
   public static from(winrates: ReadonlyArray<WinrateDto>, deps: InsightsDeps): Winrates {

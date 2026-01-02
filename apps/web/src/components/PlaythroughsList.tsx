@@ -16,7 +16,7 @@ type Props = {
  */
 export function PlaythroughsList({ formattedPlaythroughs, className }: Props) {
   
-  const { toGame, toPlaythrough } = useRouter()
+  const { toGame, toPlaythrough, toPlayer } = useRouter()
   const { playthroughs, options: { gameNames, scores } } = formattedPlaythroughs
 
   return (
@@ -51,7 +51,7 @@ export function PlaythroughsList({ formattedPlaythroughs, className }: Props) {
             }
 
             {/* winner */}
-            <td>
+            <td onClick={() => toPlayer(playthrough.winnerId)}>
               <PlayerColor playerId={playthrough.winnerId}>
                 {playthrough.winner}
               </PlayerColor>

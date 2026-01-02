@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard } from '@app/components'
+import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard, YearSelect } from '@app/components'
 import { TopPlayedGames } from '@app/components/TopPlayedGames'
 import { useRouter, useSummaryView } from '@app/hooks'
 
 
 export function Summary() {
 
-  const [viewingYear, setViewingYear] = useState(new Date().getFullYear())
+  const currentYear = new Date().getFullYear()
+  const [viewingYear, setViewingYear] = useState(currentYear)
   const view = useSummaryView(viewingYear)
   const { setPage } = useRouter()
+  const isCurrentYear = currentYear === viewingYear
 
   // render loading while waiting
   if (!view) {
@@ -16,9 +18,6 @@ export function Summary() {
   }
 
   const {
-    year,
-    currentYear,
-    isCurrentYear,
     goals,
     daysSinceLastPlaythrough,
     numPlaysThisYear,
@@ -39,7 +38,7 @@ export function Summary() {
     <>
       {!isCurrentYear &&
         <div className="title-with-link">
-          <h1>{year} summary</h1>
+          <h1>{viewingYear} summary</h1>
           <a role="button" onClick={() => setViewingYear(currentYear)}>Current year</a>
         </div>
       }
@@ -55,9 +54,10 @@ export function Summary() {
         </>
       }
       
+      {/* overall stats */}
       <div className="page-subtitle">
         <h2>Overall</h2>
-        <h3>{year}</h3>
+        <h3>{viewingYear}</h3>
       </div>
       <StatCard
         value={numPlaysThisYear}
@@ -74,13 +74,14 @@ export function Summary() {
         description="unique games played"
       />
       <PlaysByMonth
-        year={year}
+        year={viewingYear}
         data={numPlaysByMonth}
         onMonthClick={(fromDate, toDate, month) =>
-          setPage({ name: 'Playthroughs', props: { fromDate, toDate, desc: `${month} ${year}` }})
+          setPage({ name: 'Playthroughs', props: { fromDate, toDate, desc: `${month} ${viewingYear}` }})
         }
       />
 
+      {/* recent stats */}
       {isCurrentYear && latestPlaythroughs.playthroughs.length > 0 &&
         <>
           <div className="page-subtitle">
@@ -104,11 +105,12 @@ export function Summary() {
         </>
       }
 
+      {/* top played games */}
       {topPlayedGames.length > 0 &&
         <>
           <div className="page-subtitle">
             <h2>Most played games</h2>
-            <h3>{year}</h3>
+            <h3>{viewingYear}</h3>
           </div>
           <TopPlayedGames
             topPlayed={topPlayedGames}
@@ -116,9 +118,10 @@ export function Summary() {
         </>
       }
 
+      {/* game day stats */}
       <div className="page-subtitle">
         <h2>Game day</h2>
-        <h3>{year}</h3>
+        <h3>{viewingYear}</h3>
       </div>
       <div className="mb-lg">
         <StatCard
@@ -141,12 +144,12 @@ export function Summary() {
         firstDay={numPlaysPerDayThisYear.firstDate}
       />
 
-      <div className="text-muted mt-lg">
-        go to <a role="button" onClick={() => setViewingYear(viewingYear - 1)}>previous year</a>
-        {year < currentYear &&
-          <> or <a role="button" onClick={() => setViewingYear(viewingYear + 1)}>next year</a></>
-        }
-      </div>
+      {/* year select */}
+      <YearSelect
+        currentYear={currentYear}
+        viewingYear={viewingYear}
+        setViewingYear={setViewingYear}
+      />
     </>
   )
 }

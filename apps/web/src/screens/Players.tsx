@@ -26,7 +26,7 @@ export function Players() {
           {players.map(player =>
             <Link
               key={player.id}
-              page={{ name: 'EditPlayer', props: { playerId: player.id } }}
+              page={{ name: 'PlayerDetails', props: { playerId: player.id } }}
             >
               <PlayerColor playerId={player.id}>
                 {player.name}

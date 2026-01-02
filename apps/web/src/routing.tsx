@@ -20,6 +20,7 @@ import {
   Setup,
   Landing,
   Players,
+  PlayerDetails,
   PlaythroughDetails,
   Playthroughs,
   Profile,
@@ -49,6 +50,7 @@ export type Page =
   | { name: 'Playthroughs', props: PlaythroughQueryOptions & { desc?: string } }
   | { name: 'Settings' }
   | { name: 'Players' }
+  | { name: 'PlayerDetails', props: { playerId: PlayerId }}
   | { name: 'AddPlayer', props?: CallbackPageProps }
   | { name: 'EditPlayer', props: { playerId: PlayerId } & CallbackPageProps }
   | { name: 'Goals' }
@@ -87,6 +89,8 @@ export function router(page: Page) {
       return <Players />
     case 'AddPlayer':
       return <AddPlayer {...page.props} />
+    case 'PlayerDetails':
+      return <PlayerDetails {...page.props} />
     case 'EditPlayer':
       return <EditPlayer {...page.props} />
     case 'Goals':

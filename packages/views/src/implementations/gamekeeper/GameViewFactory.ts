@@ -57,8 +57,8 @@ export class GameViewFactory {
     const players = this.gamekeeper.gameplay.players.all()
 
     const winrates: FormattedPlayerStat[] = players.map(player => {
-      const valueAllTime = winratesAllTime.for(player.id)
-      const valueThisYear = winratesThisYear.for(player.id)
+      const valueAllTime = winratesAllTime.winrateFor(player.id)
+      const valueThisYear = winratesThisYear.winrateFor(player.id)
       const hasStats = valueAllTime !== undefined || valueThisYear !== undefined
 
       return {

@@ -1,3 +1,4 @@
+import type { PlayerId } from '../player'
 import type { GameId } from '../game'
 import type { NewPlaythroughData, PlaythroughData, PlaythroughId, UpdatedPlaythroughData } from './PlaythroughData'
 
@@ -8,6 +9,7 @@ export type PlaythroughQueryOptions = {
   toDate?: Date
   gameId?: GameId
   year?: number
+  playerIds?: PlayerId[]
 }
 
 export interface PlaythroughService {

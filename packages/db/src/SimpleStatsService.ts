@@ -237,7 +237,7 @@ export class SimpleStatsService implements StatsService {
     // 2. once all plays and wins are counted then we calculate winrates for each player
     const winrates: WinrateDto[] = []
     for (const [playerId, stats] of allStats) {
-      winrates.push({ playerId, winrate: stats.wins / stats.plays })
+      winrates.push({ playerId, plays: stats.plays, winrate: stats.wins / stats.plays })
     }
 
     return winrates

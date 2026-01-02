@@ -176,6 +176,10 @@ export class MemoryGameplayRepository implements GameplayRepository {
     if (options?.year !== undefined) {
       playthroughs = playthroughs.filter(p => p.playedOn.getFullYear() === options.year)
     }
+    if (options?.playerIds !== undefined) {
+      const playerIds = new Set(options.playerIds)
+      playthroughs = playthroughs.filter(playthough => playerIds.isSubsetOf(playthough.playerIdSet))
+    }
     
     return playthroughs
   }

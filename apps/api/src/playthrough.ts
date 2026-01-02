@@ -33,7 +33,7 @@ export type ApiUpdatedPlaythroughDto = {
 
 
 export function toPlaythroughQueryOptions(req: Request): PlaythroughQueryOptions {
-  const { limit, fromDate, toDate, gameId } = req.query
+  const { limit, fromDate, toDate, gameId, playerIds } = req.query
   
   const query: PlaythroughQueryOptions = {}
   if (typeof limit === 'string') {
@@ -47,6 +47,9 @@ export function toPlaythroughQueryOptions(req: Request): PlaythroughQueryOptions
   }
   if (typeof gameId === 'string') {
     query.gameId = gameId as GameId
+  }
+  if (typeof playerIds === 'string') {
+    query.playerIds = playerIds.split(',') as PlayerId[]
   }
 
   return query

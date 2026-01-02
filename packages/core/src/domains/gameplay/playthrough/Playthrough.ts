@@ -28,6 +28,10 @@ export abstract class Playthrough
     this._endedOn = data.endedOn
   }
 
+  public get playerIdSet(): Set<PlayerId> {
+    return new Set(this.playerIds)
+  }
+
   public get game(): Game {
     return this._deps.repo.getGame(this.gameId)
   }

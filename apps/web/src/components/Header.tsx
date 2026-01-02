@@ -27,6 +27,12 @@ export function Header() {
 
           <a
             role="link"
+            className={page.name === 'Players' ? 'active' : undefined}
+            onClick={() => setPage({ name: 'Players' })}
+          >players</a>
+
+          <a
+            role="link"
             className={page.name === 'Settings' ? 'active' : undefined}
             onClick={() => setPage({ name: 'Settings' })}
           >settings</a>

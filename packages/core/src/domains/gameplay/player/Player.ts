@@ -1,7 +1,8 @@
+import type { Serializable } from '@core'
 import { Entity } from '@domains'
 import type { PlayerColor, PlayerData, PlayerId, UpdatedPlayerData } from '@services'
-import type { Serializable } from  '@core'
 import { GameplayDeps } from '../Gameplay'
+import type { Playthrough } from '../playthrough'
 
 
 export class Player extends Entity<PlayerId> implements Serializable<PlayerData> {
@@ -21,6 +22,10 @@ export class Player extends Entity<PlayerId> implements Serializable<PlayerData>
 
   public get color(): PlayerColor | undefined {
     return this._color
+  }
+
+  public get playthroughs(): ReadonlyArray<Playthrough> {
+    return this._deps.repo.getPlaythroughs({ playerIds: [this.id] })
   }
 
   public update(data: Omit<UpdatedPlayerData, 'id'>): void {

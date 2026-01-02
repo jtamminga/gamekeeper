@@ -10,6 +10,7 @@ export type StatsQuery = {
 export type WinrateDto = {
   playerId: PlayerId
   winrate: number
+  plays: number
 }
 export type ScoreStatDto = { score: number, playerId?: PlayerId }
 export type ScoreStatsDto = {

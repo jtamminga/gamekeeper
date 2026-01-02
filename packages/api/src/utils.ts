@@ -1,4 +1,4 @@
-export function toCleanQuery(obj: Record<string, string | number | Date | undefined> | undefined): Record<string, string> | undefined {
+export function toCleanQuery(obj: Record<string, string | number | Date | undefined | string[]> | undefined): Record<string, string> | undefined {
   if (obj === undefined) {
     return undefined
   }
@@ -9,7 +9,9 @@ export function toCleanQuery(obj: Record<string, string | number | Date | undefi
     .forEach(key => {
       const value = obj[key]!
 
-      if (value instanceof Date) {
+      if (Array.isArray(value)) {
+        query[key] = value.join(',')
+      } else if (value instanceof Date) {
         query[key] = value.toISOString()
       }
       else {
