@@ -19,7 +19,12 @@ export function GameSummary({ view }: Props) {
   return (
     <>
       <h3>General stats</h3>
-      {renderYearVsTotalStats(view)}
+      <DetailedStatCard
+        year={view.year}
+        name={view.numPlaythroughs.name}
+        thisYear={view.numPlaythroughs.valueThisYear}
+        allTime={view.numPlaythroughs.valueAllTime}
+      />
 
       {view.scoreStats &&
         <>
@@ -27,7 +32,29 @@ export function GameSummary({ view }: Props) {
           {renderScoreStats(view.scoreStats)}
         </>
       }
-            
+
+      <h3>Winrates</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>{view.year}</th>
+            <th>All</th>
+          </tr>
+        </thead>
+        <tbody>
+          {view.winrates.map(({playerId, name, valueThisYear, valueAllTime}, index) =>
+            <tr key={`stat-${index}`} onClick={() => router.toPlayer(playerId)}>
+              <td>
+                <PlayerColor playerId={playerId}>{name}</PlayerColor>
+              </td>
+              <td>{valueThisYear}</td>
+              <td>{valueAllTime}</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+
       <h3>Lastest playthroughs</h3>
       <PlaythroughsList
         className="mb-lg"
@@ -53,7 +80,6 @@ export function GameSummary({ view }: Props) {
 
 
 // helpers
-
 function renderScoreStats({ average, best }: FormattedScoreStats) {
 
   const bestScoreText = (
@@ -71,29 +97,6 @@ function renderScoreStats({ average, best }: FormattedScoreStats) {
         value={best.score}
         description={bestScoreText}
       />
-    </>
-  )
-}
-
-function renderYearVsTotalStats({ numPlaythroughs, winrates, year }: GameView) {
-  return (
-    <>
-      <DetailedStatCard
-        year={year}
-        name={numPlaythroughs.name}
-        thisYear={numPlaythroughs.valueThisYear}
-        allTime={numPlaythroughs.valueAllTime}
-      />
-      {winrates.map((stat, index) =>
-        <DetailedStatCard
-          key={`stat-${index}`}
-          year={year}
-          name={stat.name}
-          playerId={stat.playerId}
-          thisYear={stat.valueThisYear}
-          allTime={stat.valueAllTime}
-        />
-      )}
     </>
   )
 }
