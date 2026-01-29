@@ -5,7 +5,7 @@ header.app-header {
   right: 0px;
   display: flex;
   justify-content: center;
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md) var(--global-padding);
   z-index: 100;
 }
 

@@ -17,7 +17,7 @@ export function Header() {
             role="link"
             className={page.name === 'Summary' ? 'active' : undefined}
             onClick={() => setPage({ name: 'Summary' })}
-          >summary</a>
+          >home</a>
 
           <a
             role="link"

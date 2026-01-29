@@ -6,6 +6,7 @@
   --space-md: 10px;
   --space-lg: 30px;
   --border-radius: 10px;
+  --global-padding: 16px;
 
   --brand-primary: #686fff;
   --brand-muted: #6870ff5e;
@@ -33,7 +34,7 @@
   max-width: var(--max-width);
   min-width: var(--min-width);
   margin: 0 auto;
-  padding: var(--space-lg);
+  padding: var(--global-padding);
   padding-top: 58px;
 }
 
