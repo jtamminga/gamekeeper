@@ -255,10 +255,11 @@ app.get(Route.STATS.PLAY_STREAK, async function (req, res) {
 
 
 app.get('/stats', async function (req, res) {
+  const {year} = toStatsQuery(req)
   const gamekeeper = GameKeeperFactory.create(dbServices)
   await gamekeeper.gameplay.hydrate()
   const gamekeeperViews = new GamekeeperViewService(gamekeeper)
-  const summaryView = await gamekeeperViews.getSummaryView()
+  const summaryView = await gamekeeperViews.getSummaryView(year)
   res.json({ data: summaryView })
 })
 
