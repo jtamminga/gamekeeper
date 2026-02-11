@@ -7,6 +7,7 @@ import type { OverallStatsQuery } from './Stats'
 
 type ScoreStats = {
   bestScore: { score: number, player?: Player }
+  worstScore: { score: number, player?: Player }
   averageScore: number
 }
 
@@ -58,6 +59,9 @@ export class GameStats {
     const bestScore = this.game.scoring === ScoringType.HIGHEST_WINS
       ? gameResult.highScore
       : gameResult.lowScore
+    const worstScore = this.game.scoring === ScoringType.HIGHEST_WINS
+      ? gameResult.lowScore
+      : gameResult.highScore
     
     return {
       bestScore: {
@@ -65,6 +69,12 @@ export class GameStats {
         player: bestScore.playerId === undefined
           ? undefined
           : this._deps.gameplay.players.get(bestScore.playerId)
+      },
+      worstScore: {
+        score: worstScore.score,
+        player: worstScore.playerId === undefined
+          ? undefined
+          : this._deps.gameplay.players.get(worstScore.playerId)
       },
       averageScore: gameResult.averageScore
     }

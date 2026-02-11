@@ -80,12 +80,7 @@ export function GameSummary({ view }: Props) {
 
 
 // helpers
-function renderScoreStats({ average, best }: FormattedScoreStats) {
-
-  const bestScoreText = (
-    <>best score {best.playerId && <PlayerColor playerId={best.playerId}>{best.player}</PlayerColor>}</>
-  )
-
+function renderScoreStats({ average, best, worst }: FormattedScoreStats) {
   return (
     <>
       <StatCard
@@ -95,7 +90,16 @@ function renderScoreStats({ average, best }: FormattedScoreStats) {
 
       <StatCard
         value={best.score}
-        description={bestScoreText}
+        description={
+          <>best score {best.playerId && <PlayerColor playerId={best.playerId}>{best.player}</PlayerColor>}</>
+        }
+      />
+
+      <StatCard
+        value={worst.score}
+        description={
+          <>worst score {worst.playerId && <PlayerColor playerId={worst.playerId}>{worst.player}</PlayerColor>}</>
+        }
       />
     </>
   )

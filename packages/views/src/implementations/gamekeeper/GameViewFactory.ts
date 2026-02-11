@@ -78,6 +78,11 @@ export class GameViewFactory {
           score: formatNumber(scoreStats.bestScore.score),
           playerId: scoreStats.bestScore.player?.id,
           player: scoreStats.bestScore.player?.name
+        },
+        worst: {
+          score: formatNumber(scoreStats.worstScore.score),
+          playerId: scoreStats.worstScore.player?.id,
+          player: scoreStats.worstScore.player?.name
         }
       }
     }

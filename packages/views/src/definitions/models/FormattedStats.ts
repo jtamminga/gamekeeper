@@ -12,4 +12,5 @@ export interface FormattedPlayerStat extends FormattedStat {
 export type FormattedScoreStats = {
   average: string
   best: { score: string, player?: string, playerId?: PlayerId }
+  worst: { score: string, player?: string, playerId?: PlayerId }
 }
