@@ -1,34 +1,17 @@
 
-import { addDays, endOfYear, isSameDay } from 'date-fns'
-import {
-  ArrayUtils,
-  CoopPlaythroughData,
-  GameId,
-  PlayerId,
-  PlaysByDateDto,
-  PlaythroughData,
-  PlaythroughQueryOptions,
-  ScoreData,
-  ScoreStatsDto,
-  StatsQuery,
-  StatPerGame,
-  StatsService,
-  VsPlaythroughData,
-  WinrateDto,
-  PlayStreakDto
-} from '@gamekeeper/core'
-import { UserId } from './User'
-import { DbPlaythroughService } from './PlaythroughService'
+import { ArrayUtils } from '@core'
+import { addDays, isSameDay } from 'date-fns'
+import type { GameId } from '../game'
+import type { PlayerId } from '../player'
+import { CoopPlaythroughData, PlaythroughData, ScoreData, VsPlaythroughData } from '../playthrough'
+import { PlaysByDateDto, PlayStreakDto, ScoreStatsDto, StatPerGame, StatsService, WinrateDto } from './StatsService'
+
 
 
 /**
- * Simple implementation using the playthrough service
+ * Simple implementation using the playthrough service all in memory
  */
-export class SimpleStatsService implements StatsService {
-
-  public constructor(
-    private _playthroughService: DbPlaythroughService
-  ) { }
+export class InMemoryStats implements PlaythroughArgs<StatsService> {
 
 
   //
@@ -36,31 +19,26 @@ export class SimpleStatsService implements StatsService {
   // ============================
 
 
-  public async getNumPlays(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<number>> {
-    const playthroughs = await this.getPlaythroughs(query, userId)
+  public async getNumPlays(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<number>> {
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, playthroughs => playthroughs.length)
   }
 
-  public async getWinrates(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<WinrateDto[]>> {
-    const playthroughs = await this.getPlaythroughs(query, userId)
+  public async getWinrates(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<WinrateDto[]>> {
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, this.calculateWinrates)
   }
 
-  public async getOverallWinrates(query: StatsQuery = {}, userId?: UserId): Promise<WinrateDto[]> {
-    const playthroughs = await this.getPlaythroughs(query, userId)
+  public async getOverallWinrates(playthroughs: ReadonlyArray<PlaythroughData>): Promise<WinrateDto[]> {
     return this.calculateWinrates(playthroughs)
   }
 
-  public async getLastPlayed(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<Date | undefined>> {
-    const playthroughs = await this.getPlaythroughs(query, userId)
+  public async getLastPlayed(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<Date | undefined>> {
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, playthroughs => playthroughs[0]?.playedOn)
   }
 
-  public async getNumPlaysByMonth(query: StatsQuery = {}, userId?: UserId): Promise<number[]> {
-    const playthroughs = await this.getPlaythroughs(query, userId)
+  public async getNumPlaysByMonth(playthroughs: ReadonlyArray<PlaythroughData>): Promise<number[]> {
     const groupedByMonth: number[] = []
     for (const playthrough of playthroughs) {
       const monthPlayed = playthrough.playedOn.getMonth()
@@ -69,23 +47,27 @@ export class SimpleStatsService implements StatsService {
     return groupedByMonth
   }
 
-  public async getNumUniqueGamesPlayed(year?: number | undefined, userId?: UserId): Promise<number> {
-    const playthroughs = await this.getPlaythroughs({ year }, userId)
+  public async getNumUniqueGamesPlayed(playthroughs: ReadonlyArray<PlaythroughData>): Promise<number> {
     const uniqueGames = new Set<GameId>()
     playthroughs.forEach(playthrough => uniqueGames.add(playthrough.gameId))
     return uniqueGames.size
   }
   
-  public async getScoreStats(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<ScoreStatsDto | undefined>> {
-    const playthroughs = await this.getPlaythroughs(query, userId)
+  public async getScoreStats(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<ScoreStatsDto | undefined>> {
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, this.calculateScoreStats)
   }
 
-  public async getNumPlaysByDate(query: StatsQuery = {}, userId?: UserId): Promise<PlaysByDateDto[]> {
+  public async getNumPlaysByDate(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlaysByDateDto[]> {
     // by default playthroughs are ordered by played_on date desc
-    const playthroughs = [...await this.getPlaythroughs(query, userId)].reverse()
+    playthroughs = playthroughs.toReversed()
+    
     const result: PlaysByDateDto[] = []
+    // return empty array if there are no playthroughs
+    if (playthroughs.length === 0) {
+      return result
+    }
+
     let preDate = playthroughs[0]?.playedOn
     let plays = 0
     // looping for n+1 times on purpose
@@ -102,9 +84,9 @@ export class SimpleStatsService implements StatsService {
     return result
   }
 
-  public async getPlayStreak(query: StatsQuery = {}, userId?: UserId): Promise<PlayStreakDto> {
+  public async getPlayStreak(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlayStreakDto> {
     // by default playthroughs are ordered by played_on date desc
-    const playthroughs = [...await this.getPlaythroughs(query, userId)].reverse()
+    playthroughs = playthroughs.toReversed()
 
     let bestStreak = 0
     let currentStreak = 0
@@ -141,31 +123,6 @@ export class SimpleStatsService implements StatsService {
   // protected and private
   // =====================
 
-
-  protected getDateRangeFromYear(year: number): { fromDate: Date, toDate: Date } {
-    const fromDate = new Date(year, 0, 1)
-    return {
-      fromDate,
-      toDate: endOfYear(fromDate)
-    }
-  }
-
-  private async getPlaythroughs({ gameId, year, latestPlaythroughs }: StatsQuery, userId?: UserId): Promise<readonly PlaythroughData[]> {
-    let query: PlaythroughQueryOptions  = { gameId }
-
-    // add date range to query if year is specified
-    if (year !== undefined) {
-      const dateRange = this.getDateRangeFromYear(year)
-      query = { ...query, ...dateRange }
-    }
-
-    if (latestPlaythroughs !== undefined) {
-      query.limit = latestPlaythroughs
-    }
-    
-    const playthroughs = await this._playthroughService.getPlaythroughs(query, userId)
-    return playthroughs
-  }
 
   private groupedByGame(playthroughs: ReadonlyArray<PlaythroughData>): Record<GameId, PlaythroughData[]> {
     const grouped: Record<GameId, PlaythroughData[]> = {}
@@ -294,4 +251,11 @@ export class SimpleStatsService implements StatsService {
     }
   }
 
+}
+
+
+type PlaythroughArgs<T> = {
+  [TKey in keyof T]: T[TKey] extends (...args: any[]) => infer TReturn
+    ? (playthroughs: ReadonlyArray<PlaythroughData>) => TReturn
+    : T[TKey]
 }

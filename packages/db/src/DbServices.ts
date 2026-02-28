@@ -1,4 +1,4 @@
-import type { Services } from '@gamekeeper/core'
+import { InMemoryStats, type Services } from '@gamekeeper/core'
 import { DataService } from './DataService'
 import { DbGameService } from './GameService'
 import { DbPlayerService } from './PlayerService'
@@ -22,6 +22,8 @@ export class DbServices implements Services {
     this.playerService = new DbPlayerService(dataService)
     this.playthroughService = new DbPlaythroughService(dataService)
     this.goalService = new DbGoalService(dataService)
-    this.statsService = new DbStatsService(dataService, this.playthroughService)
+
+    const inMemoryStats = new InMemoryStats()
+    this.statsService = new DbStatsService(dataService, inMemoryStats, this.playthroughService)
   }
 }

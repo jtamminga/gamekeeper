@@ -1,10 +1,12 @@
 import {
   GameId,
   StatsQuery,
-  StatPerGame
+  StatPerGame,
+  InMemoryStats,
+  DateUtils
 } from '@gamekeeper/core'
 import { DataService } from './DataService'
-import { SimpleStatsService } from './SimpleStatsService'
+import { DbInMemoryStatsService } from './DbInMemoryStatsService'
 import { DbPlaythroughService } from './PlaythroughService'
 import { UserId, whereUserId } from './User'
 
@@ -25,13 +27,14 @@ type NumPlaysPerMonthDto = {
 
 
 // stats service
-export class DbStatsService extends SimpleStatsService {
+export class DbStatsService extends DbInMemoryStatsService {
 
   public constructor(
     private _dataService: DataService,
+    inMemoryStats: InMemoryStats,
     playthroughService: DbPlaythroughService
   ) {
-    super(playthroughService)
+    super(inMemoryStats, playthroughService)
   }
 
   public override async getNumPlays({ gameId, year }: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<number>> {
@@ -60,7 +63,7 @@ export class DbStatsService extends SimpleStatsService {
     query += ' GROUP BY p.game_id'
 
     // get date range if year is specified
-    const dateRange = year ? this.getDateRangeFromYear(year) : undefined
+    const dateRange = year ? DateUtils.getDateRangeFromYear(year) : undefined
 
     // run query and store result
     const dtos = await this._dataService.all<NumPlaysPerGameDto>(query, {
@@ -105,7 +108,7 @@ export class DbStatsService extends SimpleStatsService {
     query += ' GROUP BY p.game_id'
 
     // get date range if year is specified
-    const dateRange = year ? this.getDateRangeFromYear(year) : undefined
+    const dateRange = year ? DateUtils.getDateRangeFromYear(year) : undefined
 
     // run query and store result
     const dtos = await this._dataService.all<LastPlayPerGameDto>(query, {

@@ -1,6 +1,6 @@
 import { Chart, BarController, BarElement, CategoryScale, LinearScale } from 'chart.js'
 import { useEffect, useRef } from 'react'
-import { lastDayOfMonth as getLastDayOfMonth } from 'date-fns'
+import { endOfDay, lastDayOfMonth as getLastDayOfMonth } from 'date-fns'
 import { BarChartData } from '@gamekeeper/views'
 
 
@@ -64,7 +64,7 @@ export function PlaysByMonth({ data, year, onMonthClick }: Props) {
             const point = points[0];
             const monthIndex = point.index
             const firstDayOfMonth = new Date(year, monthIndex)
-            const lastDayOfMonth = getLastDayOfMonth(firstDayOfMonth)
+            const lastDayOfMonth = endOfDay(getLastDayOfMonth(firstDayOfMonth))
             const monthName = chart.data.labels![point.index]
             onMonthClick?.(firstDayOfMonth, lastDayOfMonth, monthName)
           }
@@ -74,7 +74,7 @@ export function PlaysByMonth({ data, year, onMonthClick }: Props) {
     })
 
     return () => chart.destroy()
-  }, [ref, data, year])
+  }, [ref, data, year, onMonthClick])
 
 
   return <canvas ref={ref} className="bar-chart" />

@@ -1,5 +1,31 @@
-import { GameDto, GameId, GameKeeper, GameKeeperFactory, GameType, NewCoopPlaythroughData, NewGameData, NewVsPlaythroughData, PlayerData, PlayerId, PlaythroughDto, PlaythroughId, ScoreData, ScoringType, Services, SimpleStatsService } from '@gamekeeper/core'
-import { MemoryDatabase, TestGameService, TestPlayerService, TestPlaythroughService } from './TestServices'
+import {
+  GameData,
+  GameId,
+  GameKeeper,
+  GameKeeperFactory,
+  GameType,
+  InMemoryStats,
+  InMemoryStatsService,
+  NewCoopPlaythroughData,
+  NewGameData,
+  NewVsPlaythroughData,
+  PlayerData,
+  PlayerId,
+  PlaythroughData,
+  PlaythroughId,
+  ScoreData,
+  ScoringType,
+  Services,
+  VsPlaythroughData
+} from '@gamekeeper/core'
+import {
+  MemoryDatabase,
+  TestGameService,
+  TestGoalService,
+  TestPlayerService,
+  TestPlaythroughService
+} from './TestServices'
+
 
 export namespace Factory {
 
@@ -12,7 +38,7 @@ export namespace Factory {
     name: 'alex'
   }
 
-  const games: GameDto[] = [
+  const games: GameData[] = [
     {
       id: 'game1' as GameId,
       name: 'Game 1',
@@ -21,14 +47,14 @@ export namespace Factory {
     }
   ]
 
-  const playthroughs: PlaythroughDto[] = [
+  const playthroughs: VsPlaythroughData[] = [
     {
       id: '1' as PlaythroughId,
       gameId: 'game1' as GameId,
-      gameType: GameType.VS,
+      type: 'vs',
       playedOn: new Date(),
-      players: [john.id, alex.id],
-      result: alex.id,
+      playerIds: [john.id, alex.id],
+      winnerId: alex.id
     }
   ]
 
@@ -36,13 +62,16 @@ export namespace Factory {
     const gameService = new TestGameService(db)
     const playerService = new TestPlayerService(db)
     const playthroughService = new TestPlaythroughService(db)
-    const statsService = new SimpleStatsService(playthroughService)
+    const goalService = new TestGoalService()
+    const inMemoryStats = new InMemoryStats()
+    const statsService = new InMemoryStatsService(inMemoryStats, playthroughService)
   
     return {
       gameService,
       playerService,
       playthroughService,
-      statsService
+      statsService,
+      goalService
     }
   }
 
@@ -71,6 +100,7 @@ export namespace Factory {
 
   export function createVsPlaythrough(gameId: GameId, winnerId: PlayerId | null, scores?: ScoreData[]): NewVsPlaythroughData {
     return {
+      type: 'vs',
       gameId,
       playerIds: [john.id, alex.id],
       playedOn: new Date(),
@@ -97,6 +127,7 @@ export namespace Factory {
 
   export function createCoopPlaythrough(gameId: GameId, playersWon: boolean, score?: number): NewCoopPlaythroughData {
     return {
+      type: 'coop',
       gameId,
       playerIds: [john.id, alex.id],
       playedOn: new Date(),
