@@ -4,8 +4,11 @@ import { GamekeeperViewService, ViewService } from '@gamekeeper/views'
 import { useAuth0 } from '@auth0/auth0-react'
 
 
-const apiUrl = import.meta.env.VITE_API_URL
-if (apiUrl === undefined) {
+const API_URL = import.meta.env.VITE_API_URL
+const EXTERNAL_HOSTNAME = import.meta.env.VITE_EXTERNAL_HOSTNAME
+const EXTERNAL_API_URL = import.meta.env.VITE_EXTERNAL_API_URL
+
+if (API_URL === undefined) {
   throw new Error('API_URL not defined')
 }
 
@@ -15,10 +18,21 @@ let gamekeeper: GameKeeper
 let viewService: ViewService
 
 async function initialize(token?: string) {
-  console.log('[bootstrap] initializing app')
+  console.debug('[bootstrap] initializing app')
+
   if (token) {
-    console.log('[bootstrap] token:', token)
+    console.debug('[bootstrap] token:', token)
   }
+
+  let apiUrl = API_URL
+  if (EXTERNAL_HOSTNAME && EXTERNAL_API_URL) {
+    console.debug('[boostrap] checking hostname')
+    if (window.location.hostname === EXTERNAL_HOSTNAME) {
+      console.debug('[boostrap] using external api url')
+      apiUrl = EXTERNAL_API_URL
+    }
+  }
+
   const apiServices = new ApiServices(apiUrl, token)
   gamekeeper = GameKeeperFactory.create(apiServices)
   viewService = new GamekeeperViewService(gamekeeper)
