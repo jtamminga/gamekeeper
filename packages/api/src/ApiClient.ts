@@ -82,7 +82,8 @@ export class ApiClient implements IApiClient {
       headers: {
         ...BASE_HEADERS,
         ...(this.token ? { 'Authorization': `Bearer ${this.token}` } : {})
-      }
+      },
+      credentials: 'include'
     }
   }
 }
