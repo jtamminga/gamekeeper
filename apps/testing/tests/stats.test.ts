@@ -257,6 +257,17 @@ describe('stats', async function () {
       assert.equal(scoreStats!.bestScore.score, 10)
       assert.equal(scoreStats!.bestScore.player, undefined)
     })
+
+    it('playthroughs with no scores should not effect averages', async function () {
+      const { gameplay, insights } = gamekeeper
+
+      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS, scoring: ScoringType.HIGHEST_WINS }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id, Factory.createScores(10, 20)))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
+
+      const scoreStats = await insights.stats.forGame(game).scoreStats()
+      assert.equal(scoreStats!.averageScore, 15)
+    })
   })
 
   describe('play streak streak', async function () {

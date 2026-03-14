@@ -8,6 +8,8 @@ export interface FormattedStat {
 }
 export interface FormattedPlayerStat extends FormattedStat {
   playerId: PlayerId
+  numPlaysAllTime: number
+  numPlaysThisYear: number
 }
 export type FormattedScoreStats = {
   average: string

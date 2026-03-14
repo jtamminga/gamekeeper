@@ -38,18 +38,22 @@ export function GameSummary({ view }: Props) {
         <thead>
           <tr>
             <th>Player</th>
-            <th>{view.year}</th>
-            <th>All</th>
+            <th className="num">{view.year}</th>
+            <th>#</th>
+            <th className="num">All</th>
+            <th>#</th>
           </tr>
         </thead>
         <tbody>
-          {view.winrates.map(({playerId, name, valueThisYear, valueAllTime}, index) =>
+          {view.winrates.map(({playerId, name, numPlaysThisYear, valueThisYear, numPlaysAllTime, valueAllTime}, index) =>
             <tr key={`stat-${index}`} onClick={() => router.toPlayer(playerId)}>
               <td>
                 <PlayerColor playerId={playerId}>{name}</PlayerColor>
               </td>
-              <td>{valueThisYear}</td>
-              <td>{valueAllTime}</td>
+              <td className="num">{valueThisYear}</td>
+              <td className="text-muted">{numPlaysThisYear}</td>
+              <td className="num">{valueAllTime}</td>
+              <td className="text-muted">{numPlaysAllTime}</td>
             </tr>
           )}
         </tbody>
