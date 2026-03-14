@@ -3,6 +3,7 @@ FROM node:lts-bullseye-slim
 # ENV NODE_ENV=production
 ENV PORT=3000
 ENV DB_PATH=test
+ENV ALLOWED_ORIGINS=http://localhost:3000
 
 WORKDIR /usr/src/app
 

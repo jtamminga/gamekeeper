@@ -8,7 +8,8 @@ const BASE_HEADERS = {
 }
 const BASE_OPTIONS = {
   referrerPolicy: 'no-referrer',
-  headers: BASE_HEADERS
+  headers: BASE_HEADERS,
+  credentials: 'include'
 } as const
 
 

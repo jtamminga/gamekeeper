@@ -4,6 +4,7 @@ import 'dotenv/config'
 export type AppConfig = {
   port: string
   dbPath: string
+  allowedOrigins: string[]
   authEnabled: boolean
   auth0?: {
     audience: string
@@ -21,6 +22,7 @@ export type AppConfig = {
 const {
   PORT,
   DB_PATH,
+  ALLOWED_ORIGINS,
   AUTH_ENABLED,
   AUTH0_AUDIENCE,
   AUTH0_ISSUER_BASE_URL,
@@ -40,6 +42,7 @@ if (DB_PATH === undefined) {
 const config: AppConfig = {
   port: PORT,
   dbPath: DB_PATH,
+  allowedOrigins: ALLOWED_ORIGINS?.split(',') ?? [],
   authEnabled: AUTH_ENABLED === 'true',
   httpsEnabled: HTTPS_ENABLED === 'true'
 }

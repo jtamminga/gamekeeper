@@ -17,7 +17,26 @@ import { auth, UnauthorizedError } from 'express-oauth2-jwt-bearer'
 // setup express app
 const app = express()
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  origin: (origin, callback) => {
+
+    // allow requests with no origin
+    if (!origin) {
+      return callback(null, true)
+    }
+
+    // allowed origins are allowed
+    else if (config.allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+
+    // otherwise not allowed
+    else {
+      callback(new Error('Origin not allowed by CORS'))
+    }
+  },
+  credentials: true
+}))
 app.use(logging)
 
 // enable auth if configured
@@ -262,19 +281,6 @@ app.get('/stats', async function (req, res) {
   const summaryView = await gamekeeperViews.getSummaryView(year)
   res.json({ data: summaryView })
 })
-
-
-//
-// dashboard image
-// ===============
-
-
-// app.get('/dashboard-image', async function (req, res) {
-//   const imageBuffer = await dashboardImage()
-//   res.set('Content-type', 'image/png')
-//   res.set('Content-Disposition', 'inline; filename="dashboard.png"')
-//   res.send(imageBuffer)
-// })
 
 
 //
