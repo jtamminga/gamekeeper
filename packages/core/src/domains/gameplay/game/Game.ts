@@ -13,12 +13,14 @@ export abstract class Game<T extends Playthrough = Playthrough>
   private _name: string
   private _scoring: ScoringType
   private _weight: number | undefined
+  private _own: boolean
 
   public constructor(protected _deps: GameplayDeps, data: Omit<GameData, 'type'>) {
     super(data.id)
     this._name = data.name
     this._scoring = data.scoring
     this._weight = data.weight
+    this._own = data.own
   }
 
   public get name(): string {
@@ -31,6 +33,10 @@ export abstract class Game<T extends Playthrough = Playthrough>
 
   public get weight(): number | undefined {
     return this._weight
+  }
+
+  public get own(): boolean {
+    return this._own
   }
 
   public get hasScoring(): boolean {
@@ -48,6 +54,7 @@ export abstract class Game<T extends Playthrough = Playthrough>
   public update(data: Omit<UpdatedGameData, 'id'>): void {
     this._name = data.name ?? this._name
     this._weight = data.weight ?? this._weight
+    this._own = data.own ?? this._own
   }
 
   public abstract toData(): GameData
@@ -57,7 +64,8 @@ export abstract class Game<T extends Playthrough = Playthrough>
       id: this.id,
       name: this._name,
       scoring: this._scoring,
-      weight: this._weight
+      weight: this._weight,
+      own: this._own
     }
   }
 

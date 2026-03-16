@@ -2,7 +2,7 @@
   margin-bottom: var(--space-lg);
 }
 
-.form-control > label:first-of-type {
+.form-control > label:not(.checkbox-label):first-of-type {
   display: block;
   margin-bottom: var(--space-md);
   font-weight: bold;
@@ -48,6 +48,6 @@ input, select, textarea {
   cursor: pointer;
 }
 
-.form-control .player-select-list .checkbox-label > input {
+.form-control .checkbox-label > input {
   margin-right: var(--space-md);
 }

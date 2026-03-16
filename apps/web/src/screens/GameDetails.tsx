@@ -26,6 +26,9 @@ export function GameDetails({ gameId }: Props) {
         {view.weightLabel &&
           <div className="pill">{view.weightLabel}</div>
         }
+        {view.game.own &&
+          <div className="pill">Own</div>
+        }
       </div>
 
       <GameSummary

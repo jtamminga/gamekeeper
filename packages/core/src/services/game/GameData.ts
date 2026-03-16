@@ -11,7 +11,8 @@ export enum GameType {
 export enum ScoringType {
   HIGHEST_WINS = 1,
   LOWEST_WINS = 2,
-  NO_SCORE = 3
+  NO_SCORE = 3,
+  ROUNDS = 4
 }
 
 export interface GameData {
@@ -20,6 +21,7 @@ export interface GameData {
   scoring: ScoringType
   type: GameType
   weight?: number
+  own: boolean
 }
 
 export type NewGameData = NewData<GameData>
@@ -28,6 +30,7 @@ export type UpdatedGameData = {
   id: GameId
   name?: string
   weight?: number
+  own?: boolean
 }
 
 
@@ -38,7 +41,7 @@ export namespace NewGameData {
     if (!data.name) {
       errors.push('name is required')
     }
-    if (data.scoring === undefined || data.scoring < 1 || data.scoring > 3 ) {
+    if (data.scoring === undefined || data.scoring < 1 || data.scoring > 4 ) {
       errors.push('invalid scoring type')
     }
     if (data.type !== GameType.VS && data.type !== GameType.COOP) {
@@ -46,6 +49,9 @@ export namespace NewGameData {
     }
     if (data.weight !== undefined && (data.weight < 0 || data.weight > 5)) {
       errors.push('weight must be between 0 and 5')
+    }
+    if (data.own === undefined) {
+      errors.push('own status is required')
     }
 
     return errors

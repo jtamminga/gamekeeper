@@ -10,6 +10,7 @@ export interface DbGameDto {
   type: number
   scoring: number
   weight?: number
+  own: number
 }
 
 
@@ -34,9 +35,9 @@ export class DbGameService extends DbService implements GameService {
   }
 
   public async addGame(game: NewGameData, userId?: UserId): Promise<GameData> {
-    const query = 'INSERT INTO games (user_id, name, type, scoring, weight) VALUES (?, ?, ?, ?, ?)'
-    const id = await this._dataService.insert(query, userId, game.name, game.type, game.scoring, game.weight)
-    return this.transform({ ...game, id })
+    const query = 'INSERT INTO games (user_id, name, type, scoring, weight, own) VALUES (?, ?, ?, ?, ?, ?)'
+    const id = await this._dataService.insert(query, userId, game.name, game.type, game.scoring, game.weight, game.own ? 1 : 0)
+    return { ...game, id: id.toString() as GameId }
   }
   
   public async updateGame(updatedGame: UpdatedGameData, userId?: UserId): Promise<GameData> {
@@ -44,7 +45,8 @@ export class DbGameService extends DbService implements GameService {
       name: 'name',
       type: 'type',
       scoring: 'scoring',
-      weight: 'weight'
+      weight: 'weight',
+      own: 'own'
     }
 
     const mappedKeys = Object.keys(updatedGame)
@@ -53,8 +55,16 @@ export class DbGameService extends DbService implements GameService {
     const setStatements = mappedKeys
       .map(key => `${key} = ?`)
       .join(',')
-    const updatedValues = mappedKeys.map(key =>
-      updatedGame[key as keyof UpdatedGameData])
+    const updatedValues = mappedKeys.map(key => {
+      const value = updatedGame[key as keyof UpdatedGameData]
+      if (key === 'own') {
+        return value ? 1 : 0
+      }
+      else {
+        return value
+      }
+    })
+      
 
     const query = `UPDATE games SET ${setStatements} WHERE id = ? AND ${whereUserId(userId)}`
     await this._dataService.run(query, ...updatedValues, updatedGame.id, userId)
@@ -67,6 +77,7 @@ export class DbGameService extends DbService implements GameService {
       name: game.name,
       type: game.type as GameType,
       scoring: game.scoring as ScoringType,
+      own: game.own === 1
     }
 
     if (game.weight !== undefined && game.weight !== null) {

@@ -10,6 +10,7 @@ interface ApiGameDto {
   type: number
   scoring: number
   weight?: number
+  own: boolean
 }
 
 
@@ -42,7 +43,8 @@ export class ApiGameService extends ApiService implements GameService {
       name: game.name,
       type: game.type as GameType,
       scoring: game.scoring as ScoringType,
-      weight: game.weight
+      weight: game.weight,
+      own: game.own
     }
   }
 
