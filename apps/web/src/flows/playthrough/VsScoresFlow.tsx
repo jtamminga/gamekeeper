@@ -38,7 +38,7 @@ export function VsScoresFlow({ flow, onComplete }: Props) {
   return (
     <>
       <div className="form-control">
-        <label>Scores</label>
+        <label>{flow.game.roundBased ? 'Rounds won' : 'Score'}</label>
         <div className="player-score-inputs">
           {playerScores.map(({ player, score }) =>
             <Fragment key={player.id}>

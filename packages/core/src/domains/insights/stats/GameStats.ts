@@ -47,7 +47,7 @@ export class GameStats {
 
   public async scoreStats(query?: OverallStatsQuery): Promise<ScoreStats | undefined> {
     // score stats don't make sense for rounds, and obviously if there is no scoring
-    if (this.game.scoring === ScoringType.NO_SCORE || this.game.scoring === ScoringType.ROUNDS) {
+    if (this.game.scoring === ScoringType.NO_SCORE || this.game.scoring === ScoringType.MOST_ROUNDS) {
       return undefined
     }
 

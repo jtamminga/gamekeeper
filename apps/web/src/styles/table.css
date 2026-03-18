@@ -34,3 +34,6 @@ td.long {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+td.center, th.center {
+  text-align: center;
+}

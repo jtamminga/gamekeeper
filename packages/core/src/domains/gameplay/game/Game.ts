@@ -43,6 +43,10 @@ export abstract class Game<T extends Playthrough = Playthrough>
     return this.scoring !== ScoringType.NO_SCORE
   }
 
+  public get roundBased(): boolean {
+    return this.scoring === ScoringType.MOST_ROUNDS
+  }
+
   public get hasPlays(): boolean {
     return this.playthroughs.length > 0
   }

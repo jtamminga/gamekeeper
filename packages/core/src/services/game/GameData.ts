@@ -12,7 +12,7 @@ export enum ScoringType {
   HIGHEST_WINS = 1,
   LOWEST_WINS = 2,
   NO_SCORE = 3,
-  ROUNDS = 4
+  MOST_ROUNDS = 4
 }
 
 export interface GameData {

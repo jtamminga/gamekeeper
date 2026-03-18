@@ -80,17 +80,17 @@ export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
     }
   }
 
-  public best(scoringType: ScoringType.HIGHEST_WINS | ScoringType.LOWEST_WINS | ScoringType.ROUNDS): ScoreData {
+  public best(scoringType: ScoringType.HIGHEST_WINS | ScoringType.LOWEST_WINS | ScoringType.MOST_ROUNDS): ScoreData {
     switch (scoringType) {
       case ScoringType.HIGHEST_WINS:
-      case ScoringType.ROUNDS:
+      case ScoringType.MOST_ROUNDS:
         return this.highest()
       case ScoringType.LOWEST_WINS:
         return this.lowest()
     }
   }
 
-  public winner(scoringType: ScoringType.HIGHEST_WINS | ScoringType.LOWEST_WINS | ScoringType.ROUNDS): PlayerId | null {
+  public winner(scoringType: ScoringType.HIGHEST_WINS | ScoringType.LOWEST_WINS | ScoringType.MOST_ROUNDS): PlayerId | null {
     if (this.tied) {
       return null
     }

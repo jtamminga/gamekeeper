@@ -13,6 +13,7 @@ export function BaseFlow({ onComplete }: Props) {
   const [type, setType] = useState('1')
   const [scoring, setScoring] = useState('1')
   const [weight, setWeight] = useState('')
+  const [own, setOwn] = useState(false)
 
   function onTypeChange(e: ChangeEvent<HTMLInputElement>) {
     setType(e.target.value)
@@ -32,7 +33,8 @@ export function BaseFlow({ onComplete }: Props) {
     const data: NewGameData = {
       name,
       type: parseInt(type),
-      scoring: parseInt(scoring)
+      scoring: parseInt(scoring),
+      own
     }
     if (weight.length > 0) {
       data.weight = Number.parseFloat(weight)
@@ -111,6 +113,16 @@ export function BaseFlow({ onComplete }: Props) {
             <input
               type="radio"
               name="scoring-type"
+              value="4"
+              checked={scoring === '4'}
+              onChange={onScoreTypeChange}
+            />
+            Most rounds wins
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="scoring-type"
               value="3"
               checked={scoring === '3'}
               onChange={onScoreTypeChange}
@@ -132,6 +144,20 @@ export function BaseFlow({ onComplete }: Props) {
           onChange={e => setWeight(e.target.value)}
         />
         <p className="help-text">A scale from 0 to 5</p>
+      </div>
+
+      {/* own */}
+      <div className="form-control">
+        <label>Own</label>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            name="own"
+            checked={own}
+            onChange={e => setOwn(e.target.checked)}
+          />
+          This game is in my collection
+        </label>
       </div>
 
       <button

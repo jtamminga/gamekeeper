@@ -1,8 +1,7 @@
 .pill {
   border-radius: var(--border-radius);
   background-color: var(--dark-gray-accent);
-  padding: 5px 12px;
+  padding: 4px 10px;
   color: var(--color-gray);
-  font-weight: 600;
   white-space: nowrap;
 }

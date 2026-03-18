@@ -104,7 +104,7 @@ export class GameViewFactory {
           .gameplay
           .playthroughs
           .latest(NUM_HISTORICAL_PLAYTHROUGHS, game.id)
-      , { scores: true }),
+      , { scores: true, roundBased: game.roundBased }),
       numPlaysPerDayThisYear: {
         ...toNumPlaysPerDay(numPlaysByDateThisYear, year)
       }
