@@ -89,12 +89,21 @@ export class GameViewFactory {
       }
     }
 
+    const highestWinrateAllTime = winratesAllTime.highest
+
     return {
       year,
       game,
       gameTypeLabel,
       weightLabel,
       numPlaythroughs,
+      winnerAllTime: highestWinrateAllTime
+        ? {
+            playerId: highestWinrateAllTime.player.id,
+            playerName: highestWinrateAllTime.player.name,
+            percentage: formatPercent(highestWinrateAllTime.winrate)
+          }
+        : undefined,
       winrates,
       stats: [numPlaythroughs, ...winrates],
       scoreStats: formattedScoreStats,
@@ -104,7 +113,7 @@ export class GameViewFactory {
           .gameplay
           .playthroughs
           .latest(NUM_HISTORICAL_PLAYTHROUGHS, game.id)
-      , { scores: true, roundBased: game.roundBased }),
+      , { scores: game.hasScoring, roundBased: game.roundBased }),
       numPlaysPerDayThisYear: {
         ...toNumPlaysPerDay(numPlaysByDateThisYear, year)
       }

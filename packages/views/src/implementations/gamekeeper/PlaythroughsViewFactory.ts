@@ -16,13 +16,17 @@ export class PlaythroughsViewFactory {
     const playthroughs = await this.gamekeeper.gameplay.playthroughs
       .hydrate({ limit: MAX_PLAYTHROUGHS, ...options })
 
+    const game = options.gameId
+      ? this.gamekeeper.gameplay.games.get(options.gameId)
+      : undefined
+
+    const roundBased = game?.roundBased
+
     return {
-      game: options.gameId
-        ? this.gamekeeper.gameplay.games.get(options.gameId)
-        : undefined,
+      game,
       playthroughs: formatPlaythroughs(
         playthroughs.all(options),
-        formatOptions
+        {roundBased, ...formatOptions}
       )
     }
   }

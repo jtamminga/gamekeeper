@@ -5,7 +5,8 @@ CREATE TABLE games (
     name    TEXT    NOT NULL,
     type    INTEGER NOT NULL,
     scoring INTEGER,
-    weight  REAL
+    weight  REAL,
+    own     INTEGER(1) NOT NULL DEFAULT(1)
 );
 
 CREATE TABLE players (

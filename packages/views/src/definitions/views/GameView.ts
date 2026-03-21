@@ -1,5 +1,5 @@
 import type { Game } from '@gamekeeper/core'
-import type { FormattedPlayerStat, FormattedPlaythroughs, FormattedScoreStats, FormattedStat } from '../models'
+import type { FormattedPlayerStat, FormattedPlaythroughs, FormattedScoreStats, FormattedStat, FormattedWinrate } from '../models'
 
 
 export interface GameView {
@@ -8,6 +8,7 @@ export interface GameView {
   gameTypeLabel: string
   weightLabel: string | undefined
   numPlaythroughs: FormattedStat
+  winnerAllTime: FormattedWinrate | undefined
   winrates: ReadonlyArray<FormattedPlayerStat>
   stats: ReadonlyArray<FormattedStat>
   scoreStats: FormattedScoreStats | undefined

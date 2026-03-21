@@ -26,28 +26,16 @@
 }
 
 
-.detailed-stat-card {
-  height: 25px;
-  background-color: var(--dark-gray-accent);
-
-  padding: var(--space-md) var(--space-lg);
-  margin-bottom: var(--space-md);
-  border-radius: var(--border-radius);
-
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+.stat-card-group > .stat-card {
+  margin-bottom: 0;
+  border-radius: 0;
 }
-
-.detailed-stat-card > div {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
+.stat-card-group > .stat-card:first-of-type {
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
 }
-.detailed-stat-card > div > span:first-child {
-  color: var(--color-gray);
-  text-align: left;
+.stat-card-group > .stat-card:last-of-type {
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
-.detailed-stat-card > div > span:last-child {
-  /* font-size: 1.3em; */
-  text-align: left;
+.stat-card-group > .stat-card:not(:last-of-type) {
+  border-bottom: 1px solid var(--dark-gray);
 }
