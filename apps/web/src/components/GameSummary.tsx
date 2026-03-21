@@ -29,16 +29,14 @@ export function GameSummary({ view }: Props) {
         />
       }
 
-      <div className="stat-card-group">
-        <StatCard
-          value={view.numPlaythroughs.valueThisYear}
-          description={`plays in ${view.year}`}
-        />
-        <StatCard
-          value={view.numPlaythroughs.valueAllTime}
-          description="plays all time"
-        />
-      </div>
+      <StatCard
+        value={view.numPlaythroughs.valueThisYear}
+        description={`plays in ${view.year}`}
+      />
+      <StatCard
+        value={view.numPlaythroughs.valueAllTime}
+        description="plays all time"
+      />
 
       {view.scoreStats &&
         <>
@@ -100,7 +98,7 @@ export function GameSummary({ view }: Props) {
 // helpers
 function renderScoreStats({ average, best, worst }: FormattedScoreStats) {
   return (
-    <div className="stat-card-group">
+    <>
       <StatCard
         value={average}
         description="average score"
@@ -119,6 +117,6 @@ function renderScoreStats({ average, best, worst }: FormattedScoreStats) {
           <>worst score {worst.playerId && <PlayerColor playerId={worst.playerId}>{worst.player}</PlayerColor>}</>
         }
       />
-    </div>
+    </>
   )
 }
