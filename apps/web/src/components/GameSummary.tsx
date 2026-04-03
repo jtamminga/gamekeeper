@@ -1,9 +1,9 @@
+import { useRouter } from '@app/hooks'
+import { GameView } from '@gamekeeper/views'
+import { CalendarGraph } from './CalendarGraph'
 import { PlayerColor } from './PlayerColor'
 import { PlaythroughsList } from './PlaythroughsList'
 import { StatCard } from './StatCard'
-import { useRouter } from '@app/hooks'
-import { CalendarGraph } from './CalendarGraph'
-import { FormattedScoreStats, GameView } from '@gamekeeper/views'
 
 
 type Props = {
@@ -14,34 +14,64 @@ type Props = {
 export function GameSummary({ view }: Props) {
 
   const router = useRouter()
+  const {
+    year,
+    game,
+    winnerAllTime,
+    numPlaythroughs,
+    scoreStats,
+    winrates,
+    latestPlaythroughs,
+    hasMorePlaythroughs,
+    numPlaysPerDayThisYear
+  } = view
 
   return (
     <>
       <h3>General stats</h3>
-      {view.winnerAllTime &&
+      {winnerAllTime &&
         <StatCard
-          value={view.winnerAllTime.percentage}
+          value={winnerAllTime.percentage}
           description={
             <>
-              best player <PlayerColor playerId={view.winnerAllTime.playerId}>{view.winnerAllTime.playerName}</PlayerColor>
+              all time best winrate <PlayerColor playerId={winnerAllTime.playerId}>{winnerAllTime.name}</PlayerColor>
             </>
           }
         />
       }
+      <div className="flex gap-md">
+        <StatCard
+          value={numPlaythroughs.valueThisYear}
+          description={`plays in ${year}`}
+        />
+        <StatCard
+          value={numPlaythroughs.valueAllTime}
+          description="plays all time"
+        />
+      </div>
 
-      <StatCard
-        value={view.numPlaythroughs.valueThisYear}
-        description={`plays in ${view.year}`}
-      />
-      <StatCard
-        value={view.numPlaythroughs.valueAllTime}
-        description="plays all time"
-      />
-
-      {view.scoreStats &&
+      {scoreStats &&
         <>
           <h3>Score stats</h3>
-          {renderScoreStats(view.scoreStats)}
+  
+          <StatCard
+            value={scoreStats.average}
+            description="average score"
+          />
+
+          <StatCard
+            value={scoreStats.best.score}
+            description={
+              <>best score {scoreStats.best.playerId && <PlayerColor playerId={scoreStats.best.playerId}>{scoreStats.best.player}</PlayerColor>}</>
+            }
+          />
+
+          <StatCard
+            value={scoreStats.worst.score}
+            description={
+              <>worst score {scoreStats.worst.playerId && <PlayerColor playerId={scoreStats.worst.playerId}>{scoreStats.worst.player}</PlayerColor>}</>
+            }
+          />
         </>
       }
 
@@ -50,14 +80,14 @@ export function GameSummary({ view }: Props) {
         <thead>
           <tr>
             <th>Player</th>
-            <th className="num">{view.year}</th>
+            <th className="num">{year}</th>
             <th>#</th>
             <th className="num">All</th>
             <th>#</th>
           </tr>
         </thead>
         <tbody>
-          {view.winrates.map(({playerId, name, numPlaysThisYear, valueThisYear, numPlaysAllTime, valueAllTime}, index) =>
+          {winrates.map(({playerId, name, numPlaysThisYear, valueThisYear, numPlaysAllTime, valueAllTime}, index) =>
             <tr key={`stat-${index}`} onClick={() => router.toPlayer(playerId)}>
               <td>
                 <PlayerColor playerId={playerId}>{name}</PlayerColor>
@@ -74,48 +104,20 @@ export function GameSummary({ view }: Props) {
       <h3>Lastest playthroughs</h3>
       <PlaythroughsList
         className="mb-lg"
-        formattedPlaythroughs={view.latestPlaythroughs}
+        formattedPlaythroughs={latestPlaythroughs}
       />
-
-      {view.hasMorePlaythroughs &&
+      {hasMorePlaythroughs &&
         <div className="flex h-centered mb-lg">
           <button
             type="button"
-            onClick={() => router.setPage({ name: 'GamePlaythroughs', props: { gameId: view.game.id } })}
+            onClick={() => router.setPage({ name: 'GamePlaythroughs', props: { gameId: game.id } })}
           >All Playthroughs</button>
         </div>
       }
 
       <CalendarGraph
-        countPerDay={view.numPlaysPerDayThisYear.plays}
-        firstDay={view.numPlaysPerDayThisYear.firstDate}
-      />
-    </>
-  )
-}
-
-
-// helpers
-function renderScoreStats({ average, best, worst }: FormattedScoreStats) {
-  return (
-    <>
-      <StatCard
-        value={average}
-        description="average score"
-      />
-
-      <StatCard
-        value={best.score}
-        description={
-          <>best score {best.playerId && <PlayerColor playerId={best.playerId}>{best.player}</PlayerColor>}</>
-        }
-      />
-
-      <StatCard
-        value={worst.score}
-        description={
-          <>worst score {worst.playerId && <PlayerColor playerId={worst.playerId}>{worst.player}</PlayerColor>}</>
-        }
+        countPerDay={numPlaysPerDayThisYear.plays}
+        firstDay={numPlaysPerDayThisYear.firstDate}
       />
     </>
   )

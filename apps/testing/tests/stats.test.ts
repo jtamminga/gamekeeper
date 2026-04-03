@@ -1,190 +1,216 @@
 import assert from 'assert'
-import { GameKeeper, GameType, ScoringType } from '@gamekeeper/core'
+import { CoopWinrates, GameKeeper, Gameplay, GameWinrate, Insights, PlayerWinrate, ScoringType, Winrates } from '@gamekeeper/core'
 import { Factory } from './Factory'
 
 const alex = Factory.alex
 const john = Factory.john
 
-describe('stats', async function () {
+describe('stats', function () {
 
   let gamekeeper: GameKeeper
+  let gameplay: Gameplay
+  let insights: Insights
 
   beforeEach(async function () {
     gamekeeper = Factory.createGamekeeper()
     await gamekeeper.gameplay.hydrate()
+    
+    gameplay = gamekeeper.gameplay
+    insights = gamekeeper.insights
   })
 
   describe('playthrough counts', async function () {
     it('should count 1 playthrough', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame())
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
 
       const gameStats = insights.stats.forGame(game)
       assert.equal(await gameStats.numPlaythroughs(), 1)
-
-      const overallStats = await gamekeeper.insights.stats.numPlaythroughs({})
-      assert.equal(await overallStats.get(game), 1)
     })
 
     it('tied games should still count as playthrough', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame())
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, null))
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: null }))
 
       const gameStats = insights.stats.forGame(game)
       assert.equal(await gameStats.numPlaythroughs(), 2)
-
-      const overallStats = await insights.stats.numPlaythroughs({})
-      assert.equal(await overallStats.get(game), 2)
     })
   })
 
-  describe('calculating winrates', async function () {
-    it('single playthrough should have 100% winrate', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame())
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
+  describe('calculating winrates', function () {
+    it('no playthroughs should have no winrate', async function() {
+      const game = await gameplay.games.create(Factory.createVsGame())
 
       const winrates = await insights.stats.winrates({})
-      const gameWinrates = winrates.get(game)!
-      assert.equal(gameWinrates.winrateFor(alex.id), 1)
-      assert.equal(gameWinrates.winrateFor(john.id), 0)
-      assert.equal(gameWinrates.highest?.player.id, alex.id)
-      assert.equal(gameWinrates.highest?.winrate, 1)
-
-      const overallWinrates = await insights.stats.overallWinrates()
-      assert.equal(overallWinrates.winrateFor(alex.id), 1)
-      assert.equal(overallWinrates.winrateFor(john.id), 0)
-      assert.equal(overallWinrates.highest?.player.id, alex.id)
-      assert.equal(overallWinrates.highest?.winrate, 1)
+      const gameWinrates = winrates.get(game)
+      assert.equal(gameWinrates, undefined)
     })
 
-    it('single game with multiple playthroughs', async function () {
-      const { gameplay, insights } = gamekeeper
+    describe('vs games', function () {
+      it('single playthrough', async function () {
+        const game = await gameplay.games.create(Factory.createVsGame())
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
 
-      const game = await gameplay.games.create(Factory.createGame())
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, john.id))
+        const winrates = await insights.stats.winrates({})
+        const gameWinrates = winrates.get(game)!
+        assert.ok(gameWinrates instanceof Winrates)
+        assert.equal(gameWinrates.winrateFor(alex.id), 1)
+        assert.equal(gameWinrates.winrateFor(john.id), 0)
+        assert.equal(gameWinrates.highest?.player.id, alex.id)
+        assert.equal(gameWinrates.highest?.winrate, 1)
+      })
 
-      const winrates = await insights.stats.winrates({})
-      const gameWinrates = winrates.get(game)!
-      assert.equal(gameWinrates.winrateFor(alex.id), 2 / 3)
-      assert.equal(gameWinrates.winrateFor(john.id), 1 / 3)
-      assert.equal(gameWinrates.highest?.player.id, alex.id)
-      assert.equal(gameWinrates.highest?.winrate, 2 / 3)
+      it('single tied playthrough', async function () {
+        const game = await gameplay.games.create(Factory.createVsGame())
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: null }))
 
-      const overallWinrates = await insights.stats.overallWinrates()
-      assert.equal(overallWinrates.winrateFor(alex.id), 2 / 3)
-      assert.equal(overallWinrates.winrateFor(john.id), 1 / 3)
-      assert.equal(overallWinrates.highest?.player.id, alex.id)
-      assert.equal(overallWinrates.highest?.winrate, 2 / 3)
+        const winrates = await insights.stats.winrates({})
+        const gameWinrates = winrates.get(game)!
+        assert.ok(gameWinrates instanceof Winrates)
+        assert.equal(gameWinrates.for(alex.id), undefined)
+        assert.equal(gameWinrates.for(john.id), undefined)
+      })
+
+      it('single game with multiple playthroughs', async function () {
+        const game = await gameplay.games.create(Factory.createVsGame())
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: john.id }))
+
+        const winrates = await insights.stats.winrates({})
+        const gameWinrates = winrates.get(game)!
+        assert.ok(gameWinrates instanceof Winrates)
+        assert.equal(gameWinrates.winrateFor(alex.id), 2 / 3)
+        assert.equal(gameWinrates.winrateFor(john.id), 1 / 3)
+        assert.equal(gameWinrates.highest?.player.id, alex.id)
+        assert.equal(gameWinrates.highest?.winrate, 2 / 3)
+      })
+
+      it('tied games should be ignored for winrates', async function () {
+        const game = await gameplay.games.create(Factory.createVsGame())
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: null })) // tie
+
+        const winrates = await insights.stats.winrates({})
+        const gameWinrates = winrates.get(game)!
+        assert.ok(gameWinrates instanceof Winrates)
+        assert.equal(gameWinrates.winrateFor(alex.id), 1)
+        assert.equal(gameWinrates.winrateFor(john.id), 0)
+        assert.equal(gameWinrates.highest?.player.id, alex.id)
+        assert.equal(gameWinrates.highest?.winrate, 1)
+      })
+
+      it('multiple games', async function () {
+        const vs1 = await gameplay.games.create(Factory.createVsGame({ name: 'game1' }))
+        const vs2 = await gameplay.games.create(Factory.createVsGame({ name: 'game2' }))
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: vs1.id, winnerId: alex.id }))
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: vs1.id, winnerId: john.id }))
+        await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: vs2.id, winnerId: john.id }))
+
+        const winrates = await insights.stats.winrates({})
+        const vs1Winrates = winrates.get(vs1)!
+        assert.ok(vs1Winrates instanceof Winrates)
+        assert.equal(vs1Winrates.winrateFor(alex.id), 1 / 2)
+        assert.equal(vs1Winrates.winrateFor(john.id), 1 / 2)
+        assert.equal(vs1Winrates.highest?.winrate, 1 / 2)
+
+        const vs2Winrates = winrates.get(vs2)!
+        assert.ok(vs2Winrates instanceof Winrates)
+        assert.equal(vs2Winrates.winrateFor(alex.id), 0)
+        assert.equal(vs2Winrates.winrateFor(john.id), 1)
+        assert.equal(vs2Winrates.highest?.player.id, john.id)
+        assert.equal(vs2Winrates.highest?.winrate, 1)
+
+        const overallWinrates = await insights.stats.overallWinrates()
+        assert.equal(overallWinrates.winrateFor(alex.id), 1 / 3)
+        assert.equal(overallWinrates.winrateFor(john.id), 2 / 3)
+        assert.equal(overallWinrates.highest?.player.id, john.id)
+        assert.equal(overallWinrates.highest?.winrate, 2 / 3)
+      })
     })
 
-    it('tied games should be ignored for winrates', async function () {
-      const { gameplay, insights } = gamekeeper
+    describe('coop games', function () {
+      it('single playthrough with players winning', async function() {
+        const game = await gameplay.games.create(Factory.createCoopGame())
+        await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: true }))
 
-      const game = await gameplay.games.create(Factory.createGame())
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, null)) // tie
+        const winrates = await insights.stats.winrates({})
+        const gameWinrates = winrates.get(game)
+        assert.ok(gameWinrates instanceof CoopWinrates)
+        assert.equal(gameWinrates.for(alex.id)!.winrate, 1)
+        assert.equal(gameWinrates.for(alex.id)!.plays, 1)
+        assert.equal(gameWinrates.for(john.id)!.winrate, 1)
+        assert.equal(gameWinrates.for(john.id)!.plays, 1)
+        assert.equal(gameWinrates.gameWinrate.winrate, 0)
+        assert.equal(gameWinrates.gameWinrate.plays, 1)
+        assert.ok(gameWinrates.highest instanceof PlayerWinrate)
+        assert.equal(gameWinrates.highest.winrate, 1)
+      })
 
-      const winrates = await insights.stats.winrates({})
-      const gameWinrates = winrates.get(game)!
-      assert.equal(gameWinrates.winrateFor(alex.id), 1)
-      assert.equal(gameWinrates.winrateFor(john.id), 0)
-      assert.equal(gameWinrates.highest?.player.id, alex.id)
-      assert.equal(gameWinrates.highest?.winrate, 1)
+      it('single playthrough with game winning', async function() {
+        const game = await gameplay.games.create(Factory.createCoopGame())
+        await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false }))
 
-      const overallWinrates = await insights.stats.overallWinrates()
-      assert.equal(overallWinrates.winrateFor(alex.id), 1)
-      assert.equal(overallWinrates.winrateFor(john.id), 0)
-      assert.equal(overallWinrates.highest?.player.id, alex.id)
-      assert.equal(overallWinrates.highest?.winrate, 1)
+        const winrates = await insights.stats.winrates({})
+        const gameWinrates = winrates.get(game)
+        assert.ok(gameWinrates instanceof CoopWinrates)
+        assert.equal(gameWinrates.for(alex.id)!.winrate, 0)
+        assert.equal(gameWinrates.for(alex.id)!.plays, 1)
+        assert.equal(gameWinrates.for(john.id)!.winrate, 0)
+        assert.equal(gameWinrates.for(john.id)!.plays, 1)
+        assert.equal(gameWinrates.gameWinrate.winrate, 1)
+        assert.equal(gameWinrates.gameWinrate.plays, 1)
+        assert.ok(gameWinrates.highest instanceof GameWinrate)
+        assert.equal(gameWinrates.highest.winrate, 1)
+        assert.equal(gameWinrates.highest.plays, 1)
+      })
+
+      it('multple playthroughs', async function () {
+        const game = await gameplay.games.create(Factory.createCoopGame())
+        await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: true, playerIds: [alex.id] }))
+        await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false, playerIds: [john.id] }))
+        await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false, playerIds: [john.id] }))
+        await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false, playerIds: [alex.id, john.id] }))
+
+        const winrates = await insights.stats.winrates({})
+        const gameWinrates = winrates.get(game)
+        assert.ok(gameWinrates instanceof CoopWinrates)
+        assert.equal(gameWinrates.for(alex.id)!.winrate, 1 / 2)
+        assert.equal(gameWinrates.for(alex.id)!.plays, 2)
+        assert.equal(gameWinrates.for(john.id)!.winrate, 0 / 3)
+        assert.equal(gameWinrates.for(john.id)!.plays, 3)
+        assert.equal(gameWinrates.gameWinrate.winrate, 3 / 4)
+        assert.equal(gameWinrates.gameWinrate.plays, 4)
+        assert.ok(gameWinrates.highest instanceof GameWinrate)
+        assert.equal(gameWinrates.highest.winrate, 3 / 4)
+        assert.equal(gameWinrates.highest.plays, 4)
+      })
     })
 
-    it('multiple games', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const vs1 = await gameplay.games.create(Factory.createGame({ name: 'game1' }))
-      const vs2 = await gameplay.games.create(Factory.createGame({ name: 'game2' }))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(vs1.id, alex.id))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(vs1.id, john.id))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(vs2.id, john.id))
-
-      const winrates = await insights.stats.winrates({})
-      const vs1Winrates = winrates.get(vs1)!
-      assert.equal(vs1Winrates.winrateFor(alex.id), 1 / 2)
-      assert.equal(vs1Winrates.winrateFor(john.id), 1 / 2)
-      assert.equal(vs1Winrates.highest?.winrate, 1 / 2)
-
-      const vs2Winrates = winrates.get(vs2)!
-      assert.equal(vs2Winrates.winrateFor(alex.id), 0)
-      assert.equal(vs2Winrates.winrateFor(john.id), 1)
-      assert.equal(vs2Winrates.highest?.player.id, john.id)
-      assert.equal(vs2Winrates.highest?.winrate, 1)
+    it('overall winrates with mixed game types', async function () {
+      const vs = await gameplay.games.create(Factory.createVsGame({ name: 'vs' }))
+      const coop = await gameplay.games.create(Factory.createCoopGame({ name: 'coop' }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: vs.id, winnerId: alex.id }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: coop.id, playersWon: false }))
 
       const overallWinrates = await insights.stats.overallWinrates()
-      assert.equal(overallWinrates.winrateFor(alex.id), 1 / 3)
-      assert.equal(overallWinrates.winrateFor(john.id), 2 / 3)
-      assert.equal(overallWinrates.highest?.player.id, john.id)
-      assert.equal(overallWinrates.highest?.winrate, 2 / 3)
-    })
-
-    it('coop games', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const vs = await gameplay.games.create(Factory.createGame({ name: 'vs', type: GameType.VS }))
-      const coop = await gameplay.games.create(Factory.createGame({ name: 'coop', type: GameType.COOP }))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(vs.id, alex.id))
-      await gameplay.playthroughs.create(Factory.createCoopPlaythrough(coop.id, false))
-
-      const winrates = await insights.stats.winrates({})
-      const vsWinrates = winrates.get(vs)!
-      assert.equal(vsWinrates.winrateFor(alex.id), 1)
-      assert.equal(vsWinrates.winrateFor(john.id), 0)
-      assert.equal(vsWinrates.highest?.player.id, alex.id)
-      assert.equal(vsWinrates.highest?.winrate, 1)
-
-      const coopWinrates = winrates.get(coop)!
-      assert.equal(coopWinrates.winrateFor(alex.id), 0)
-      assert.equal(coopWinrates.winrateFor(john.id), 0)
-      assert.equal(coopWinrates.highest?.winrate, 0)
-
-      const overallWinrates = await insights.stats.overallWinrates()
+      assert.ok(overallWinrates instanceof Winrates)
       assert.equal(overallWinrates.winrateFor(alex.id), 1 / 2)
       assert.equal(overallWinrates.winrateFor(john.id), 0)
       assert.equal(overallWinrates.highest?.player.id, alex.id)
       assert.equal(overallWinrates.highest?.winrate, 1 / 2)
     })
 
-    it('winrate using latest playthroughs', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame())
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, john.id))
-
-      const winrates = await insights.stats.winrates({})
-      const gameWinrates = winrates.get(game)!
-      assert.equal(gameWinrates.winrateFor(alex.id), 2 / 3)
-      assert.equal(gameWinrates.winrateFor(john.id), 1 / 3)
-      assert.equal(gameWinrates.highest?.player.id, alex.id)
-      assert.equal(gameWinrates.highest?.winrate, 2 / 3)
-
-      const overallWinrates = await insights.stats.overallWinrates()
-      assert.equal(overallWinrates.winrateFor(alex.id), 2 / 3)
-      assert.equal(overallWinrates.winrateFor(john.id), 1 / 3)
-      assert.equal(overallWinrates.highest?.player.id, alex.id)
-      assert.equal(overallWinrates.highest?.winrate, 2 / 3)
+    it('winrates using latest playthroughs', async function () {
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: john.id }))
 
       const latestWinrates = await insights.stats.winrates({ latestPlaythroughs: 2 })
       const latestGameWinrates = latestWinrates.get(game)!
+      assert.ok(latestGameWinrates instanceof Winrates)
       assert.equal(latestGameWinrates.winrateFor(alex.id), 1, 'winrate for alex')
       assert.equal(latestGameWinrates.winrateFor(john.id), 0, 'winrate for john')
       assert.equal(latestGameWinrates.highest?.player.id, alex.id, 'winner should be alex')
@@ -200,30 +226,24 @@ describe('stats', async function () {
 
   describe('calculating scoring', async function () {
     it('no scores results in undefined score stats', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS }))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
 
       const scoreStats = await insights.stats.forGame(game).scoreStats()
       assert.equal(scoreStats, undefined)
     })
 
     it('game with no scoring type results in undefined score stats', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS, scoring: ScoringType.NO_SCORE }))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id, Factory.createScores(10, 20)))
+      const game = await gameplay.games.create(Factory.createVsGame({ scoring: ScoringType.NO_SCORE }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id, scores: Factory.createScores(10, 20) }))
 
       const scoreStats = await insights.stats.forGame(game).scoreStats()
       assert.equal(scoreStats, undefined)
     })
 
     it('single vs playthrough with all scores', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS }))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id, Factory.createScores(10, 20)))
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id, scores: Factory.createScores(10, 20) }))
 
       const scoreStats = await insights.stats.forGame(game).scoreStats()
       assert.equal(scoreStats!.averageScore, 15)
@@ -232,10 +252,8 @@ describe('stats', async function () {
     })
 
     it('single vs low score playthrough with all scores', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS, scoring: ScoringType.LOWEST_WINS }))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id, Factory.createScores(10, 20)))
+      const game = await gameplay.games.create(Factory.createVsGame({ scoring: ScoringType.LOWEST_WINS }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id, scores: Factory.createScores(10, 20) }))
 
       const scoreStats = await insights.stats.forGame(game).scoreStats()
       assert.equal(scoreStats!.averageScore, 15)
@@ -244,13 +262,11 @@ describe('stats', async function () {
     })
 
     it('multiple coop playthroughs', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.COOP, scoring: ScoringType.LOWEST_WINS }))
-      await gameplay.playthroughs.create(Factory.createCoopPlaythrough(game.id, true, 20))
-      await gameplay.playthroughs.create(Factory.createCoopPlaythrough(game.id, true, 10))
-      await gameplay.playthroughs.create(Factory.createCoopPlaythrough(game.id, false, 30))
-      await gameplay.playthroughs.create(Factory.createCoopPlaythrough(game.id, false))
+      const game = await gameplay.games.create(Factory.createCoopGame({ scoring: ScoringType.LOWEST_WINS }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: true, score: 20 }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: true, score: 10 }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false, score: 30 }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false }))
 
       const scoreStats = await insights.stats.forGame(game).scoreStats()
       assert.equal(scoreStats!.averageScore, 20)
@@ -259,22 +275,18 @@ describe('stats', async function () {
     })
 
     it('playthroughs with no scores should not effect averages', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS, scoring: ScoringType.HIGHEST_WINS }))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id, Factory.createScores(10, 20)))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
+      const game = await gameplay.games.create(Factory.createVsGame({ scoring: ScoringType.HIGHEST_WINS }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id, scores: Factory.createScores(10, 20) }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
 
       const scoreStats = await insights.stats.forGame(game).scoreStats()
       assert.equal(scoreStats!.averageScore, 15)
     })
   })
 
-  describe('play streak streak', async function () {
+  describe('play streak', async function () {
     it('no playthroughs should be streak of zero', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS }))
+      const game = await gameplay.games.create(Factory.createVsGame())
 
       const {currentStreak, bestStreak} = await insights.stats.playStreak()
       assert.equal(currentStreak, 0, 'current streak')
@@ -282,10 +294,8 @@ describe('stats', async function () {
     })
 
     it('single playthrough should be streak of one', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS }))
-      await gameplay.playthroughs.create(Factory.createVsPlaythrough(game.id, alex.id))
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
 
       const {currentStreak, bestStreak} = await insights.stats.playStreak()
       assert.equal(currentStreak, 1, 'current streak')
@@ -293,15 +303,13 @@ describe('stats', async function () {
     })
 
     it('multiple playthroughs on same day should be streak of one', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS }))
+      const game = await gameplay.games.create(Factory.createVsGame())
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 1)
       })
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 1)
       })
 
@@ -311,15 +319,13 @@ describe('stats', async function () {
     })
 
     it('multiple playthroughs on adjacent days', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS }))
+      const game = await gameplay.games.create(Factory.createVsGame())
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 2)
       })
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 1)
       })
 
@@ -329,27 +335,25 @@ describe('stats', async function () {
     })
 
     it('multiple playthroughs on adjacent days with break', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS }))
+      const game = await gameplay.games.create(Factory.createVsGame())
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 10)
       })
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 9)
       })
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 3)
       })
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 2)
       })
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 1)
       })
 
@@ -361,22 +365,18 @@ describe('stats', async function () {
 
   describe('plays by date', async function () {
     it('no playthroughs should be empty array', async function () {
-      const { gameplay, insights } = gamekeeper
-
       const playsByDate = await insights.stats.numPlaysByDate()
       assert.equal(playsByDate.length, 0)
     })
 
     it('multiple playthroughs on same day', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS }))
+      const game = await gameplay.games.create(Factory.createVsGame())
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 1)
       })
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 1)
       })
 
@@ -387,19 +387,17 @@ describe('stats', async function () {
     })
 
     it('multiple playthroughs should have multiple days with num plays', async function () {
-      const { gameplay, insights } = gamekeeper
-
-      const game = await gameplay.games.create(Factory.createGame({ type: GameType.VS }))
+      const game = await gameplay.games.create(Factory.createVsGame())
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 3)
       })
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 3)
       })
       await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough(game.id, alex.id),
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
         playedOn: new Date(2000, 0, 1)
       })
 

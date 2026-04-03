@@ -1,5 +1,5 @@
-import { PlayerView, GameWithWinrate as GameWithWinrateView } from '@def/views'
-import { Game, GameKeeper, PlayerId, StatsResult, Winrate, Winrates } from '@gamekeeper/core'
+import { GameWithWinrate as GameWithWinrateView, PlayerView } from '@def/views'
+import type { CoopWinrates, Game, GameKeeper, PlayerId, PlayerWinrate, StatsResult, Winrates } from '@gamekeeper/core'
 import { formatPercent } from '../formatters'
 
 
@@ -16,11 +16,9 @@ export class PlayerViewFactory {
     const [
       winratesAllTime,
       winratesThisYear,
-      // numPlaythroughs
     ] = await Promise.all([
       stats.winrates({}),
       stats.winrates({ year })
-      // stats.numPlaythroughs({})
     ])
 
     return {
@@ -35,7 +33,7 @@ export class PlayerViewFactory {
 }
 
 
-function getTopGames(playerId: PlayerId, winrates: StatsResult<Winrates>): GameWithWinrate[] {
+function getTopGames(playerId: PlayerId, winrates: StatsResult<Winrates | CoopWinrates>): GameWithWinrate[] {
   const gamesWithWinrates: GameWithWinrate[] = []
   winrates.forEach((winrates, game) => {
     const winrate = winrates.for(playerId)
@@ -85,5 +83,5 @@ function formatTopGame({ game, winrate }: GameWithWinrate): GameWithWinrateView 
 
 type GameWithWinrate = {
   game: Game
-  winrate: Winrate
+  winrate: PlayerWinrate
 }

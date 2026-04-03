@@ -1,4 +1,4 @@
-import { GameId, StatsQuery, StatPerGame, StatsService, WinrateDto, ScoreStatsDto, PlaysByDateDto, PlayStreakDto } from '@gamekeeper/core'
+import type { GameId, StatsQuery, StatPerGame, StatsService, PlayerWinrateData, CoopWinratesData, ScoreStatsData, PlaysByDateData, PlayStreakData } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { toCleanQuery } from './utils'
 import { Route } from '@gamekeeper/views'
@@ -24,11 +24,11 @@ export class ApiStatsService extends ApiService implements StatsService {
     return this.apiClient.get(Route.STATS.NUM_PLAYTHROUGHS, toCleanQuery(query))
   }
 
-  public async getWinrates(query: StatsQuery = {}): Promise<StatPerGame<WinrateDto[]>> {
+  public async getWinrates(query: StatsQuery = {}): Promise<StatPerGame<PlayerWinrateData[] | CoopWinratesData>> {
     return this.apiClient.get(Route.STATS.WINRATES, toCleanQuery(query))
   }
 
-  public async getOverallWinrates(query: StatsQuery = {}): Promise<WinrateDto[]> {
+  public async getOverallWinrates(query: StatsQuery = {}): Promise<PlayerWinrateData[]> {
     return this.apiClient.get(Route.STATS.OVERALL_WINRATES, toCleanQuery(query))
   }
 
@@ -53,11 +53,11 @@ export class ApiStatsService extends ApiService implements StatsService {
     return await this.apiClient.get(Route.STATS.NUM_UNIQUE_GAMES_PLAYED, toCleanQuery({ year }))
   }
   
-  public async getScoreStats(query?: StatsQuery | undefined): Promise<StatPerGame<ScoreStatsDto | undefined>> {
+  public async getScoreStats(query?: StatsQuery | undefined): Promise<StatPerGame<ScoreStatsData | undefined>> {
     return await this.apiClient.get(Route.STATS.SCORE_STATS, toCleanQuery(query))
   }
 
-  public async getNumPlaysByDate(query?: StatsQuery): Promise<PlaysByDateDto[]> {
+  public async getNumPlaysByDate(query?: StatsQuery): Promise<PlaysByDateData[]> {
     const result = await this.apiClient.get<ApiPlaysByDateDto[]>(Route.STATS.NUM_PLAYS_BY_DATE, toCleanQuery(query))
     return result.map(item => ({
       date: new Date(item.date),
@@ -65,7 +65,7 @@ export class ApiStatsService extends ApiService implements StatsService {
     }))
   }
 
-  public async getPlayStreak(query?: StatsQuery): Promise<PlayStreakDto> {
+  public async getPlayStreak(query?: StatsQuery): Promise<PlayStreakData> {
     const result = await this.apiClient.get<ApiPlayStreakDto>(Route.STATS.PLAY_STREAK, toCleanQuery(query))
     return {
       bestStreak: result.bestStreak,

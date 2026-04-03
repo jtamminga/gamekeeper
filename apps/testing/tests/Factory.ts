@@ -37,16 +37,15 @@ export namespace Factory {
     id: '2' as PlayerId,
     name: 'alex'
   }
-
   const games: GameData[] = [
     {
       id: 'game1' as GameId,
       name: 'Game 1',
       scoring: ScoringType.HIGHEST_WINS,
-      type: GameType.VS
+      type: GameType.VS,
+      own: true
     }
   ]
-
   const playthroughs: VsPlaythroughData[] = [
     {
       id: '1' as PlaythroughId,
@@ -90,22 +89,56 @@ export namespace Factory {
     return GameKeeperFactory.create(createTestServices(db))
   }
 
-  export function createGame({ name, scoring, type }: Partial<NewGameData> = {}): NewGameData {
+  export function createGame({ name, scoring, type }: Pick<NewGameData, 'type'> & Partial<NewGameData>): NewGameData {
     return {
       name: name ?? 'test',
       scoring: scoring ?? ScoringType.HIGHEST_WINS,
-      type: type ?? GameType.VS
+      type,
+      own: true
     }
   }
 
-  export function createVsPlaythrough(gameId: GameId, winnerId: PlayerId | null, scores?: ScoreData[]): NewVsPlaythroughData {
+  export function createVsGame(opts: Omit<Partial<NewGameData>, 'type'> = {}): NewGameData {
+    return createGame({ ...opts, type: GameType.VS })
+  }
+
+  export function createCoopGame(opts: Omit<Partial<NewGameData>, 'type'> = {}): NewGameData {
+    return createGame({ ...opts, type: GameType.COOP })
+  }
+
+  export type CreateVsPlaythroughParams = {
+    gameId: GameId
+    winnerId: PlayerId | null
+    scores?: ScoreData[]
+    playerIds?: PlayerId[]
+  }
+
+  export type CreateCoopPlaythroughParams = {
+    gameId: GameId
+    playersWon: boolean
+    score?: number
+    playerIds?: PlayerId[]
+  }
+
+  export function createVsPlaythrough({ gameId, winnerId, scores, playerIds = [john.id, alex.id] }: CreateVsPlaythroughParams): NewVsPlaythroughData {
     return {
       type: 'vs',
       gameId,
-      playerIds: [john.id, alex.id],
+      playerIds,
       playedOn: new Date(),
       winnerId,
       scores
+    }
+  }
+
+  export function createCoopPlaythrough({ gameId, playersWon, score, playerIds = [john.id, alex.id] }: CreateCoopPlaythroughParams): NewCoopPlaythroughData {
+    return {
+      type: 'coop',
+      gameId,
+      playerIds,
+      playedOn: new Date(),
+      playersWon,
+      score
     }
   }
 
@@ -122,17 +155,6 @@ export namespace Factory {
       return undefined
     } else {
       return scores
-    }
-  }
-
-  export function createCoopPlaythrough(gameId: GameId, playersWon: boolean, score?: number): NewCoopPlaythroughData {
-    return {
-      type: 'coop',
-      gameId,
-      playerIds: [john.id, alex.id],
-      playedOn: new Date(),
-      playersWon,
-      score
     }
   }
 

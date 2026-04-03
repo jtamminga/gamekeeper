@@ -1,5 +1,6 @@
 .stat-card {
   height: 25px;
+  flex-grow: 1;
   background-color: var(--dark-gray-accent);
 
   padding: var(--space-md);
@@ -11,11 +12,7 @@
 }
 
 .stat-card > div:first-child {
-  width: 60px;
-  text-align: right;
   padding-right: var(--space-md);
-
-  /* font-weight: bold; */
   font-size: 1.3em;
 }
 
@@ -23,19 +20,4 @@
   color: var(--color-gray);
   white-space: nowrap;
   overflow: hidden;
-}
-
-
-.stat-card-group > .stat-card {
-  margin-bottom: 0;
-  border-radius: 0;
-}
-.stat-card-group > .stat-card:first-of-type {
-  border-radius: var(--border-radius) var(--border-radius) 0 0;
-}
-.stat-card-group > .stat-card:last-of-type {
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
-}
-.stat-card-group > .stat-card:not(:last-of-type) {
-  border-bottom: 1px solid var(--dark-gray);
 }

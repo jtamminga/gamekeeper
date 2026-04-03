@@ -4,7 +4,8 @@ import { addDays, isSameDay } from 'date-fns'
 import type { GameId } from '../game'
 import type { PlayerId } from '../player'
 import { CoopPlaythroughData, PlaythroughData, ScoreData, VsPlaythroughData } from '../playthrough'
-import { PlaysByDateDto, PlayStreakDto, ScoreStatsDto, StatPerGame, StatsService, WinrateDto } from './StatsService'
+import type { StatPerGame, StatsService } from './StatsService'
+import type { CoopWinratesData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatsData } from './WinrateData'
 
 
 
@@ -24,12 +25,16 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     return this.forEachGroup(grouped, playthroughs => playthroughs.length)
   }
 
-  public async getWinrates(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<WinrateDto[]>> {
+  public async getWinrates(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<PlayerWinrateData[] | CoopWinratesData>> {
     const grouped = this.groupedByGame(playthroughs)
-    return this.forEachGroup(grouped, this.calculateWinrates)
+    return this.forEachGroup(grouped, group =>
+      CoopPlaythroughData.guardCollection(group)
+        ? this.calculateCoopWinrates(group)
+        : this.calculateWinrates(group)
+    )
   }
 
-  public async getOverallWinrates(playthroughs: ReadonlyArray<PlaythroughData>): Promise<WinrateDto[]> {
+  public async getOverallWinrates(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlayerWinrateData[]> {
     return this.calculateWinrates(playthroughs)
   }
 
@@ -53,16 +58,16 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     return uniqueGames.size
   }
   
-  public async getScoreStats(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<ScoreStatsDto | undefined>> {
+  public async getScoreStats(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<ScoreStatsData | undefined>> {
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, this.calculateScoreStats)
   }
 
-  public async getNumPlaysByDate(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlaysByDateDto[]> {
+  public async getNumPlaysByDate(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlaysByDateData[]> {
     // by default playthroughs are ordered by played_on date desc
     playthroughs = playthroughs.toReversed()
     
-    const result: PlaysByDateDto[] = []
+    const result: PlaysByDateData[] = []
     // return empty array if there are no playthroughs
     if (playthroughs.length === 0) {
       return result
@@ -84,7 +89,7 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     return result
   }
 
-  public async getPlayStreak(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlayStreakDto> {
+  public async getPlayStreak(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlayStreakData> {
     // by default playthroughs are ordered by played_on date desc
     playthroughs = playthroughs.toReversed()
 
@@ -156,7 +161,7 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     return result
   }
 
-  private calculateWinrates(playthroughs: ReadonlyArray<PlaythroughData>): WinrateDto[] {
+  private calculateWinrates(playthroughs: ReadonlyArray<PlaythroughData>): PlayerWinrateData[] {
     // 1. store for each player how many plays and wins they got
     const allStats = new Map<PlayerId, {plays: number, wins: number}>()
     for (const playthrough of playthroughs) {
@@ -192,7 +197,7 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     }
 
     // 2. once all plays and wins are counted then we calculate winrates for each player
-    const winrates: WinrateDto[] = []
+    const winrates: PlayerWinrateData[] = []
     for (const [playerId, stats] of allStats) {
       winrates.push({ playerId, plays: stats.plays, winrate: stats.wins / stats.plays })
     }
@@ -200,8 +205,50 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     return winrates
   }
 
+  private calculateCoopWinrates(playthroughs: ReadonlyArray<CoopPlaythroughData>): CoopWinratesData {
+    // 1. store stats for each player and the game itself
+    const allStats = new Map<PlayerId, { plays: number, wins: number }>()
+    let gamePlays = 0
+    let gameWins = 0
+
+    // go through each playthrough, tracking plays and wins
+    for (const playthrough of playthroughs) {
+
+      // a. track game
+      gamePlays++
+      if (!playthrough.playersWon) {
+        gameWins++
+      }
+
+      // b. track players
+      playthrough.playerIds.forEach(playerId => {
+        const stats = allStats.get(playerId)
+        if (stats) {
+          stats.plays++
+          if (playthrough.playersWon) {
+            stats.wins++
+          }
+        } else {
+          allStats.set(playerId, { plays: 1, wins: playthrough.playersWon ? 1 : 0 })
+        }
+      })
+    }
+
+    // 2. calculate winrates for players and game
+    const game = { plays: gamePlays, winrate: gameWins / gamePlays }
+    const players: PlayerWinrateData[] = []
+    for (const [playerId, stats] of allStats) {
+      players.push({ playerId, plays: stats.plays, winrate: stats.wins / stats.plays })
+    }
+
+    return {
+      players,
+      game
+    }
+  }
+
   // assume all playthroughs are of the same game
-  private calculateScoreStats(playthroughs: ReadonlyArray<PlaythroughData>): ScoreStatsDto | undefined {
+  private calculateScoreStats(playthroughs: ReadonlyArray<PlaythroughData>): ScoreStatsData | undefined {
     if (playthroughs.length === 0) {
       return undefined
     }

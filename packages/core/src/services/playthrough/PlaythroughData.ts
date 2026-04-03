@@ -71,6 +71,9 @@ export namespace CoopPlaythroughData {
   export function guard(data: PlaythroughData): data is CoopPlaythroughData {
     return data.type === 'coop'
   }
+  export function guardCollection(data: PlaythroughData[]): data is CoopPlaythroughData[] {
+    return data.every(guard)
+  }
   export function guardNew(data: NewPlaythroughData): data is NewCoopPlaythroughData {
     return data.type === 'coop'
   }

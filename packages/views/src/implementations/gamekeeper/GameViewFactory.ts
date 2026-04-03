@@ -1,7 +1,7 @@
 import { GameView } from '@def/views'
 import { GameId, GameKeeper, VsGame } from '@gamekeeper/core'
 import { FormattedPlayerStat, FormattedScoreStats, FormattedStat } from '@def/models'
-import { formatNumber, formatPercent, formatPlaythroughs } from '../formatters'
+import { formatNumber, formatPercent, formatPlaythroughs, formatWinrate } from '../formatters'
 import { toNumPlaysPerDay } from '../transforms'
 
 
@@ -98,11 +98,7 @@ export class GameViewFactory {
       weightLabel,
       numPlaythroughs,
       winnerAllTime: highestWinrateAllTime
-        ? {
-            playerId: highestWinrateAllTime.player.id,
-            playerName: highestWinrateAllTime.player.name,
-            percentage: formatPercent(highestWinrateAllTime.winrate)
-          }
+        ? formatWinrate(highestWinrateAllTime, game)
         : undefined,
       winrates,
       stats: [numPlaythroughs, ...winrates],

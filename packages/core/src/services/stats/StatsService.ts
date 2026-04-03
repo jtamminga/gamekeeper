@@ -1,5 +1,5 @@
-import type { PlayerId } from '../player'
 import type { GameId } from '../game'
+import type { PlayerWinrateData, CoopWinratesData, ScoreStatsData, PlayStreakData, PlaysByDateData } from './WinrateData'
 
 
 export type StatsQuery = {
@@ -7,19 +7,7 @@ export type StatsQuery = {
   year?: number
   latestPlaythroughs?: number
 }
-export type WinrateDto = {
-  playerId: PlayerId
-  winrate: number
-  plays: number
-}
-export type ScoreStatDto = { score: number, playerId?: PlayerId }
-export type ScoreStatsDto = {
-  highScore: ScoreStatDto
-  lowScore: ScoreStatDto
-  averageScore: number
-}
-export type PlayStreakDto = { bestStreak: number, bestStart?: Date, currentStreak: number }
-export type PlaysByDateDto = { date: Date, plays: number }
+
 export type StatPerGame<TData> = Record<GameId, Readonly<TData>>
 
 
@@ -27,9 +15,9 @@ export interface StatsService {
 
   getNumPlays(query?: StatsQuery): Promise<StatPerGame<number>>
 
-  getWinrates(query?: StatsQuery): Promise<StatPerGame<WinrateDto[]>>
+  getWinrates(query?: StatsQuery): Promise<StatPerGame<PlayerWinrateData[] | CoopWinratesData>>
 
-  getOverallWinrates(query?: StatsQuery): Promise<WinrateDto[]>
+  getOverallWinrates(query?: StatsQuery): Promise<PlayerWinrateData[]>
 
   getLastPlayed(query?: StatsQuery): Promise<StatPerGame<Date | undefined>>
 
@@ -37,10 +25,10 @@ export interface StatsService {
 
   getNumUniqueGamesPlayed(year?: number): Promise<number>
 
-  getScoreStats(query?: StatsQuery): Promise<StatPerGame<ScoreStatsDto | undefined>>
+  getScoreStats(query?: StatsQuery): Promise<StatPerGame<ScoreStatsData | undefined>>
 
-  getNumPlaysByDate(query?: StatsQuery): Promise<PlaysByDateDto[]>
+  getNumPlaysByDate(query?: StatsQuery): Promise<PlaysByDateData[]>
 
-  getPlayStreak(query?: StatsQuery): Promise<PlayStreakDto>
+  getPlayStreak(query?: StatsQuery): Promise<PlayStreakData>
 
 }

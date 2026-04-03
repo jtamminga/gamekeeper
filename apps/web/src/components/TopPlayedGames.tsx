@@ -10,7 +10,7 @@ type Props = {
     numPlays: number
     highestWinrate: {
       playerId: PlayerId | undefined
-      playerName: string
+      name: string
       percentage: string
     } | undefined
   }[]
@@ -39,7 +39,7 @@ export function TopPlayedGames({ topPlayed }: Props) {
             <td>
               {highestWinrate &&
                 <PlayerColor playerId={highestWinrate.playerId}>
-                  {highestWinrate.playerName} {highestWinrate.percentage}
+                  {highestWinrate.name} {highestWinrate.percentage}
                 </PlayerColor>
               }
             </td>

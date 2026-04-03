@@ -1,13 +1,12 @@
-import { Winrate } from './Winrate'
-import type { InsightsDeps } from '../Insights'
-import type { PlayerId, WinrateDto } from '@services'
+import type { PlayerId } from '@services'
+import type { PlayerWinrate } from './PlayerWinrate'
 
 
 export class Winrates {
 
-  public constructor(public readonly winrates: ReadonlyArray<Winrate>) { }
+  public constructor(public readonly winrates: ReadonlyArray<PlayerWinrate>) { }
 
-  public get highest(): Winrate | undefined {
+  public get highest(): PlayerWinrate | undefined {
     let highestWinrate = this.winrates[0]
     for (let i = 1; i < this.winrates.length; i++) {
       if (this.winrates[i].winrate > highestWinrate.winrate) {
@@ -18,16 +17,12 @@ export class Winrates {
     return highestWinrate
   }
 
-  public for(id: PlayerId): Winrate | undefined {
+  public for(id: PlayerId): PlayerWinrate | undefined {
     return this.winrates.find(winrate => winrate.player.id === id)
   }
 
   public winrateFor(id: PlayerId): number | undefined {
     return this.for(id)?.winrate
-  }
-
-  public static from(winrates: ReadonlyArray<WinrateDto>, deps: InsightsDeps): Winrates {
-    return new Winrates(winrates.map(winrate => new Winrate(winrate, deps)))
   }
 
 }

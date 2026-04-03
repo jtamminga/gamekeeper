@@ -2,15 +2,16 @@
 import {
   DateUtils,
   InMemoryStats,
-  PlaysByDateDto,
-  PlayStreakDto,
+  PlaysByDateData,
+  PlayStreakData,
   PlaythroughData,
   PlaythroughQueryOptions,
-  ScoreStatsDto,
+  PlayerWinrateData,
+  CoopWinratesData,
+  ScoreStatsData,
   StatPerGame,
   StatsQuery,
-  StatsService,
-  WinrateDto
+  StatsService
 } from '@gamekeeper/core'
 import { DbPlaythroughService } from './PlaythroughService'
 import { UserId } from './User'
@@ -38,12 +39,12 @@ export class DbInMemoryStatsService implements StatsService {
     return this._inMemoryStats.getNumPlays(playthroughs)
   }
 
-  public async getWinrates(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<WinrateDto[]>> {
+  public async getWinrates(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<PlayerWinrateData[] | CoopWinratesData>> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     return this._inMemoryStats.getWinrates(playthroughs)
   }
 
-  public async getOverallWinrates(query: StatsQuery = {}, userId?: UserId): Promise<WinrateDto[]> {
+  public async getOverallWinrates(query: StatsQuery = {}, userId?: UserId): Promise<PlayerWinrateData[]> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     return this._inMemoryStats.getOverallWinrates(playthroughs)
   }
@@ -63,17 +64,17 @@ export class DbInMemoryStatsService implements StatsService {
     return this._inMemoryStats.getNumUniqueGamesPlayed(playthroughs)
   }
   
-  public async getScoreStats(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<ScoreStatsDto | undefined>> {
+  public async getScoreStats(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<ScoreStatsData | undefined>> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     return this._inMemoryStats.getScoreStats(playthroughs)
   }
 
-  public async getNumPlaysByDate(query: StatsQuery = {}, userId?: UserId): Promise<PlaysByDateDto[]> {
+  public async getNumPlaysByDate(query: StatsQuery = {}, userId?: UserId): Promise<PlaysByDateData[]> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     return this._inMemoryStats.getNumPlaysByDate(playthroughs)
   }
 
-  public async getPlayStreak(query: StatsQuery = {}, userId?: UserId): Promise<PlayStreakDto> {
+  public async getPlayStreak(query: StatsQuery = {}, userId?: UserId): Promise<PlayStreakData> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     return this._inMemoryStats.getPlayStreak(playthroughs)
   }

@@ -111,16 +111,6 @@ export class TestPlaythroughService implements PlaythroughService {
   }
 
   public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughData> {
-    // const dto: PlaythroughData = {
-    //   id: playthrough.id ?? uuidv4() as PlaythroughId,
-    //   gameId: playthrough.gameId,
-    //   gameType: VsPlaythroughData.guard(playthrough) ? GameType.VS : GameType.COOP,
-    //   playedOn: playthrough.playedOn,
-    //   result: VsPlaythroughData.guard(playthrough) ? playthrough.winnerId : playthrough.playersWon,
-    //   players: playthrough.playerIds,
-    //   scores: VsPlaythroughData.guard(playthrough) ? playthrough.scores : undefined,
-    //   score: CoopPlaythroughData.guard(playthrough) ? playthrough.score : undefined
-    // }
     this._db.playthroughs.push(playthrough)
     return playthrough
   }

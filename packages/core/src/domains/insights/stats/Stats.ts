@@ -1,8 +1,10 @@
-import { GameStats } from './GameStats'
-import { Winrates } from './Winrates'
 import type { Game } from '@domains/gameplay'
-import type { GameId, PlaysByDateDto, PlayStreakDto, StatsQuery } from '@services'
+import type { GameId, PlaysByDateData, PlayStreakData, StatsQuery } from '@services'
 import type { InsightsDeps } from '../Insights'
+import type { CoopWinrates } from './CoopWinrates'
+import { GameStats } from './GameStats'
+import type { Winrates } from './Winrates'
+import { WinratesFactory } from './WinratesFactory'
 
 
 // types
@@ -45,13 +47,13 @@ export class Stats {
     return map
   }
 
-  public async winrates(query: OverallStatsQuery): Promise<StatsResult<Winrates>> {
+  public async winrates(query: OverallStatsQuery): Promise<StatsResult<Winrates | CoopWinrates>> {
     const result = await this._deps.service.getWinrates(query)
 
-    const map = new Map<Game, Winrates>()
+    const map = new Map<Game, Winrates | CoopWinrates>()
     for (const id in result) {
       const gameId = id as GameId
-      map.set(this._deps.gameplay.games.get(gameId), Winrates.from(result[gameId], this._deps))
+      map.set(this._deps.gameplay.games.get(gameId), WinratesFactory.create(this._deps, result[gameId]))
     }
 
     return map
@@ -59,7 +61,7 @@ export class Stats {
 
   public async overallWinrates(query?: OverallStatsQuery): Promise<Winrates> {
     const result = await this._deps.service.getOverallWinrates(query)
-    return Winrates.from(result, this._deps)
+    return WinratesFactory.createWinrates(this._deps, result)
   }
 
   public async playsByMonth(query: OverallStatsQuery): Promise<number[]> {
@@ -70,11 +72,11 @@ export class Stats {
     return this._deps.service.getNumUniqueGamesPlayed(year)
   }
 
-  public async numPlaysByDate(query?: OverallStatsQuery): Promise<PlaysByDateDto[]> {
+  public async numPlaysByDate(query?: OverallStatsQuery): Promise<PlaysByDateData[]> {
     return this._deps.service.getNumPlaysByDate(query)
   }
 
-  public async playStreak(query?: OverallStatsQuery): Promise<PlayStreakDto> {
+  public async playStreak(query?: OverallStatsQuery): Promise<PlayStreakData> {
     return this._deps.service.getPlayStreak(query)
   }
 
