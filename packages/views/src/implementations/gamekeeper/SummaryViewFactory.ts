@@ -57,7 +57,7 @@ export class SummaryViewFactory {
           gameName: game.name,
           numPlays,
           highestWinrate: highestWinrate
-            ? formatWinrate(highestWinrate, game)
+            ? formatWinrate(highestWinrate)
             : undefined
         }
       })

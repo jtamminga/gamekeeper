@@ -1,15 +1,19 @@
 import type { PlayerId } from '@services'
 
 
-export type PlayerWinrateData = {
-  playerId: PlayerId
+export type WinrateData = {
   winrate: number
   plays: number
 }
 
+export type PlayerWinrateData = WinrateData & {
+  playerId: PlayerId
+}
+
 export type CoopWinratesData = {
-  players: PlayerWinrateData[]
-  game: { winrate: number, plays: number }
+  game: WinrateData
+  players: WinrateData
+  winrates: PlayerWinrateData[]
 }
 
 export type ScoreStatData = { score: number, playerId?: PlayerId }

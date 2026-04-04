@@ -34,7 +34,7 @@ export function GameSummary({ view }: Props) {
           value={winnerAllTime.percentage}
           description={
             <>
-              all time best winrate <PlayerColor playerId={winnerAllTime.playerId}>{winnerAllTime.name}</PlayerColor>
+              all time best <PlayerColor playerId={winnerAllTime.playerId}>{winnerAllTime.name}</PlayerColor>
             </>
           }
         />

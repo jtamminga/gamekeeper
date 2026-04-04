@@ -1,11 +1,10 @@
-import type { Player } from '@domains/gameplay'
 import { Winrate } from './Winrate'
 
 
-export class PlayerWinrate extends Winrate {
+export class HighestCoopWinrate extends Winrate {
 
   public constructor(
-    public readonly player: Player,
+    public readonly type: 'game' | 'players',
     public readonly winrate: number,
     public readonly plays: number
   ) {

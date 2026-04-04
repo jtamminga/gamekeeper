@@ -5,7 +5,7 @@ import type { GameId } from '../game'
 import type { PlayerId } from '../player'
 import { CoopPlaythroughData, PlaythroughData, ScoreData, VsPlaythroughData } from '../playthrough'
 import type { StatPerGame, StatsService } from './StatsService'
-import type { CoopWinratesData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatsData } from './WinrateData'
+import type { CoopWinratesData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatsData, WinrateData } from './WinrateData'
 
 
 
@@ -235,15 +235,18 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     }
 
     // 2. calculate winrates for players and game
-    const game = { plays: gamePlays, winrate: gameWins / gamePlays }
-    const players: PlayerWinrateData[] = []
+    const game: WinrateData = { plays: gamePlays, winrate: gameWins / gamePlays }
+    // players (overall) winrate is derived from the game winrate
+    const players: WinrateData = { plays: game.plays, winrate: 1 - game.winrate }
+    const winrates: PlayerWinrateData[] = []
     for (const [playerId, stats] of allStats) {
-      players.push({ playerId, plays: stats.plays, winrate: stats.wins / stats.plays })
+      winrates.push({ playerId, plays: stats.plays, winrate: stats.wins / stats.plays })
     }
 
     return {
+      game,
       players,
-      game
+      winrates
     }
   }
 

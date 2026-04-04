@@ -1,4 +1,4 @@
-export class GameWinrate {
+export class Winrate {
 
   public constructor(
     public readonly winrate: number,

@@ -98,7 +98,7 @@ export class GameViewFactory {
       weightLabel,
       numPlaythroughs,
       winnerAllTime: highestWinrateAllTime
-        ? formatWinrate(highestWinrateAllTime, game)
+        ? formatWinrate(highestWinrateAllTime)
         : undefined,
       winrates,
       stats: [numPlaythroughs, ...winrates],

@@ -1,28 +1,28 @@
 import type { PlayerId } from '@services'
-import type { GameWinrate } from './GameWinrate'
+import { HighestCoopWinrate } from './HighestCoopWinrate'
 import type { PlayerWinrate } from './PlayerWinrate'
+import type { Winrate } from './Winrate'
 
 
 export class CoopWinrates {
 
+  public readonly highest: HighestCoopWinrate
+
   public constructor(
-    public readonly gameWinrate: GameWinrate,
+    public readonly game: Winrate,
+    public readonly players: Winrate,
     public readonly winrates: ReadonlyArray<PlayerWinrate>
-  ) { }
+  ) {
 
-  public get highest(): PlayerWinrate | GameWinrate | undefined {
-    const highestPlayer = this.winrates.reduce<PlayerWinrate | undefined>(
-      (best, current) => best === undefined || current.winrate > best.winrate ? current : best,
-      undefined
-    )
-
-    if (highestPlayer === undefined) {
-      return this.gameWinrate
+    // game winrate higher
+    if (game.winrate > players.winrate) {
+      this.highest = new HighestCoopWinrate('game', game.winrate, game.plays)
     }
 
-    return highestPlayer.winrate > this.gameWinrate.winrate
-      ? highestPlayer
-      : this.gameWinrate
+    // players winrate higher
+    else {
+      this.highest = new HighestCoopWinrate('players', players.winrate, players.plays)
+    }
   }
 
   public for(id: PlayerId): PlayerWinrate | undefined {

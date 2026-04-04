@@ -1,9 +1,10 @@
+import { CoopWinrates, GameKeeper, Gameplay, Insights, ScoringType, Winrates } from '@gamekeeper/core'
 import assert from 'assert'
-import { CoopWinrates, GameKeeper, Gameplay, GameWinrate, Insights, PlayerWinrate, ScoringType, Winrates } from '@gamekeeper/core'
 import { Factory } from './Factory'
 
 const alex = Factory.alex
 const john = Factory.john
+const otherPlayer = Factory.otherPlayer
 
 describe('stats', function () {
 
@@ -142,10 +143,13 @@ describe('stats', function () {
         assert.equal(gameWinrates.for(alex.id)!.plays, 1)
         assert.equal(gameWinrates.for(john.id)!.winrate, 1)
         assert.equal(gameWinrates.for(john.id)!.plays, 1)
-        assert.equal(gameWinrates.gameWinrate.winrate, 0)
-        assert.equal(gameWinrates.gameWinrate.plays, 1)
-        assert.ok(gameWinrates.highest instanceof PlayerWinrate)
+        assert.equal(gameWinrates.game.winrate, 0)
+        assert.equal(gameWinrates.game.plays, 1)
+        assert.equal(gameWinrates.players.winrate, 1)
+        assert.equal(gameWinrates.players.plays, 1)
+        assert.equal(gameWinrates.highest.type, 'players')
         assert.equal(gameWinrates.highest.winrate, 1)
+        assert.equal(gameWinrates.highest.plays, 1)
       })
 
       it('single playthrough with game winning', async function() {
@@ -159,19 +163,22 @@ describe('stats', function () {
         assert.equal(gameWinrates.for(alex.id)!.plays, 1)
         assert.equal(gameWinrates.for(john.id)!.winrate, 0)
         assert.equal(gameWinrates.for(john.id)!.plays, 1)
-        assert.equal(gameWinrates.gameWinrate.winrate, 1)
-        assert.equal(gameWinrates.gameWinrate.plays, 1)
-        assert.ok(gameWinrates.highest instanceof GameWinrate)
+        assert.equal(gameWinrates.game.winrate, 1)
+        assert.equal(gameWinrates.game.plays, 1)
+        assert.equal(gameWinrates.players.winrate, 0)
+        assert.equal(gameWinrates.players.plays, 1)
+        assert.equal(gameWinrates.highest.type, 'game')
         assert.equal(gameWinrates.highest.winrate, 1)
         assert.equal(gameWinrates.highest.plays, 1)
       })
 
-      it('multple playthroughs', async function () {
+      it('multiple playthroughs', async function () {
         const game = await gameplay.games.create(Factory.createCoopGame())
         await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: true, playerIds: [alex.id] }))
         await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false, playerIds: [john.id] }))
         await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false, playerIds: [john.id] }))
         await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false, playerIds: [alex.id, john.id] }))
+        await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: true, playerIds: [otherPlayer.id] }))
 
         const winrates = await insights.stats.winrates({})
         const gameWinrates = winrates.get(game)
@@ -180,11 +187,15 @@ describe('stats', function () {
         assert.equal(gameWinrates.for(alex.id)!.plays, 2)
         assert.equal(gameWinrates.for(john.id)!.winrate, 0 / 3)
         assert.equal(gameWinrates.for(john.id)!.plays, 3)
-        assert.equal(gameWinrates.gameWinrate.winrate, 3 / 4)
-        assert.equal(gameWinrates.gameWinrate.plays, 4)
-        assert.ok(gameWinrates.highest instanceof GameWinrate)
-        assert.equal(gameWinrates.highest.winrate, 3 / 4)
-        assert.equal(gameWinrates.highest.plays, 4)
+        assert.equal(gameWinrates.for(otherPlayer.id)!.winrate, 1)
+        assert.equal(gameWinrates.for(otherPlayer.id)!.plays, 1)
+        assert.equal(gameWinrates.game.winrate, 3 / 5)
+        assert.equal(gameWinrates.game.plays, 5)
+        assert.equal(gameWinrates.players.winrate, 2 / 5)
+        assert.equal(gameWinrates.players.plays, 5)
+        assert.equal(gameWinrates.highest.type, 'game')
+        assert.equal(gameWinrates.highest.winrate, 3 / 5)
+        assert.equal(gameWinrates.highest.plays, 5)
       })
     })
 

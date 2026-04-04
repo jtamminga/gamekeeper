@@ -6,7 +6,7 @@ export interface FormattedWinrate {
   /**
    * Player id, could be undefined if it's a coop game
    */
-  playerId: PlayerId | undefined
+  playerId?: PlayerId
 
   /**
    * Could be player name or 'players', 'game' if coop

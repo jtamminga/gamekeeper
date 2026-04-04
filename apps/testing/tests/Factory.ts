@@ -11,7 +11,6 @@ import {
   NewVsPlaythroughData,
   PlayerData,
   PlayerId,
-  PlaythroughData,
   PlaythroughId,
   ScoreData,
   ScoringType,
@@ -36,6 +35,10 @@ export namespace Factory {
   export const alex: PlayerData = {
     id: '2' as PlayerId,
     name: 'alex'
+  }
+  export const otherPlayer: PlayerData = {
+    id: '3' as PlayerId,
+    name: 'other'
   }
   const games: GameData[] = [
     {
@@ -78,11 +81,11 @@ export namespace Factory {
     const db = loadSomeStuff
       ? {
         games: [...games],
-        players: [john, alex],
+        players: [john, alex, otherPlayer],
         playthroughs: [...playthroughs]
       } : {
         games: [],
-        players: [john, alex],
+        players: [john, alex, otherPlayer],
         playthroughs: []
       }
 

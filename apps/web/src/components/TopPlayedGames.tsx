@@ -9,7 +9,7 @@ type Props = {
     gameName: string
     numPlays: number
     highestWinrate: {
-      playerId: PlayerId | undefined
+      playerId?: PlayerId
       name: string
       percentage: string
     } | undefined
