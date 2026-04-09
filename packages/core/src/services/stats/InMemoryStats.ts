@@ -5,7 +5,7 @@ import type { GameId } from '../game'
 import type { PlayerId } from '../player'
 import { CoopPlaythroughData, PlaythroughData, ScoreData, VsPlaythroughData } from '../playthrough'
 import type { StatPerGame, StatsService } from './StatsService'
-import type { CoopWinratesData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatsData, WinrateData } from './WinrateData'
+import type { CoopWinratesData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatData, ScoreStatsData, WinrateData } from './WinrateData'
 
 
 
@@ -257,47 +257,26 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     }
 
     const gameType = playthroughs[0].type
+    let allScores: ScoreStatData[]
 
     if (gameType === 'vs') {
-      const allScores = (playthroughs as ReadonlyArray<VsPlaythroughData>)
-        .reduce((scores, playthrough) =>
-          scores.concat(playthrough.scores ?? [])
-        , [] as ScoreData[])
-
-      if (allScores.length === 0) {
-        return undefined
-      }
-
-      return {
-        highScore: ArrayUtils.best(allScores, (a, b) => a.score > b.score ? a : b),
-        lowScore: ArrayUtils.best(allScores, (a, b) => a.score < b.score ? a : b),
-        averageScore: ArrayUtils.average(allScores.map(s => s.score))
-      }
-    }
-
-    else if (gameType === "coop") {
-      const allScores = (playthroughs as ReadonlyArray<CoopPlaythroughData>)
-        .reduce((scores, playthrough) =>
-          playthrough.score === undefined
-            ? scores
-            : scores.concat(playthrough.score)
-        , [] as number[])
-
-      if (allScores.length === 0) {
-        return undefined
-      }
-
-      return {
-        highScore: { score: ArrayUtils.best(allScores, (a, b) => a > b ? a : b) },
-        lowScore: { score: ArrayUtils.best(allScores, (a, b) => a < b ? a : b) },
-        averageScore: ArrayUtils.average(allScores)
-      }
-    }
-
-    
-
-    else {
+      allScores = (playthroughs as ReadonlyArray<VsPlaythroughData>)
+        .flatMap(p => p.scores?.map(score => ({ ...score, playthroughId: p.id })) ?? [])
+    } else if (gameType === 'coop') {
+      allScores = (playthroughs as ReadonlyArray<CoopPlaythroughData>)
+        .flatMap(p => p.score !== undefined ? [{ score: p.score, playthroughId: p.id }] : [])
+    } else {
       throw new Error('calculateScoreStats does not support this game type')
+    }
+
+    if (allScores.length === 0) {
+      return undefined
+    }
+
+    return {
+      highScore: ArrayUtils.best(allScores, (a, b) => a.score > b.score ? a : b),
+      lowScore: ArrayUtils.best(allScores, (a, b) => a.score < b.score ? a : b),
+      averageScore: ArrayUtils.average(allScores.map(s => s.score))
     }
   }
 
