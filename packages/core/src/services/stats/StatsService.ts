@@ -8,7 +8,7 @@ export type StatsQuery = {
   latestPlaythroughs?: number
 }
 
-export type StatPerGame<TData> = Record<GameId, Readonly<TData>>
+export type StatPerGame<TData> = Record<GameId, TData>
 
 
 export interface StatsService {

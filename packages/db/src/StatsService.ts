@@ -1,7 +1,9 @@
 import {
   GameId,
+  GameType,
   StatsQuery,
   StatPerGame,
+  HistoricalScoreData,
   InMemoryStats,
   DateUtils
 } from '@gamekeeper/core'
@@ -9,6 +11,7 @@ import { DataService } from './DataService'
 import { DbInMemoryStatsService } from './DbInMemoryStatsService'
 import { DbPlaythroughService } from './PlaythroughService'
 import { UserId, whereUserId } from './User'
+import { parseVsScores } from './scores'
 
 
 // types
@@ -23,6 +26,11 @@ type LastPlayPerGameDto = {
 type NumPlaysPerMonthDto = {
   month: string
   numPlays: number
+}
+type HistoricalScoreRowDto = {
+  gameId: number
+  gameType: GameType
+  scores: string
 }
 
 
@@ -176,6 +184,66 @@ export class DbStatsService extends DbInMemoryStatsService {
     }
 
     return playsByMonth
+  }
+
+  public override async getHistoricalScores({ gameId, year, latestPlaythroughs }: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<HistoricalScoreData[]>> {
+
+    // build query
+    let query = `
+      SELECT
+        p.game_id as gameId,
+        g.type as gameType,
+        p.scores
+      FROM playthroughs p
+      JOIN games g ON p.game_id = g.id
+    `
+
+    const conditions = [
+      `p.${whereUserId(userId, ':user_id')}`,
+      'p.scores IS NOT NULL'
+    ]
+    if (gameId) {
+      conditions.push('p.game_id = :game_id')
+    }
+    if (year) {
+      conditions.push('p.played_on BETWEEN :from_date AND :to_date')
+    }
+    query += ' WHERE ' + conditions.join(' AND ')
+    query += ' ORDER BY p.played_on DESC'
+    if (latestPlaythroughs) {
+      query += ' LIMIT :limit'
+    }
+
+    const dateRange = year ? DateUtils.getDateRangeFromYear(year) : undefined
+
+    // run query
+    const dtos = await this._dataService.all<HistoricalScoreRowDto>(query, {
+      ':game_id': gameId,
+      ':from_date': dateRange?.fromDate.toISOString(),
+      ':to_date': dateRange?.toDate.toISOString(),
+      ':user_id': userId,
+      ':limit': latestPlaythroughs
+    })
+
+    // build result
+    const result: StatPerGame<HistoricalScoreData[]> = {}
+    for (const dto of dtos) {
+
+      const gameId = dto.gameId.toString() as GameId
+      if (!result[gameId]) {
+        result[gameId] = []
+      }
+
+      if (dto.gameType === GameType.VS) {
+        for (const {score, playerId} of parseVsScores(dto.scores)) {
+          result[gameId].push({ score, playerId })
+        }
+      } else {
+        result[gameId].push({ score: Number.parseInt(dto.scores) })
+      }
+    }
+
+    return result
   }
 
 }

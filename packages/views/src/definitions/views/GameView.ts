@@ -1,4 +1,4 @@
-import type { Game } from '@gamekeeper/core'
+import type { Game, HistoricalScoreData } from '@gamekeeper/core'
 import type { FormattedPlayerStat, FormattedPlaythroughs, FormattedScoreStats, FormattedStat, FormattedWinrate } from '../models'
 
 
@@ -12,6 +12,7 @@ export interface GameView {
   winrates: ReadonlyArray<FormattedPlayerStat>
   stats: ReadonlyArray<FormattedStat>
   scoreStats: FormattedScoreStats | undefined
+  historicalScores: ReadonlyArray<HistoricalScoreData> | undefined
   latestPlaythroughs: FormattedPlaythroughs
   hasMorePlaythroughs: boolean
   numPlaysPerDayThisYear: {

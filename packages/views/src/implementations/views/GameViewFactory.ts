@@ -33,6 +33,7 @@ export class GameViewFactory {
       winratesAllTime,
       winratesThisYear,
       scoreStats,
+      historicalScores,
       numPlaysByDateThisYear
     ] = await Promise.all([
       gameStats.numPlaythroughs(),
@@ -40,6 +41,7 @@ export class GameViewFactory {
       gameStats.winrates(),
       gameStats.winrates({ year }),
       gameStats.scoreStats(),
+      gameStats.historicalScores({ latestPlaythroughs: 20 }),
       gameStats.numPlaysByDate({ year }),
       this.gamekeeper.gameplay.playthroughs.hydrate({
         gameId: game.id,
@@ -103,6 +105,7 @@ export class GameViewFactory {
       winrates,
       stats: [numPlaythroughs, ...winrates],
       scoreStats: formattedScoreStats,
+      historicalScores,
       hasMorePlaythroughs: numPlaysAllTime > NUM_HISTORICAL_PLAYTHROUGHS,
       latestPlaythroughs: formatPlaythroughs(
         this.gamekeeper

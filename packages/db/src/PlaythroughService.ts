@@ -1,6 +1,7 @@
 import { DbService } from './DbService'
-import { BasePlaythroughData, CoopPlaythroughData, GameId, GameType, NewPlaythroughData, NotFoundError, PlayerId, PlaythroughData, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, ScoreData, UpdatedPlaythroughData, VsPlaythroughData } from '@gamekeeper/core'
+import { BasePlaythroughData, CoopPlaythroughData, GameId, GameType, NewPlaythroughData, NotFoundError, PlayerId, PlaythroughData, PlaythroughId, PlaythroughQueryOptions, PlaythroughService, UpdatedPlaythroughData, VsPlaythroughData } from '@gamekeeper/core'
 import { UserId, whereUserId } from './User'
+import { parseVsScores, serializeVsScores } from './scores'
 
 
 // type
@@ -16,12 +17,6 @@ export interface DbPlaythroughDto {
   startedOn: string | null // date
   endedOn: string | null // date
 }
-type DbScoreDto = {
-  id: string
-  s: number
-}
-
-
 // repository
 export class DbPlaythroughService extends DbService implements PlaythroughService {
 
@@ -177,7 +172,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
           ? null
           : playthrough.result.toString() as PlayerId,
         scores: playthrough.scores
-          ? this.parseScores(playthrough.scores)
+          ? parseVsScores(playthrough.scores)
           : undefined
       } satisfies VsPlaythroughData
     }
@@ -214,7 +209,7 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
           ? null
           : parseInt(playthrough.winnerId),
         scores: playthrough.scores
-          ? this.serializeScores(playthrough.scores)
+          ? serializeVsScores(playthrough.scores)
           : null
       }
     }
@@ -227,17 +222,4 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       }
     }
   }
-  
-  private serializeScores(scores: readonly ScoreData[]): string {
-    return JSON.stringify(scores.map<DbScoreDto>(score => ({
-      id: score.playerId,
-      s: score.score
-    })))
-  }
-  
-  private parseScores(scores: string): readonly ScoreData[] {
-    const collection = JSON.parse(scores) as DbScoreDto[]
-    return collection.map(score => ({playerId: score.id as PlayerId, score: score.s}))
-  }
-  
 }
