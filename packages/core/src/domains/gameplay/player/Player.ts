@@ -1,21 +1,18 @@
 import type { Serializable } from '@core'
 import { Entity } from '@domains'
 import type { PlayerColor, PlayerData, PlayerId, UpdatedPlayerData } from '@services'
-import { GameplayDeps } from '../Gameplay'
-import type { Playthrough } from '../playthrough'
 
 
 /**
  * Represents a person who participates in playthroughs.
- * Stores identifying information (name, color) and provides
- * access to all playthroughs this player has participated in.
+ * Stores identifying information (name, color).
  */
 export class Player extends Entity<PlayerId> implements Serializable<PlayerData> {
 
   private _name: string
   private _color?: PlayerColor
 
-  public constructor(protected _deps: GameplayDeps, data: PlayerData) {
+  public constructor(data: PlayerData) {
     super(data.id)
     this._name = data.name
     this._color = data.color
@@ -27,10 +24,6 @@ export class Player extends Entity<PlayerId> implements Serializable<PlayerData>
 
   public get color(): PlayerColor | undefined {
     return this._color
-  }
-
-  public get playthroughs(): ReadonlyArray<Playthrough> {
-    return this._deps.repo.getPlaythroughs({ playerIds: [this.id] })
   }
 
   public update(data: Omit<UpdatedPlayerData, 'id'>): void {

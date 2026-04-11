@@ -1,18 +1,13 @@
 import { Entity } from '@domains'
 import { GameData, GameId, ScoringType, UpdatedGameData } from '@services'
-import { Playthrough } from '../playthrough'
-import type { GameplayDeps } from '../Gameplay'
 import type { Serializable } from '@core'
 
 
 /**
  * Abstract base class for a board game in the library.
- * Holds metadata (name, weight, scoring type, ownership) and provides
- * access to all playthroughs of this game via the repository.
- * Typed by its playthrough type so that `CoopGame` and `VsGame`
- * only surface their respective playthrough subclasses.
+ * Holds metadata (name, weight, scoring type, ownership).
  */
-export abstract class Game<T extends Playthrough = Playthrough>
+export abstract class Game
   extends Entity<GameId>
   implements Serializable<GameData> {
 
@@ -21,7 +16,7 @@ export abstract class Game<T extends Playthrough = Playthrough>
   private _weight: number | undefined
   private _own: boolean
 
-  public constructor(protected _deps: GameplayDeps, data: Omit<GameData, 'type'>) {
+  public constructor(data: Omit<GameData, 'type'>) {
     super(data.id)
     this._name = data.name
     this._scoring = data.scoring
@@ -51,14 +46,6 @@ export abstract class Game<T extends Playthrough = Playthrough>
 
   public get roundBased(): boolean {
     return this.scoring === ScoringType.MOST_ROUNDS
-  }
-
-  public get hasPlays(): boolean {
-    return this.playthroughs.length > 0
-  }
-
-  public get playthroughs(): ReadonlyArray<T> {
-    return this._deps.repo.getPlaythroughs({ gameId: this.id }) as T[]
   }
 
   public update(data: Omit<UpdatedGameData, 'id'>): void {

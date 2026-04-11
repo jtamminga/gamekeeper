@@ -1,9 +1,15 @@
 import { Playthrough } from './Playthrough'
 import { VsPlaythroughScores } from './VsPlaythroughScores'
-import type { GameplayDeps } from '../Gameplay'
 import type { Player } from '../player'
 import type { PlayerId, VsPlaythroughData } from '@services'
 import type { VsGame } from '../game'
+
+
+export type VsPlaythroughArgs = Omit<VsPlaythroughData, 'gameId' | 'playerIds' | 'scores'> & {
+  game: VsGame
+  players: ReadonlyArray<Player>
+  scores: VsPlaythroughScores
+}
 
 
 /**
@@ -15,10 +21,10 @@ export class VsPlaythrough extends Playthrough {
   public readonly winnerId: PlayerId | null
   public readonly scores: VsPlaythroughScores
 
-  public constructor(deps: GameplayDeps, data: VsPlaythroughData) {
-    super(deps, data)
+  public constructor(data: VsPlaythroughArgs) {
+    super(data)
     this.winnerId = data.winnerId
-    this.scores = new VsPlaythroughScores(deps, data.scores ?? [])
+    this.scores = data.scores
   }
 
   public get game(): VsGame {
@@ -28,7 +34,7 @@ export class VsPlaythrough extends Playthrough {
   public get winner(): Player | undefined {
     return this.winnerId === null
       ? undefined
-      : this._deps.repo.getPlayer(this.winnerId)
+      : this.players.find(p => p.id === this.winnerId)
   }
 
   public get tied(): boolean {

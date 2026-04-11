@@ -1,7 +1,13 @@
 import { Playthrough } from './Playthrough'
 import type { CoopGame } from '../game'
 import type { CoopPlaythroughData } from '@services'
-import type { GameplayDeps } from '../Gameplay'
+import type { Player } from '../player'
+
+
+type CoopPlaythroughArgs = Omit<CoopPlaythroughData, 'gameId' | 'playerIds'> & {
+  game: CoopGame
+  players: ReadonlyArray<Player>
+}
 
 
 /**
@@ -13,8 +19,8 @@ export class CoopPlaythrough extends Playthrough {
   public readonly playersWon: boolean
   public readonly score?: number
 
-  public constructor(deps: GameplayDeps, data: CoopPlaythroughData) {
-    super(deps, data)
+  public constructor(data: CoopPlaythroughArgs) {
+    super(data)
     this.playersWon = data.playersWon
     this.score = data.score
   }

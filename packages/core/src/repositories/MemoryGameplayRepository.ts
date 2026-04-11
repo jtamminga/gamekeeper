@@ -71,7 +71,7 @@ export class MemoryGameplayRepository implements GameplayRepository {
       return player
     }
 
-    player = PlayerFactory.create({ logger: this._logger, repo: this }, data)
+    player = PlayerFactory.create(data)
     this._players.set(data.id, player)
     return player
   }
@@ -116,7 +116,7 @@ export class MemoryGameplayRepository implements GameplayRepository {
       return game
     }
 
-    game = GameFactory.create({ logger: this._logger, repo: this }, data)
+    game = GameFactory.create(data)
     this._games.set(data.id, game)
     return game
   }

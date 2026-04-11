@@ -3,7 +3,12 @@ import type { BasePlaythroughData, GameId, PlayerId, PlaythroughId, UpdatedPlayt
 import type { Game } from '../game'
 import type { Serializable } from '@core'
 import type { Player } from '../player'
-import type { GameplayDeps } from '../Gameplay'
+
+
+export type PlaythroughArgs = Omit<BasePlaythroughData, 'gameId' | 'playerIds'> & {
+  game: Game
+  players: ReadonlyArray<Player>
+}
 
 
 /**
@@ -18,14 +23,18 @@ export abstract class Playthrough
   public readonly playerIds: ReadonlyArray<PlayerId>
   public readonly gameId: GameId
   public readonly playedOn: Date
+  private _game: Game
+  private _players: ReadonlyArray<Player>
   private _notes?: string
   private _startedOn?: Date
   private _endedOn?: Date
 
-  public constructor(protected _deps: GameplayDeps, data: BasePlaythroughData) {
+  public constructor(data: PlaythroughArgs) {
     super(data.id)
-    this.gameId = data.gameId
-    this.playerIds = data.playerIds
+    this._game = data.game
+    this._players = data.players
+    this.gameId = data.game.id
+    this.playerIds = data.players.map(p => p.id)
     this.playedOn = data.playedOn
     this._notes = data.notes
     this._startedOn = data.startedOn
@@ -37,11 +46,11 @@ export abstract class Playthrough
   }
 
   public get game(): Game {
-    return this._deps.repo.getGame(this.gameId)
+    return this._game
   }
 
   public get players(): ReadonlyArray<Player> {
-    return this._deps.repo.getPlayers(this.playerIds)
+    return this._players
   }
 
   public get notes(): string | undefined {

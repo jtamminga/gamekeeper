@@ -1,7 +1,6 @@
 import type { Serializable } from '@core'
 import type { ScoreData } from '@services'
 import type { Player } from '../player'
-import type { GameplayDeps } from '../Gameplay'
 
 
 /**
@@ -13,10 +12,8 @@ export class VsPlaythroughScores implements Serializable<ReadonlyArray<ScoreData
 
   private readonly _scores: ReadonlyArray<VsPlaythroughScore>
 
-  public constructor(deps: GameplayDeps, scores: ReadonlyArray<ScoreData>) {
-    this._scores = scores.map(score =>
-      new VsPlaythroughScore(deps.repo.getPlayer(score.playerId), score.score)
-    )
+  public constructor(scores: ReadonlyArray<VsPlaythroughScore>) {
+    this._scores = scores
   }
 
   public get empty(): boolean {
@@ -49,5 +46,5 @@ export class VsPlaythroughScore implements Serializable<ScoreData> {
       score: this.value
     }
   }
-  
+
 }
