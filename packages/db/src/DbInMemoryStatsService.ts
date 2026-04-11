@@ -8,6 +8,7 @@ import {
   PlaythroughQueryOptions,
   PlayerWinrateData,
   CoopWinratesData,
+  HistoricalScoreData,
   ScoreStatsData,
   StatPerGame,
   StatsQuery,
@@ -67,6 +68,11 @@ export class DbInMemoryStatsService implements StatsService {
   public async getScoreStats(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<ScoreStatsData | undefined>> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     return this._inMemoryStats.getScoreStats(playthroughs)
+  }
+
+  public async getHistoricalScores(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<HistoricalScoreData[]>> {
+    const playthroughs = await this.getPlaythroughs(query, userId)
+    return this._inMemoryStats.getHistoricalScores(playthroughs)
   }
 
   public async getNumPlaysByDate(query: StatsQuery = {}, userId?: UserId): Promise<PlaysByDateData[]> {

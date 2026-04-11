@@ -7,6 +7,11 @@ import type { Game } from './Game'
 const MAX_GAMES = 100
 
 
+/**
+ * Collection manager for all games in the library.
+ * Handles hydration, lookup, creation, and persistence.
+ * Enforces a hard limit on the total number of games.
+ */
 export class Games {
 
   public constructor(

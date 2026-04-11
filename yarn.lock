@@ -437,6 +437,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@gamekeeper/core@workspace:packages/core"
   dependencies:
+    "@types/node": "npm:^20.0.0"
     date-fns: "npm:^2.29.3"
     tsc-alias: "npm:^1.7.0"
     typescript: "npm:^5"

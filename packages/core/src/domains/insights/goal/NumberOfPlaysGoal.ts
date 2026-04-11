@@ -2,6 +2,12 @@ import { Goal } from './Goal'
 import { GoalType, type GameId, type GoalData } from '@services'
 
 
+/**
+ * A goal to play a target number of game sessions within a year.
+ * Progress is the total play count for the year across all games.
+ * Exposes `currentlyAheadBy` to show whether the user is ahead or
+ * behind the expected pace for the current day of the year.
+ */
 export class NumberOfPlaysGoal extends Goal {
 
   public get type(): GoalType {

@@ -4,6 +4,11 @@ import type { PlayerWinrate } from './PlayerWinrate'
 import type { Winrate } from './Winrate'
 
 
+/**
+ * Win rate data for a cooperative game.
+ * Tracks the overall game win rate (across all sessions), per-player win rates
+ * (sessions that player participated in), and the highest of the two perspectives.
+ */
 export class CoopWinrates {
 
   public readonly highest: HighestCoopWinrate

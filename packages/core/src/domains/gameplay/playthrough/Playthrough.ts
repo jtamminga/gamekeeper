@@ -6,7 +6,11 @@ import type { Player } from '../player'
 import type { GameplayDeps } from '../Gameplay'
 
 
-// class
+/**
+ * Abstract base for a recorded session of playing a board game.
+ * Captures the core facts of a play: which game, which players, and when it happened.
+ * Subclasses add game-type-specific data (outcome, scores).
+ */
 export abstract class Playthrough
   extends Entity<PlaythroughId>
   implements Serializable<BasePlaythroughData> {

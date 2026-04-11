@@ -4,7 +4,10 @@ import type { CoopPlaythroughData } from '@services'
 import type { GameplayDeps } from '../Gameplay'
 
 
-// class
+/**
+ * A recorded session of a cooperative game.
+ * Captures whether the group won or lost, and an optional shared score.
+ */
 export class CoopPlaythrough extends Playthrough {
 
   public readonly playersWon: boolean

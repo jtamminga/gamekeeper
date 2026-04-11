@@ -5,7 +5,13 @@ import type { GameplayDeps } from '../Gameplay'
 import type { Serializable } from '@core'
 
 
-// class
+/**
+ * Abstract base class for a board game in the library.
+ * Holds metadata (name, weight, scoring type, ownership) and provides
+ * access to all playthroughs of this game via the repository.
+ * Typed by its playthrough type so that `CoopGame` and `VsGame`
+ * only surface their respective playthrough subclasses.
+ */
 export abstract class Game<T extends Playthrough = Playthrough>
   extends Entity<GameId>
   implements Serializable<GameData> {

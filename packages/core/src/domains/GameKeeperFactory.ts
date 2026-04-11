@@ -5,7 +5,11 @@ import { MemoryGameplayRepository, MemoryInsightsRepository } from '@repos'
 import type { GameKeeper } from './GameKeeper'
 
 
-// factory
+/**
+ * Factory for constructing a fully wired `GameKeeper` instance.
+ * Assembles the repositories, services, and aggregate roots for both
+ * bounded contexts (Gameplay and Insights).
+ */
 export namespace GameKeeperFactory {
   export function create(services: Services): GameKeeper {
 

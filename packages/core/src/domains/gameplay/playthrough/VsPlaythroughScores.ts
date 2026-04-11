@@ -4,6 +4,11 @@ import type { Player } from '../player'
 import type { GameplayDeps } from '../Gameplay'
 
 
+/**
+ * Immutable score record attached to a saved `VsPlaythrough`.
+ * Enriches raw score data with resolved `Player` references so consumers
+ * don't need to look players up separately.
+ */
 export class VsPlaythroughScores implements Serializable<ReadonlyArray<ScoreData>> {
 
   private readonly _scores: ReadonlyArray<VsPlaythroughScore>
@@ -28,6 +33,9 @@ export class VsPlaythroughScores implements Serializable<ReadonlyArray<ScoreData
 
 }
 
+/**
+ * A single player's score within a `VsPlaythrough`.
+ */
 export class VsPlaythroughScore implements Serializable<ScoreData> {
 
   public constructor(

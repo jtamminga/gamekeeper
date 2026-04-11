@@ -8,6 +8,11 @@ const MAX_GOALS_PER_YEAR = 3
 const MAX_GOALS = 100
 
 
+/**
+ * Collection manager for yearly goals.
+ * Enforces constraints: at most one goal of each type per year,
+ * a cap on goals per year, and a global cap on total goals.
+ */
 export class Goals {
 
   public constructor(

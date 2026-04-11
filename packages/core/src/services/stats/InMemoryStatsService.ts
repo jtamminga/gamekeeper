@@ -2,7 +2,7 @@ import { DateUtils } from '@core'
 import type { PlaythroughData, PlaythroughQueryOptions, PlaythroughService } from '../playthrough'
 import type { InMemoryStats } from './InMemoryStats'
 import type { StatPerGame, StatsQuery, StatsService } from './StatsService'
-import type { CoopWinratesData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatsData } from './WinrateData'
+import type { CoopWinratesData, HistoricalScoreData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatsData } from './WinrateData'
 
 
 
@@ -55,6 +55,11 @@ export class InMemoryStatsService implements StatsService {
   public async getScoreStats(query: StatsQuery = {}): Promise<StatPerGame<ScoreStatsData | undefined>> {
     const playthroughs = await this.getPlaythroughs(query)
     return this._inMemoryStats.getScoreStats(playthroughs)
+  }
+
+  public async getHistoricalScores(query: StatsQuery = {}): Promise<StatPerGame<HistoricalScoreData[]>> {
+    const playthroughs = await this.getPlaythroughs(query)
+    return this._inMemoryStats.getHistoricalScores(playthroughs)
   }
 
   public async getNumPlaysByDate(query: StatsQuery = {}): Promise<PlaysByDateData[]> {

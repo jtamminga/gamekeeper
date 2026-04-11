@@ -4,6 +4,15 @@ import { InsightsDeps } from '../Insights'
 import type { GoalData, GoalId, GoalType, UpdatedGoalData } from '@services'
 
 
+/**
+ * Abstract base for a yearly goal set by the user.
+ * A goal has a target `value` and tracks `progress` toward it,
+ * calculated against the stats service. Also computes how far along
+ * the year has progressed so progress can be compared to expectations.
+ *
+ * Goals require an explicit `load()` call to populate `progress`
+ * before accessing it, since the calculation is async.
+ */
 export abstract class Goal extends Entity<GoalId> {
 
   private _value: number

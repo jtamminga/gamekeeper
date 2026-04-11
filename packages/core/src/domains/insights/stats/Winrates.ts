@@ -2,6 +2,10 @@ import type { PlayerId } from '@services'
 import type { PlayerWinrate } from './PlayerWinrate'
 
 
+/**
+ * Collection of player win rates for a vs game.
+ * Exposes the individual rates and pre-computes the highest for quick access.
+ */
 export class Winrates {
 
   public readonly highest: PlayerWinrate | undefined

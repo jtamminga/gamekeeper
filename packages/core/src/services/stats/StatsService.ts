@@ -1,5 +1,5 @@
 import type { GameId } from '../game'
-import type { PlayerWinrateData, CoopWinratesData, ScoreStatsData, PlayStreakData, PlaysByDateData } from './WinrateData'
+import type { PlayerWinrateData, CoopWinratesData, ScoreStatsData, HistoricalScoreData, PlayStreakData, PlaysByDateData } from './WinrateData'
 
 
 export type StatsQuery = {
@@ -26,6 +26,8 @@ export interface StatsService {
   getNumUniqueGamesPlayed(year?: number): Promise<number>
 
   getScoreStats(query?: StatsQuery): Promise<StatPerGame<ScoreStatsData | undefined>>
+
+  getHistoricalScores(query?: StatsQuery): Promise<StatPerGame<HistoricalScoreData[]>>
 
   getNumPlaysByDate(query?: StatsQuery): Promise<PlaysByDateData[]>
 

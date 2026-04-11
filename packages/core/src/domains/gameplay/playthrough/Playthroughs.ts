@@ -4,7 +4,12 @@ import type { GameplayDeps } from '../Gameplay'
 import type { Playthrough } from './Playthrough'
 
 
-// class
+/**
+ * Collection manager for all playthroughs.
+ * Handles hydration, lookup, creation, and deletion.
+ * Also serves as the entry point for the playthrough flow —
+ * use `startFlow()` to progressively build and commit a new playthrough.
+ */
 export class Playthroughs {
 
   constructor(

@@ -254,6 +254,12 @@ app.get(Route.STATS.SCORE_STATS, async function (req, res) {
   const stats = await statsService.getScoreStats(query, userId)
   res.json({ data: stats })
 })
+app.get(Route.STATS.HISTORICAL_SCORES, async function (req, res) {
+  const userId = getUserId(req)
+  const query = toStatsQuery(req)
+  const stats = await statsService.getHistoricalScores(query, userId)
+  res.json({ data: stats })
+})
 app.get(Route.STATS.NUM_PLAYS_BY_DATE, async function (req, res) {
   const userId = getUserId(req)
   const query = toStatsQuery(req)

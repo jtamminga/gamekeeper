@@ -1,4 +1,4 @@
-import type { GameId, StatsQuery, StatPerGame, StatsService, PlayerWinrateData, CoopWinratesData, ScoreStatsData, PlaysByDateData, PlayStreakData } from '@gamekeeper/core'
+import type { GameId, StatsQuery, StatPerGame, StatsService, PlayerWinrateData, CoopWinratesData, HistoricalScoreData, ScoreStatsData, PlaysByDateData, PlayStreakData } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { toCleanQuery } from './utils'
 import { Route } from '@gamekeeper/views'
@@ -55,6 +55,10 @@ export class ApiStatsService extends ApiService implements StatsService {
   
   public async getScoreStats(query?: StatsQuery | undefined): Promise<StatPerGame<ScoreStatsData | undefined>> {
     return await this.apiClient.get(Route.STATS.SCORE_STATS, toCleanQuery(query))
+  }
+
+  public async getHistoricalScores(query?: StatsQuery): Promise<StatPerGame<HistoricalScoreData[]>> {
+    return await this.apiClient.get(Route.STATS.HISTORICAL_SCORES, toCleanQuery(query))
   }
 
   public async getNumPlaysByDate(query?: StatsQuery): Promise<PlaysByDateData[]> {

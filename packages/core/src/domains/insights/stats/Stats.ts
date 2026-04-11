@@ -12,6 +12,11 @@ export type OverallStatsQuery = Omit<StatsQuery, 'gameId'>
 export type StatsResult<TData> = Map<Game, TData>
 
 
+/**
+ * Entry point for querying aggregated statistics across all games.
+ * All methods are async and delegate to the stats service.
+ * Use `forGame()` to scope queries to a specific game.
+ */
 export class Stats {
 
   public constructor(private _deps: InsightsDeps) { }

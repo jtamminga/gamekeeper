@@ -3,7 +3,13 @@ import type { PlayerId, ScoreData } from '@services'
 import type { Serializable } from '@core'
 
 
-// class
+/**
+ * Mutable score tracker used during playthrough recording (within a flow).
+ * Backed by a map of player ID to score, with helpers to find the highest/lowest
+ * and determine the winner based on a game's scoring type.
+ * This is a scratch-pad object — once a playthrough is saved, scores are
+ * stored as immutable data in `VsPlaythroughScores`.
+ */
 export class Scores implements Serializable<ReadonlyArray<ScoreData>> {
 
   private _scores: Map<PlayerId, number>

@@ -295,6 +295,73 @@ describe('stats', function () {
     })
   })
 
+  describe('historical scores', async function () {
+    it('no score game returns empty array', async function () {
+      const game = await gameplay.games.create(Factory.createVsGame({ scoring: ScoringType.NO_SCORE }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+
+      const scores = await insights.stats.forGame(game).historicalScores()
+      assert.equal(scores.length, 0)
+    })
+
+    it('vs playthroughs with scores returns one entry per player score', async function () {
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id, scores: Factory.createScores(10, 20) }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: john.id, scores: Factory.createScores(30, 15) }))
+
+      const scores = await insights.stats.forGame(game).historicalScores()
+      assert.equal(scores.length, 4)
+    })
+
+    it('vs playthrough scores include playerId', async function () {
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id, scores: Factory.createScores(10, 20) }))
+
+      const scores = await insights.stats.forGame(game).historicalScores()
+      const johnScore = scores.find(s => s.playerId === john.id)
+      const alexScore = scores.find(s => s.playerId === alex.id)
+      assert.equal(johnScore?.score, 10)
+      assert.equal(alexScore?.score, 20)
+    })
+
+    it('vs playthroughs without scores are excluded', async function () {
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id, scores: Factory.createScores(10, 20) }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+
+      const scores = await insights.stats.forGame(game).historicalScores()
+      assert.equal(scores.length, 2)
+    })
+
+    it('coop playthroughs with score returns one entry per playthrough', async function () {
+      const game = await gameplay.games.create(Factory.createCoopGame({ scoring: ScoringType.HIGHEST_WINS }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: true, score: 50 }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false, score: 30 }))
+
+      const scores = await insights.stats.forGame(game).historicalScores()
+      assert.equal(scores.length, 2)
+    })
+
+    it('coop scores have no playerId', async function () {
+      const game = await gameplay.games.create(Factory.createCoopGame({ scoring: ScoringType.HIGHEST_WINS }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: true, score: 50 }))
+
+      const scores = await insights.stats.forGame(game).historicalScores()
+      assert.equal(scores.length, 1)
+      assert.equal(scores[0].score, 50)
+      assert.equal(scores[0].playerId, undefined)
+    })
+
+    it('coop playthroughs without score are excluded', async function () {
+      const game = await gameplay.games.create(Factory.createCoopGame({ scoring: ScoringType.HIGHEST_WINS }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: true, score: 50 }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: game.id, playersWon: false }))
+
+      const scores = await insights.stats.forGame(game).historicalScores()
+      assert.equal(scores.length, 1)
+    })
+  })
+
   describe('play streak', async function () {
     it('no playthroughs should be streak of zero', async function () {
       const game = await gameplay.games.create(Factory.createVsGame())

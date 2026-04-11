@@ -1,5 +1,5 @@
 import type { Game, Player } from '@domains/gameplay'
-import { type PlaysByDateData, ScoringType } from '@services'
+import { type HistoricalScoreData, type PlaysByDateData, ScoringType } from '@services'
 import type { InsightsDeps } from '../Insights'
 import type { CoopWinrates } from './CoopWinrates'
 import type { OverallStatsQuery } from './Stats'
@@ -14,7 +14,11 @@ type ScoreStats = {
 }
 
 
-// vs game stats
+/**
+ * Statistics scoped to a single game.
+ * Created via `Stats.forGame()`. Supports play counts, last played date,
+ * winrates, plays by month/date, and score stats (where applicable).
+ */
 export class GameStats {
 
   public constructor(
@@ -45,6 +49,14 @@ export class GameStats {
 
   public async numPlaysByDate(query?: OverallStatsQuery): Promise<PlaysByDateData[]> {
     return this._deps.service.getNumPlaysByDate({ ...this._query, ...query, gameId: this.game.id })
+  }
+
+  public async historicalScores(query?: OverallStatsQuery): Promise<ReadonlyArray<HistoricalScoreData>> {
+    if (this.game.scoring === ScoringType.NO_SCORE || this.game.scoring === ScoringType.MOST_ROUNDS) {
+      return []
+    }
+    const result = await this._deps.service.getHistoricalScores({ ...this._query, ...query, gameId: this.game.id })
+    return result[this.game.id] ?? []
   }
 
   public async scoreStats(query?: OverallStatsQuery): Promise<ScoreStats | undefined> {

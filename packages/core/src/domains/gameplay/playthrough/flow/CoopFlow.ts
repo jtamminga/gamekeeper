@@ -4,6 +4,11 @@ import { PlaythroughFlow } from './PlaythroughFlow'
 import { InvalidState } from '@core'
 
 
+/**
+ * Flow builder for cooperative playthroughs.
+ * Collects the outcome (players won/lost) and an optional score
+ * before committing via `build()`.
+ */
 export class CoopFlow extends PlaythroughFlow<CoopGame> {
   
   private playersWon?: boolean

@@ -7,6 +7,11 @@ import type { Player } from './Player'
 const MAX_PLAYERS = 10
 
 
+/**
+ * Collection manager for all players.
+ * Handles hydration, lookup, creation, and persistence.
+ * Enforces a hard limit on the total number of players.
+ */
 export class Players {
 
   public constructor(

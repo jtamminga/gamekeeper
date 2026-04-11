@@ -12,7 +12,12 @@ export type GameplayDeps = {
 }
 
 
-// game keeper
+/**
+ * Aggregate root for the Gameplay bounded context.
+ * Coordinates the three core gameplay collections — games, players, and playthroughs —
+ * and manages their hydration order (players and games load in parallel before
+ * playthroughs, since playthroughs depend on both).
+ */
 export class Gameplay {
   
   public readonly games: Games

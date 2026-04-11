@@ -5,6 +5,11 @@ import { GameplayDeps } from '../Gameplay'
 import type { Playthrough } from '../playthrough'
 
 
+/**
+ * Represents a person who participates in playthroughs.
+ * Stores identifying information (name, color) and provides
+ * access to all playthroughs this player has participated in.
+ */
 export class Player extends Entity<PlayerId> implements Serializable<PlayerData> {
 
   private _name: string

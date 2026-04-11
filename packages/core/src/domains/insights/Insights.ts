@@ -13,6 +13,11 @@ export type InsightsDeps = {
 }
 
 
+/**
+ * Aggregate root for the Insights bounded context.
+ * Coordinates stats and goals. Stats are lazy (queried on demand);
+ * goals are hydrated up front since they're used for progress tracking.
+ */
 export class Insights {
 
   public readonly stats: Stats

@@ -6,7 +6,10 @@ import type { PlayerId, VsPlaythroughData } from '@services'
 import type { VsGame } from '../game'
 
 
-// class
+/**
+ * A recorded session of a competitive (vs) game.
+ * Captures the winner (or null for a tie) and optional per-player scores.
+ */
 export class VsPlaythrough extends Playthrough {
 
   public readonly winnerId: PlayerId | null

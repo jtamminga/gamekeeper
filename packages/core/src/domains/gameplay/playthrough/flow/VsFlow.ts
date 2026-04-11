@@ -4,6 +4,12 @@ import { PlaythroughFlow } from './PlaythroughFlow'
 import { InvalidState } from '@core'
 
 
+/**
+ * Flow builder for competitive (vs) playthroughs.
+ * Accepts per-player scores and derives the winner automatically when all
+ * players have scores (implicit winner). If scores are tied or not provided,
+ * the winner must be set explicitly via `setWinner()`.
+ */
 export class VsFlow extends PlaythroughFlow<VsGame> {
 
   private scores?: Scores

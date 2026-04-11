@@ -3,7 +3,10 @@ import { GameData, GameType, type VsPlaythroughData } from '@services'
 import { VsPlaythrough } from '../playthrough'
 
 
-// vs game domain
+/**
+ * A competitive (vs) board game where one player wins against the others.
+ * Playthroughs record a winner and optional per-player scores.
+ */
 export class VsGame extends Game<VsPlaythrough> {
 
   public async record(data: Omit<VsPlaythroughData, 'gameId'>): Promise<VsPlaythrough> {

@@ -5,7 +5,7 @@ import type { GameId } from '../game'
 import type { PlayerId } from '../player'
 import { CoopPlaythroughData, PlaythroughData, ScoreData, VsPlaythroughData } from '../playthrough'
 import type { StatPerGame, StatsService } from './StatsService'
-import type { CoopWinratesData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatData, ScoreStatsData, WinrateData } from './WinrateData'
+import type { CoopWinratesData, HistoricalScoreData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatData, ScoreStatsData, WinrateData } from './WinrateData'
 
 
 
@@ -61,6 +61,11 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
   public async getScoreStats(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<ScoreStatsData | undefined>> {
     const grouped = this.groupedByGame(playthroughs)
     return this.forEachGroup(grouped, this.calculateScoreStats)
+  }
+
+  public async getHistoricalScores(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<HistoricalScoreData[]>> {
+    const grouped = this.groupedByGame(playthroughs)
+    return this.forEachGroup(grouped, this.collectHistoricalScores)
   }
 
   public async getNumPlaysByDate(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlaysByDateData[]> {
@@ -248,6 +253,19 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
       players,
       winrates
     }
+  }
+
+  // assume all playthroughs are of the same game
+  private collectHistoricalScores(playthroughs: ReadonlyArray<PlaythroughData>): HistoricalScoreData[] {
+    const gameType = playthroughs[0]?.type
+    if (gameType === 'vs') {
+      return (playthroughs as ReadonlyArray<VsPlaythroughData>)
+        .flatMap(p => p.scores?.map(s => ({ score: s.score, playerId: s.playerId })) ?? [])
+    } else if (gameType === 'coop') {
+      return (playthroughs as ReadonlyArray<CoopPlaythroughData>)
+        .flatMap(p => p.score !== undefined ? [{ score: p.score }] : [])
+    }
+    return []
   }
 
   // assume all playthroughs are of the same game
