@@ -40,7 +40,7 @@ export type Page =
   | { name: 'Setup' }
   | { name: 'Profile' }
   | { name: 'Summary' }
-  | { name: 'AddPlaythrough', props?: { gameId?: GameId } }
+  | { name: 'AddPlaythrough', props?: { gameId?: GameId, resetKey?: number } }
   | { name: 'PlaythroughDetails', props: { playthroughId: PlaythroughId }}
   | { name: 'Games' }
   | { name: 'AddGame', props?: CallbackPageProps }
@@ -70,7 +70,7 @@ export function router(page: Page) {
     case 'Games':
       return <Games />
     case 'AddPlaythrough':
-      return <AddPlaythrough />
+      return <AddPlaythrough key={page.props?.resetKey} />
     case 'AddGame':
       return <AddGame {...page.props} />
     case 'GameDetails':

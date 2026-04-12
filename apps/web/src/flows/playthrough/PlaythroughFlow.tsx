@@ -6,6 +6,7 @@ import { CoopFlowPartial } from './CoopFlow'
 import { PlaythroughAdded } from './PlaythroughAdded'
 import { Loading } from '@app/components'
 import { formatDate } from '@gamekeeper/views'
+import { useRouter } from '@app/hooks'
 
 
 /**
@@ -13,6 +14,7 @@ import { formatDate } from '@gamekeeper/views'
  */
 export function PlaythroughFlow() {
 
+  const { page, setPage } = useRouter()
   const [flow, setFlow] = useState<PlaythroughFlowModel>()
   const [completed, setCompleted] = useState(false)
   const [playthrough, setPlaythrough] = useState<Playthrough>()
@@ -22,12 +24,11 @@ export function PlaythroughFlow() {
 
     const playthrough = await flow.build()
     setPlaythrough(playthrough)
-  }
 
-  function onReset() {
-    setFlow(undefined)
-    setCompleted(false)
-    setPlaythrough(undefined)
+    // set the completed game onto the page props so that clicking
+    // "Record" again pre-selects the same game
+    const resetKey = page.name === 'AddPlaythrough' ? page.props?.resetKey : undefined
+    setPage({ name: 'AddPlaythrough', props: { gameId: flow.game.id, resetKey } })
   }
 
   let contents: ReactNode = null
@@ -37,10 +38,7 @@ export function PlaythroughFlow() {
   if (completed) {
     // while waiting for the playthrough show loader
     return playthrough
-      ? <PlaythroughAdded
-          playthrough={playthrough}
-          onReset={onReset}
-        />
+      ? <PlaythroughAdded playthrough={playthrough} />
       : <Loading />
   }
  

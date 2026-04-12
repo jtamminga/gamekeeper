@@ -4,10 +4,12 @@ import { useRouter } from '@app/hooks'
 export function Header() {
   const { page, setPage } = useRouter()
   // add game id to AddPlaythrough context
-  // if we are currently on a game's page
+  // if we are currently on a game's page, or just finished recording a playthrough
   const gameId = page.name === 'GameDetails'
     ? page.props.gameId
-    : undefined
+    : page.name === 'AddPlaythrough'
+      ? page.props?.gameId
+      : undefined
   
   return (
     <header className="app-header">
@@ -41,7 +43,7 @@ export function Header() {
         <a
           role="button"
           className={'record' + (page.name === 'AddPlaythrough' ? ' active' : '')}
-          onClick={() => setPage({ name: 'AddPlaythrough', props: { gameId } })}
+          onClick={() => setPage({ name: 'AddPlaythrough', props: { gameId, resetKey: Date.now() } })}
         >record</a>
       </nav>
     </header>
