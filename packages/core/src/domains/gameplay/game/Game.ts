@@ -44,7 +44,7 @@ export abstract class Game
     return this.scoring !== ScoringType.NO_SCORE
   }
 
-  public get roundBased(): boolean {
+  public get hasRoundBasedScoring(): boolean {
     return this.scoring === ScoringType.MOST_ROUNDS
   }
 

@@ -16,7 +16,7 @@ export function formatPlaythroughs(
       gameNames: false,
       scores: false,
       notes: false,
-      roundBased: false,
+      hasRoundBasedScoring: false,
       ...options
     }
   }

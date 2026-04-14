@@ -20,13 +20,13 @@ export class PlaythroughsViewFactory {
       ? this.gamekeeper.gameplay.games.get(options.gameId)
       : undefined
 
-    const roundBased = game?.roundBased
+    const hasRoundBasedScoring = game?.hasRoundBasedScoring
 
     return {
       game,
       playthroughs: formatPlaythroughs(
         playthroughs.all(options),
-        {roundBased, ...formatOptions}
+        {hasRoundBasedScoring, ...formatOptions}
       )
     }
   }

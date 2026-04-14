@@ -1,4 +1,4 @@
-import type { PlayerId } from '@gamekeeper/core'
+import type { HistoricalScoreData, PlayerId, PlaythroughId } from '@gamekeeper/core'
 
 export interface FormattedStat {
   name: string
@@ -13,6 +13,7 @@ export interface FormattedPlayerStat extends FormattedStat {
 }
 export type FormattedScoreStats = {
   average: string
-  best: { score: string, player?: string, playerId?: PlayerId }
-  worst: { score: string, player?: string, playerId?: PlayerId }
+  best: { playthroughId: PlaythroughId, score: string, player?: string, playerId?: PlayerId }
+  worst: { playthroughId: PlaythroughId, score: string, player?: string, playerId?: PlayerId }
+  historicalScores: ReadonlyArray<HistoricalScoreData>
 }

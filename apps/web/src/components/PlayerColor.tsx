@@ -1,4 +1,4 @@
-import { playerColorClass } from '@app/helpers'
+import { playerColor } from '@app/helpers'
 import { useGamekeeper } from '@app/hooks'
 import type { PlayerId } from '@gamekeeper/core'
 import type { ReactNode } from 'react'
@@ -20,6 +20,6 @@ export function PlayerColor({ playerId, children }: Props) {
     : undefined
 
   return (
-    <span className={playerColorClass(color)}>{children}</span>
+    <span style={{ color: playerColor(color) }}>{children}</span>
   )
 }

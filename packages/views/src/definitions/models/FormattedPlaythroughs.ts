@@ -16,7 +16,7 @@ export type FormatPlaythroughOptions = {
   gameNames?: boolean
   scores?: boolean
   notes?: boolean
-  roundBased?: boolean
+  hasRoundBasedScoring?: boolean
 }
 export type FormattedPlaythroughs = {
   readonly playthroughs: ReadonlyArray<FormattedPlaythrough>

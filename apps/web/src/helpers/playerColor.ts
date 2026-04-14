@@ -1,10 +1,12 @@
 import { PlayerColor } from '@gamekeeper/core'
 
 
-export function playerColorClass(color: PlayerColor | undefined): string {
-  const colorText = color === undefined
+
+export function playerColor(color: PlayerColor | undefined): string {
+
+  const colorLabel = color === undefined
     ? 'none'
     : PlayerColor.toString(color)
 
-  return `player-color-${colorText}`
+  return `var(--player-color-${colorLabel})`
 }

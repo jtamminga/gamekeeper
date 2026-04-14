@@ -41,7 +41,7 @@ export class GameViewFactory {
       gameStats.winrates(),
       gameStats.winrates({ year }),
       gameStats.scoreStats(),
-      gameStats.historicalScores({ latestPlaythroughs: 20 }),
+      gameStats.historicalScores({ latestPlaythroughs: NUM_HISTORICAL_PLAYTHROUGHS }),
       gameStats.numPlaysByDate({ year }),
       this.gamekeeper.gameplay.playthroughs.hydrate({
         gameId: game.id,
@@ -79,15 +79,18 @@ export class GameViewFactory {
       formattedScoreStats = {
         average: formatNumber(scoreStats.averageScore),
         best: {
+          playthroughId: scoreStats.bestScore.playthroughId,
           score: formatNumber(scoreStats.bestScore.score),
           playerId: scoreStats.bestScore.player?.id,
           player: scoreStats.bestScore.player?.name
         },
         worst: {
+          playthroughId: scoreStats.worstScore.playthroughId,
           score: formatNumber(scoreStats.worstScore.score),
           playerId: scoreStats.worstScore.player?.id,
           player: scoreStats.worstScore.player?.name
-        }
+        },
+        historicalScores: historicalScores ?? []
       }
     }
 
@@ -105,14 +108,13 @@ export class GameViewFactory {
       winrates,
       stats: [numPlaythroughs, ...winrates],
       scoreStats: formattedScoreStats,
-      historicalScores,
       hasMorePlaythroughs: numPlaysAllTime > NUM_HISTORICAL_PLAYTHROUGHS,
       latestPlaythroughs: formatPlaythroughs(
         this.gamekeeper
           .gameplay
           .playthroughs
           .latest(NUM_HISTORICAL_PLAYTHROUGHS, game.id)
-      , { scores: game.hasScoring, roundBased: game.roundBased }),
+      , { scores: game.hasScoring, hasRoundBasedScoring: game.hasRoundBasedScoring }),
       numPlaysPerDayThisYear: {
         ...toNumPlaysPerDay(numPlaysByDateThisYear, year)
       }

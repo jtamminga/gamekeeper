@@ -44,8 +44,9 @@ export function PlaythroughDetails({ playthroughId }: Props) {
       <h3>Scores</h3>
       <div className="mb-lg">
         {view.scores && view.scores.length > 0
-          ? view.scores.map(score =>
+          ? view.scores.map((score, index) =>
               <StatCard
+                key={`stat-${score.name}-${index}`}
                 value={score.score}
                 description={<PlayerColor playerId={score.playerId}>{score.name}</PlayerColor>}
               />

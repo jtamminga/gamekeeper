@@ -17,7 +17,7 @@ type Props = {
 export function PlaythroughsList({ formattedPlaythroughs, className }: Props) {
   
   const { toGame, toPlaythrough, toPlayer } = useRouter()
-  const { playthroughs, options: { gameNames, scores, roundBased } } = formattedPlaythroughs
+  const { playthroughs, options: { gameNames, scores, hasRoundBasedScoring } } = formattedPlaythroughs
 
   return (
     <table className={className}>
@@ -26,7 +26,7 @@ export function PlaythroughsList({ formattedPlaythroughs, className }: Props) {
           <th>Date</th>
           {gameNames && <th>Game</th>}
           <th>Winner</th>
-          {scores && <th className="center">{roundBased ? 'Rounds' : 'Scores'}</th>}
+          {scores && <th className="center">{hasRoundBasedScoring ? 'Rounds' : 'Scores'}</th>}
         </tr>
       </thead>
       <tbody>

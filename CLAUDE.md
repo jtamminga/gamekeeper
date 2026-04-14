@@ -3,12 +3,20 @@
 ## Project structure
 Monorepo with `packages/` (core, db, api, views) and `apps/` (web, api, testing).
 After modifying packages, run `yarn build:packages` before the app and api will pick up changes.
-Run `yarn build:api` to build the api. Run `yarn build:web` to build the Vite app.
+To build the API run `yarn build:api`. To build the web app run `yarn build:web`.
+
+## Highlevel Architecture
+- API is a simple express node app, located `/apps/api`
+- web app is a single page app that uses Vite. Makes calls to API. Located at `/apps/web`
+- core domain is located in `/packages/core`
 
 ## Testing
 Tests live in `apps/testing/tests/`. Use `Factory` helpers — `Factory.createVsGame()`,
 `Factory.createCoopGame()`, `Factory.createScores(johnsScore, alexsScore)`, etc.
 Players `john` (id `'1'`), `alex` (id `'2'`), `otherPlayer` (id `'3'`) are pre-seeded.
+
+## Web app routing
+Screen components read their own page props via `useRouter()` rather than through prop drilling — e.g. `BaseFlow` reads `gameId` directly from `page.props` when `page.name === 'AddPlaythrough'`. To pre-select something in a flow, stamp the value onto the page props via `setPage`.
 
 ## Adding a new stat
 Touch these files in order:

@@ -4,6 +4,7 @@ import { CalendarGraph } from './CalendarGraph'
 import { PlayerColor } from './PlayerColor'
 import { PlaythroughsList } from './PlaythroughsList'
 import { StatCard } from './StatCard'
+import { ScoreScatterPlot } from './ScoreScatterPlot'
 
 
 type Props = {
@@ -59,18 +60,23 @@ export function GameSummary({ view }: Props) {
             description="average score"
           />
 
-          <StatCard
-            value={scoreStats.best.score}
-            description={
-              <>best score {scoreStats.best.playerId && <PlayerColor playerId={scoreStats.best.playerId}>{scoreStats.best.player}</PlayerColor>}</>
-            }
-          />
-
-          <StatCard
-            value={scoreStats.worst.score}
-            description={
-              <>worst score {scoreStats.worst.playerId && <PlayerColor playerId={scoreStats.worst.playerId}>{scoreStats.worst.player}</PlayerColor>}</>
-            }
+          <div className="flex gap-md">
+            <StatCard
+              value={scoreStats.best.score}
+              description={
+                <>best {scoreStats.best.playerId && <PlayerColor playerId={scoreStats.best.playerId}>{scoreStats.best.player}</PlayerColor>}</>
+              }
+            />
+            <StatCard
+              value={scoreStats.worst.score}
+              description={
+                <>worst {scoreStats.worst.playerId && <PlayerColor playerId={scoreStats.worst.playerId}>{scoreStats.worst.player}</PlayerColor>}</>
+              }
+            />
+          </div>
+          
+          <ScoreScatterPlot
+            scoreStats={scoreStats}
           />
         </>
       }

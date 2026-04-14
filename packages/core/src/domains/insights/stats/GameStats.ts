@@ -1,5 +1,5 @@
 import type { Game, Player } from '@domains/gameplay'
-import { type HistoricalScoreData, type PlaysByDateData, ScoringType } from '@services'
+import { type HistoricalScoreData, type PlaysByDateData, type PlaythroughId, ScoringType } from '@services'
 import type { InsightsDeps } from '../Insights'
 import type { CoopWinrates } from './CoopWinrates'
 import type { OverallStatsQuery } from './Stats'
@@ -8,8 +8,8 @@ import { WinratesFactory } from './WinratesFactory'
 
 
 type ScoreStats = {
-  bestScore: { score: number, player?: Player }
-  worstScore: { score: number, player?: Player }
+  bestScore: { playthroughId: PlaythroughId, score: number, player?: Player }
+  worstScore: { playthroughId: PlaythroughId, score: number, player?: Player }
   averageScore: number
 }
 
@@ -52,16 +52,18 @@ export class GameStats {
   }
 
   public async historicalScores(query?: OverallStatsQuery): Promise<ReadonlyArray<HistoricalScoreData>> {
-    if (this.game.scoring === ScoringType.NO_SCORE || this.game.scoring === ScoringType.MOST_ROUNDS) {
+    // only continue if game has scoring
+    if (!this.game.hasScoring || this.game.hasRoundBasedScoring) {
       return []
     }
+
     const result = await this._deps.service.getHistoricalScores({ ...this._query, ...query, gameId: this.game.id })
     return result[this.game.id] ?? []
   }
 
   public async scoreStats(query?: OverallStatsQuery): Promise<ScoreStats | undefined> {
-    // score stats don't make sense for rounds, and obviously if there is no scoring
-    if (this.game.scoring === ScoringType.NO_SCORE || this.game.scoring === ScoringType.MOST_ROUNDS) {
+    // only continue if game has scoring
+    if (!this.game.hasScoring || this.game.hasRoundBasedScoring) {
       return undefined
     }
 
@@ -80,12 +82,14 @@ export class GameStats {
     
     return {
       bestScore: {
+        playthroughId: bestScore.playthroughId,
         score: bestScore.score,
         player: bestScore.playerId === undefined
           ? undefined
           : this._deps.gameplay.players.get(bestScore.playerId)
       },
       worstScore: {
+        playthroughId: worstScore.playthroughId,
         score: worstScore.score,
         player: worstScore.playerId === undefined
           ? undefined
