@@ -8,8 +8,8 @@ export class PlaythroughViewFactory {
     private readonly gamekeeper: GameKeeper
   ) { }
 
-  public create(id: PlaythroughId): PlaythroughView {
-    const playthrough = this.gamekeeper.gameplay.playthroughs.get(id)
+  public async create(id: PlaythroughId): Promise<PlaythroughView> {
+    const playthrough = await this.gamekeeper.gameplay.playthroughs.fetch(id)
 
     const formattedPlaythrough = formatPlaythrough(playthrough, { scores: true, notes: true })
 

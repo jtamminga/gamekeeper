@@ -138,6 +138,11 @@ export class MemoryGameplayRepository implements GameplayRepository {
     return playthroughData.map(data => this.bindPlaythrough(data))
   }
 
+  public async hydratePlaythrough(id: PlaythroughId): Promise<Playthrough> {
+    const data = await this._services.playthroughService.getPlaythrough(id)
+    return this.bindPlaythrough(data)
+  }
+
   public async createPlaythrough<T extends Playthrough = Playthrough>(data: NewPlaythroughData): Promise<T> {
     const playthroughData = await this._services.playthroughService.addPlaythrough(data)
     return this.bindPlaythrough(playthroughData) as T
@@ -146,6 +151,10 @@ export class MemoryGameplayRepository implements GameplayRepository {
   public async removePlaythrough(id: PlaythroughId): Promise<void> {
     await this._services.playthroughService.removePlaythrough(id)
     this._playthroughs.delete(id)
+  }
+
+  public findPlaythrough(id: PlaythroughId): Playthrough | undefined {
+    return this._playthroughs.get(id)
   }
 
   public getPlaythrough(id: PlaythroughId): Playthrough {

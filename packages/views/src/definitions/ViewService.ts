@@ -7,6 +7,6 @@ export interface ViewService {
   getGameView(id: GameId): Promise<GameView>
   getGamesView(): Promise<GamesView>
   getPlaythroughsView(options: PlaythroughQueryOptions, formatOptions: FormatPlaythroughOptions): Promise<PlaythroughsView>
-  getPlaythroughView(id: PlaythroughId): PlaythroughView
+  getPlaythroughView(id: PlaythroughId): Promise<PlaythroughView>
   getPlayerView(id: PlayerId, year?: number): Promise<PlayerView>
 }

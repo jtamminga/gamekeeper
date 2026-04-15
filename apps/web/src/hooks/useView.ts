@@ -1,7 +1,7 @@
 import type { GameId, PlayerId, PlaythroughId, PlaythroughQueryOptions } from '@gamekeeper/core'
 import { useEffect, useState } from 'react'
 import { viewService } from '@app/bootstrap'
-import { FormatPlaythroughOptions, GamesView, GameView, PlayerView, PlaythroughsView, SummaryView } from '@gamekeeper/views'
+import { FormatPlaythroughOptions, GamesView, GameView, PlayerView, PlaythroughsView, PlaythroughView, SummaryView } from '@gamekeeper/views'
 
 
 export function useSummaryView(year?: number) {
@@ -81,5 +81,15 @@ export function usePlaythroughsView(
 }
 
 export function usePlaythroughView(id: PlaythroughId) {
-  return viewService.getPlaythroughView(id)
+  const [view, setView] = useState<PlaythroughView>()
+
+  useEffect(() => {
+    async function fetchData() {
+      const view = await viewService.getPlaythroughView(id)
+      setView(view)
+    }
+    fetchData()
+  }, [id])
+
+  return view
 }

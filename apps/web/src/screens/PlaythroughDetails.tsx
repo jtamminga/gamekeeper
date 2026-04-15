@@ -1,4 +1,4 @@
-import { PlayerColor, StatCard } from '@app/components'
+import { Loading, PlayerColor, StatCard } from '@app/components'
 import { useGamekeeper, usePlaythroughView } from '@app/hooks'
 import type { PlaythroughId } from '@gamekeeper/core'
 
@@ -12,6 +12,10 @@ export function PlaythroughDetails({ playthroughId }: Props) {
 
   const { gameplay } = useGamekeeper()
   const view = usePlaythroughView(playthroughId)
+
+  if (!view) {
+    return <Loading />
+  }
 
   async function onDelete() {
     if (confirm('Are you sure you want to delete?')) {

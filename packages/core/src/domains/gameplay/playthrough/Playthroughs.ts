@@ -21,6 +21,14 @@ export class Playthroughs {
     return this
   }
 
+  public async hydratePlaythrough(id: PlaythroughId): Promise<Playthrough> {
+    return this._deps.repo.hydratePlaythrough(id)
+  }
+
+  public async fetch(id: PlaythroughId): Promise<Playthrough> {
+    return this._deps.repo.findPlaythrough(id) ?? this.hydratePlaythrough(id)
+  }
+
   public all(options?: PlaythroughQueryOptions): ReadonlyArray<Playthrough> {
     return this._deps.repo.getPlaythroughs(options)
   }

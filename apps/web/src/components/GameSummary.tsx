@@ -66,12 +66,14 @@ export function GameSummary({ view }: Props) {
               description={
                 <>best {scoreStats.best.playerId && <PlayerColor playerId={scoreStats.best.playerId}>{scoreStats.best.player}</PlayerColor>}</>
               }
+              onClick={() => router.toPlaythrough(scoreStats.best.playthroughId)}
             />
             <StatCard
               value={scoreStats.worst.score}
               description={
                 <>worst {scoreStats.worst.playerId && <PlayerColor playerId={scoreStats.worst.playerId}>{scoreStats.worst.player}</PlayerColor>}</>
               }
+              onClick={() => router.toPlaythrough(scoreStats.worst.playthroughId)}
             />
           </div>
           

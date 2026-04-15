@@ -22,7 +22,9 @@ export interface GameplayRepository {
   // playthroughs
   playthroughs: ReadonlyArray<Playthrough>
   hydratePlaythroughs(options?: PlaythroughQueryOptions): Promise<ReadonlyArray<Playthrough>>
+  hydratePlaythrough(id: PlaythroughId): Promise<Playthrough>
   getPlaythrough(id: PlaythroughId): Playthrough
+  findPlaythrough(id: PlaythroughId): Playthrough | undefined
   createPlaythrough<T extends Playthrough = Playthrough>(data: NewPlaythroughData): Promise<T>
   getPlaythroughs(options?: PlaythroughQueryOptions): ReadonlyArray<Playthrough>
   removePlaythrough(id: PlaythroughId): Promise<void>

@@ -43,7 +43,7 @@ export class GamekeeperViewService implements ViewService {
     return this.playthroughsViewFactory.create(options, formatOptions)
   }
 
-  public getPlaythroughView(id: PlaythroughId): PlaythroughView {
+  public getPlaythroughView(id: PlaythroughId): Promise<PlaythroughView> {
     return this.playthroughViewFactory.create(id)
   }
 

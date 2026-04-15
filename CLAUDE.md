@@ -18,6 +18,10 @@ Players `john` (id `'1'`), `alex` (id `'2'`), `otherPlayer` (id `'3'`) are pre-s
 ## Web app routing
 Screen components read their own page props via `useRouter()` rather than through prop drilling — e.g. `BaseFlow` reads `gameId` directly from `page.props` when `page.name === 'AddPlaythrough'`. To pre-select something in a flow, stamp the value onto the page props via `setPage`.
 
+## Repository hydration pattern
+`Playthroughs` (and other domain collections) use a two-phase pattern: `hydrate*()` loads from DB into memory (async), `get*()` reads from memory (sync). For on-demand single-record loading, use `playthroughs.fetch(id)` — checks memory first, hydrates from DB only if missing.
+`PlaythroughQueryOptions` is for list/filter queries only — primary-key lookups go through `hydratePlaythrough(id)` or `fetch(id)`.
+
 ## Adding a new stat
 Touch these files in order:
 1. `packages/core/src/services/stats/WinrateData.ts` — add the data type
