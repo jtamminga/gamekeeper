@@ -1,4 +1,5 @@
 import { GameService, GoalService, PlayerService, PlaythroughService, Services, StatsService } from '@gamekeeper/core'
+import { ViewService } from '@gamekeeper/views'
 import { ApiClient } from './ApiClient'
 import { ApiGameService } from './GameService'
 import { ApiPlayerService } from './PlayerService'
@@ -6,6 +7,7 @@ import { ApiPlaythroughService } from './PlaythroughService'
 import { ApiStatsService } from './StatsService'
 import { ApiCachingClient } from './ApiCachingClient'
 import { ApiGoalService } from './GoalService'
+import { ApiViewService } from './ApiViewService'
 
 
 export class ApiServices implements Services {
@@ -15,6 +17,7 @@ export class ApiServices implements Services {
   public readonly playthroughService: PlaythroughService
   public readonly goalService: GoalService
   public readonly statsService: StatsService
+  public readonly viewService: ViewService
 
   public constructor(baseUrl: string, token?: string) {
     const apiClient = new ApiClient(baseUrl, token)
@@ -25,6 +28,7 @@ export class ApiServices implements Services {
     this.playthroughService = new ApiPlaythroughService(cachingClient)
     this.goalService = new ApiGoalService(cachingClient)
     this.statsService = new ApiStatsService(cachingClient)
+    this.viewService = new ApiViewService(cachingClient)
   }
-  
+
 }

@@ -1,7 +1,7 @@
 import { GoalData, GoalId, GoalService, GoalsQuery, GoalType, NewGoalData, UpdatedGoalData } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { Route } from '@gamekeeper/views'
-import { toCleanQuery } from './utils'
+import { encodeGoalsQuery } from './queryParams'
 
 
 // types
@@ -21,7 +21,7 @@ export class ApiGoalService extends ApiService implements GoalService {
   }
 
   public async getGoals(query: GoalsQuery): Promise<readonly GoalData[]> {
-    const goals = await this.apiClient.get<ApiGoalDto[]>(Route.GOALS, toCleanQuery(query))
+    const goals = await this.apiClient.get<ApiGoalDto[]>(Route.GOALS, encodeGoalsQuery(query))
     return goals.map(this.transform)
   }
 

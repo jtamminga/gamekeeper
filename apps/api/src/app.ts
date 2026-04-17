@@ -1,17 +1,14 @@
-import 'express-async-errors'
-import cors from 'cors'
-import https from 'https'
-import fs from 'fs'
-import express, { NextFunction, Request, Response } from 'express'
-import { GameId, NewGameData, NewPlayerData, NotFoundError, GameKeeperFactory, PlaythroughId, UpdatedGameData, PlayerId, UpdatedGoalData, GoalId } from '@gamekeeper/core'
+import { decodeFormatOptions, decodeGoalsQuery, decodeNewGoalBody, decodeNewPlaythroughBody, decodePlaythroughQuery, decodeStatsQuery, decodeUpdatedGoalBody, InvalidParamsError } from '@gamekeeper/api-services'
+import { GameId, GameKeeperFactory, GoalId, NewGameData, NewPlayerData, NotFoundError, PlayerId, PlaythroughId, UpdatedGameData } from '@gamekeeper/core'
 import { DbServices, UserId } from '@gamekeeper/db-services'
 import { GamekeeperViewService, Route } from '@gamekeeper/views'
-import { ApiNewPlaythroughDto, toNewPlaythroughData, toPlaythroughQueryOptions } from './playthrough'
-import { config } from './config'
-import { InvalidParamsError } from './InvalidParamsError'
-import { toStatsQuery } from './stats'
-import { toGoalsQuery, toNewGoalData, toUpdatedGoalData } from './goals'
+import cors from 'cors'
+import express, { NextFunction, Request, Response } from 'express'
+import 'express-async-errors'
 import { auth, UnauthorizedError } from 'express-oauth2-jwt-bearer'
+import fs from 'fs'
+import https from 'https'
+import { config } from './config'
 
 
 // setup express app
@@ -141,7 +138,7 @@ app.get(`${Route.PLAYTHROUGHS}/:id`, async function(req, res) {
 // get playthroughs
 app.get(Route.PLAYTHROUGHS, async function (req, res) {
   const userId = getUserId(req)
-  const query = toPlaythroughQueryOptions(req)
+  const query = decodePlaythroughQuery(req.query)
   const playthroughs = await playthroughService.getPlaythroughs(query, userId)
   res.json({ data: playthroughs })
 })
@@ -149,8 +146,7 @@ app.get(Route.PLAYTHROUGHS, async function (req, res) {
 // create playthrough
 app.post(Route.PLAYTHROUGHS, async function (req, res) {
   const userId = getUserId(req)
-  const dto = req.body as ApiNewPlaythroughDto
-  const data = toNewPlaythroughData(dto)
+  const data = decodeNewPlaythroughBody(req.body)
 
   const playthrough = await playthroughService.addPlaythrough(data, userId)
   res.json({ data: playthrough })
@@ -184,19 +180,19 @@ app.get(`${Route.GOALS}/:id`, async function (req, res) {
 })
 app.get(Route.GOALS, async function (req, res) {
   const userId = getUserId(req)
-  const query = toGoalsQuery(req)
+  const query = decodeGoalsQuery(req.query)
   const goals = await goalService.getGoals(query, userId)
   res.json({ data: goals })
 })
 app.post(Route.GOALS, async function (req, res) {
   const userId = getUserId(req)
-  const data = toNewGoalData(req)
+  const data = decodeNewGoalBody(req.body)
   const goal = await goalService.addGoal(data, userId)
   res.json({ data: goal })
 })
 app.patch(`${Route.GOALS}/:id`, async function (req, res) {
   const userId = getUserId(req)
-  const data = toUpdatedGoalData(req)
+  const data = decodeUpdatedGoalBody(req.body)
   const goal = await goalService.updateGoal({ ...data, id: req.params.id as GoalId }, userId)
   res.json({ data: goal })
 })
@@ -214,61 +210,61 @@ app.delete(`${Route.GOALS}/:id`, async function (req, res) {
 
 app.get(Route.STATS.LAST_PLAYTHROUGHS, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getLastPlayed(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.NUM_PLAYTHROUGHS, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getNumPlays(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.WINRATES, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getWinrates(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.PLAYS_BY_MONTH, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getNumPlaysByMonth(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.OVERALL_WINRATES, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getOverallWinrates(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.NUM_UNIQUE_GAMES_PLAYED, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getNumUniqueGamesPlayed(query.year, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.SCORE_STATS, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getScoreStats(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.HISTORICAL_SCORES, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getHistoricalScores(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.NUM_PLAYS_BY_DATE, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getNumPlaysByDate(query, userId)
   res.json({ data: stats })
 })
 app.get(Route.STATS.PLAY_STREAK, async function (req, res) {
   const userId = getUserId(req)
-  const query = toStatsQuery(req)
+  const query = decodeStatsQuery(req.query)
   const stats = await statsService.getPlayStreak(query, userId)
   res.json({ data: stats })
 })
@@ -279,13 +275,44 @@ app.get(Route.STATS.PLAY_STREAK, async function (req, res) {
 // =====
 
 
-app.get('/stats', async function (req, res) {
-  const {year} = toStatsQuery(req)
+async function createViewService() {
   const gamekeeper = GameKeeperFactory.create(dbServices)
   await gamekeeper.gameplay.hydrate()
-  const gamekeeperViews = new GamekeeperViewService(gamekeeper)
-  const summaryView = await gamekeeperViews.getSummaryView(year)
-  res.json({ data: summaryView })
+  return new GamekeeperViewService(gamekeeper)
+}
+
+app.get(Route.VIEW.SUMMARY, async function (req, res) {
+  const { year } = decodeStatsQuery(req.query)
+  const viewService = await createViewService()
+  res.json({ data: await viewService.getSummaryView(year) })
+})
+
+app.get(Route.VIEW.GAMES, async function (req, res) {
+  const viewService = await createViewService()
+  res.json({ data: await viewService.getGamesView() })
+})
+
+app.get(Route.VIEW.GAME, async function (req, res) {
+  const viewService = await createViewService()
+  res.json({ data: await viewService.getGameView(req.params.id as GameId) })
+})
+
+app.get(Route.VIEW.PLAYTHROUGHS, async function (req, res) {
+  const options = decodePlaythroughQuery(req.query)
+  const formatOptions = decodeFormatOptions(req.query)
+  const viewService = await createViewService()
+  res.json({ data: await viewService.getPlaythroughsView(options, formatOptions) })
+})
+
+app.get(Route.VIEW.PLAYTHROUGH, async function (req, res) {
+  const viewService = await createViewService()
+  res.json({ data: await viewService.getPlaythroughView(req.params.id as PlaythroughId) })
+})
+
+app.get(Route.VIEW.PLAYER, async function (req, res) {
+  const { year } = decodeStatsQuery(req.query)
+  const viewService = await createViewService()
+  res.json({ data: await viewService.getPlayerView(req.params.id as PlayerId, year) })
 })
 
 

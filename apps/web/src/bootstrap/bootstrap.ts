@@ -36,6 +36,7 @@ async function initialize(token?: string) {
   const apiServices = new ApiServices(apiUrl, token)
   gamekeeper = GameKeeperFactory.create(apiServices)
   viewService = new GamekeeperViewService(gamekeeper)
+  // viewService = apiServices.viewService
 
   await gamekeeper.gameplay.hydrate({ limit: 10 })
 }

@@ -1,1 +1,5 @@
 export { ApiServices } from './ApiServices'
+export { ApiViewService } from './ApiViewService'
+export { encodePlaythroughQuery, decodePlaythroughQuery, encodeFormatOptions, decodeFormatOptions, encodeStatsQuery, decodeStatsQuery, encodeGoalsQuery, decodeGoalsQuery } from './queryParams'
+export { decodeNewGoalBody, decodeUpdatedGoalBody, decodeNewPlaythroughBody } from './body'
+export { InvalidParamsError } from './InvalidParamsError'
