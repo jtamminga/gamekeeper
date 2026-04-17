@@ -24,7 +24,7 @@ export class GamesViewFactory {
         type: game instanceof VsGame ? GameType.VS : GameType.COOP,
         weight: game.weight,
         numPlays: numPlays.get(game) ?? 0,
-        lastPlayed: lastPlayedDate,
+        lastPlayed: lastPlayedDate?.toISOString(),
         lastPlayedFormatted: lastPlayedDate ? formatDate(lastPlayedDate, true) : undefined
       }
     })

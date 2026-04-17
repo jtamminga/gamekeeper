@@ -6,7 +6,7 @@ export type GameWithStats = {
   type: GameType
   numPlays: number
   weight: number | undefined
-  lastPlayed: Date | undefined
+  lastPlayed: string | undefined
   lastPlayedFormatted: string | undefined
 }
 export type GameSortBy =

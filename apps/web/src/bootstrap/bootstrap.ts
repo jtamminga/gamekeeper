@@ -1,7 +1,7 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { ApiServices } from '@gamekeeper/api-services'
 import { GameKeeper, GameKeeperFactory } from '@gamekeeper/core'
 import { GamekeeperViewService, ViewService } from '@gamekeeper/views'
-import { useAuth0 } from '@auth0/auth0-react'
 
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -36,7 +36,6 @@ async function initialize(token?: string) {
   const apiServices = new ApiServices(apiUrl, token)
   gamekeeper = GameKeeperFactory.create(apiServices)
   viewService = new GamekeeperViewService(gamekeeper)
-  // viewService = apiServices.viewService
 
   await gamekeeper.gameplay.hydrate({ limit: 10 })
 }
@@ -58,4 +57,4 @@ const useAuth = authEnabled
       getAccessTokenSilently: getAccessToken,
     })
 
-export { initialize, gamekeeper, viewService, authEnabled, useAuth }
+export { authEnabled, gamekeeper, initialize, useAuth, viewService }

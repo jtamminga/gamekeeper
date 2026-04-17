@@ -9,16 +9,27 @@ export class ApiViewService implements ViewService {
 
   public constructor(private readonly client: IApiClient) { }
 
-  public getSummaryView(year?: number): Promise<SummaryView> {
-    return this.client.get(Route.VIEW.SUMMARY, year ? { year: year.toString() } : undefined)
+  public async getSummaryView(year?: number): Promise<SummaryView> {
+    const view = await this.client.get<SummaryView>(Route.VIEW.SUMMARY, year ? { year: year.toString() } : undefined)
+
+    // transform the only Date string back into a Date
+    // FIXME: also need to handle objects or take them out
+    view.numPlaysPerDayThisYear.firstDate = new Date(view.numPlaysPerDayThisYear.firstDate as unknown as string)
+
+    return view
   }
 
   public getGamesView(): Promise<GamesView> {
     return this.client.get(Route.VIEW.GAMES)
   }
 
-  public getGameView(id: GameId): Promise<GameView> {
-    return this.client.get(Route.forViewGame(id))
+  public async getGameView(id: GameId): Promise<GameView> {
+    const view = await this.client.get<GameView>(Route.forViewGame(id))
+
+    // transform the only Date string back into a Date
+    view.numPlaysPerDayThisYear.firstDate = new Date(view.numPlaysPerDayThisYear.firstDate as unknown as string)
+    
+    return view
   }
 
   public getPlaythroughsView(options: PlaythroughQueryOptions, formatOptions: FormatPlaythroughOptions): Promise<PlaythroughsView> {

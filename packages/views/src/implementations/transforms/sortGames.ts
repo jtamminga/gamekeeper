@@ -15,7 +15,7 @@ function getSortableValue(game: GameWithStats, sortBy: GameSortBy): string | num
     case 'name':
       return game.name
     case 'lastPlayed':
-      return game.lastPlayed?.getTime() ?? 0
+      return game.lastPlayed ?? ''
     case 'numPlays':
       return game.numPlays
     case 'weight':
