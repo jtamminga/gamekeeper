@@ -23,7 +23,8 @@ export class PlayerViewFactory {
 
     return {
       year,
-      player,
+      id: player.id,
+      name: player.name,
       topGamesAllTime: sortBest(getTopGames(playerId, winratesAllTime)).map(formatTopGame),
       topGamesThisYear: sortBest(getTopGames(playerId, winratesThisYear)).map(formatTopGame),
       worstGamesAllTime: sortWorst(getTopGames(playerId, winratesAllTime)).map(formatTopGame),

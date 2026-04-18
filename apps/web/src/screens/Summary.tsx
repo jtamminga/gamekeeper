@@ -141,7 +141,7 @@ export function Summary() {
       </div>
       <CalendarGraph
         countPerDay={numPlaysPerDayThisYear.plays}
-        firstDay={numPlaysPerDayThisYear.firstDate}
+        firstDay={new Date(numPlaysPerDayThisYear.firstDate)}
       />
 
       {/* year select */}

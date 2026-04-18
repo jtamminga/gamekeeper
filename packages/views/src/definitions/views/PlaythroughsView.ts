@@ -1,7 +1,7 @@
 import type { FormattedPlaythroughs } from '@def/models'
-import type { Game } from '@gamekeeper/core'
+import type { GameId } from '@gamekeeper/core'
 
 export interface PlaythroughsView {
-  game?: Game
+  gameId?: GameId
   playthroughs: FormattedPlaythroughs
 }

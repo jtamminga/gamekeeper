@@ -1,5 +1,7 @@
+export * from './FormattedDate'
 export * from './FormattedGoal'
 export * from './FormattedPlayer'
+export * from './FormattedPlaysPerDay'
 export * from './FormattedPlaythroughs'
 export * from './FormattedStats'
 export * from './FormattedWinrate'

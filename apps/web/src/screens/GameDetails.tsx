@@ -17,16 +17,16 @@ export function GameDetails({ gameId }: Props) {
   return (
     <>
       <div className="title-with-link for-game">
-        <h1>{view.game.name}</h1>
+        <h1>{view.name}</h1>
         <Link page={{ name: 'EditGame', props: { gameId }}}>Edit</Link>
       </div>
 
       <div className="flex flex-wrap gap-md mb-lg">
-        <div className="pill">{view.gameTypeLabel}</div>
-        {view.weightLabel &&
-          <div className="pill">{view.weightLabel}</div>
+        <div className="pill">{view.type}</div>
+        {view.weight &&
+          <div className="pill">{view.weight}</div>
         }
-        {view.game.own &&
+        {view.own &&
           <div className="pill">Own</div>
         }
       </div>

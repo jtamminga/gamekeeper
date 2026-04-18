@@ -1,9 +1,10 @@
-import type { GameId, Player } from '@gamekeeper/core'
+import type { GameId, PlayerId } from '@gamekeeper/core'
 
 
 export interface PlayerView {
   year: number
-  player: Player
+  id: PlayerId
+  name: string
   topGamesAllTime: GameWithWinrate[]
   topGamesThisYear: GameWithWinrate[]
   worstGamesAllTime: GameWithWinrate[]

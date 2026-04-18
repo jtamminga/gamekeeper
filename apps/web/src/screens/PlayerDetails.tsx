@@ -24,7 +24,7 @@ export function PlayerDetails({ playerId }: Props) {
   return (
     <>
       <div className="title-with-link">
-        <h1>{view.player.name}</h1>
+        <h1>{view.name}</h1>
         <Link page={{ name: 'EditPlayer', props: { playerId }}}>Edit</Link>
       </div>
 

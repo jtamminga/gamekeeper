@@ -1,12 +1,14 @@
-import type { Game } from '@gamekeeper/core'
-import type { FormattedPlayerStat, FormattedPlaythroughs, FormattedScoreStats, FormattedStat, FormattedWinrate } from '../models'
+import type { GameId } from '@gamekeeper/core'
+import type { FormattedPlayerStat, FormattedPlaysPerDay, FormattedPlaythroughs, FormattedScoreStats, FormattedStat, FormattedWinrate, ISODate } from '../models'
 
 
 export interface GameView {
   year: number
-  game: Game
-  gameTypeLabel: string
-  weightLabel: string | undefined
+  name: string
+  id: GameId
+  type: string
+  weight: string | undefined
+  own: boolean
   numPlaythroughs: FormattedStat
   winnerAllTime: FormattedWinrate | undefined
   winrates: ReadonlyArray<FormattedPlayerStat>
@@ -14,8 +16,5 @@ export interface GameView {
   scoreStats: FormattedScoreStats | undefined
   latestPlaythroughs: FormattedPlaythroughs
   hasMorePlaythroughs: boolean
-  numPlaysPerDayThisYear: {
-    plays: number[]
-    firstDate: Date
-  }
+  numPlaysPerDayThisYear: FormattedPlaysPerDay
 }

@@ -19,10 +19,10 @@ export class GameViewFactory {
     const game = this.gamekeeper.gameplay.games.get(gameId)
     const gameStats = this.gamekeeper.insights.stats.forGame(game)
     const year = new Date().getFullYear()
-    const gameTypeLabel = game instanceof VsGame
+    const type = game instanceof VsGame
       ? 'VS'
       : 'Coop'
-    const weightLabel = game.weight
+    const weight = game.weight
       ? `Weight: ${game.weight} / 5`
       : undefined
 
@@ -98,9 +98,11 @@ export class GameViewFactory {
 
     return {
       year,
-      game,
-      gameTypeLabel,
-      weightLabel,
+      id: game.id,
+      name: game.name,
+      type,
+      weight,
+      own: game.own,
       numPlaythroughs,
       winnerAllTime: highestWinrateAllTime
         ? formatWinrate(highestWinrateAllTime)
@@ -115,9 +117,7 @@ export class GameViewFactory {
           .playthroughs
           .latest(NUM_HISTORICAL_PLAYTHROUGHS, game.id)
       , { scores: game.hasScoring, hasRoundBasedScoring: game.hasRoundBasedScoring }),
-      numPlaysPerDayThisYear: {
-        ...toNumPlaysPerDay(numPlaysByDateThisYear, year)
-      }
+      numPlaysPerDayThisYear: toNumPlaysPerDay(numPlaysByDateThisYear, year)
     }
   }
 

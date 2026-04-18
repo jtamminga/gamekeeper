@@ -23,7 +23,7 @@ export class PlaythroughsViewFactory {
     const hasRoundBasedScoring = game?.hasRoundBasedScoring
 
     return {
-      game,
+      gameId: game?.id,
       playthroughs: formatPlaythroughs(
         playthroughs.all(options),
         {hasRoundBasedScoring, ...formatOptions}

@@ -17,7 +17,7 @@ export function GameSummary({ view }: Props) {
   const router = useRouter()
   const {
     year,
-    game,
+    id,
     winnerAllTime,
     numPlaythroughs,
     scoreStats,
@@ -118,14 +118,14 @@ export function GameSummary({ view }: Props) {
         <div className="flex h-centered mb-lg">
           <button
             type="button"
-            onClick={() => router.setPage({ name: 'GamePlaythroughs', props: { gameId: game.id } })}
+            onClick={() => router.setPage({ name: 'GamePlaythroughs', props: { gameId: id } })}
           >All Playthroughs</button>
         </div>
       }
 
       <CalendarGraph
         countPerDay={numPlaysPerDayThisYear.plays}
-        firstDay={numPlaysPerDayThisYear.firstDate}
+        firstDay={new Date(numPlaysPerDayThisYear.firstDate)}
       />
     </>
   )

@@ -1,5 +1,5 @@
 import { Link, Loading, PlaythroughsList } from '@app/components'
-import { usePlaythroughsView } from '@app/hooks'
+import { useGamekeeper, usePlaythroughsView } from '@app/hooks'
 import { GameId } from '@gamekeeper/core'
 
 
@@ -10,15 +10,19 @@ type Props = {
 
 export function GamePlaythroughs({ gameId }: Props) {
 
+  const gamekeeper = useGamekeeper()
   const view = usePlaythroughsView({ gameId }, { scores: true })
+  const game = gamekeeper.gameplay.games.get(gameId)
+
   if (!view) {
     return <Loading />
   }
+  
 
   return (
     <>
       <div className="title-with-link">
-        <h1>{view.game!.name}</h1>
+        <h1>{game!.name}</h1>
         <Link page={{ name: 'GameDetails', props: { gameId }}}>Back</Link>
       </div>
 

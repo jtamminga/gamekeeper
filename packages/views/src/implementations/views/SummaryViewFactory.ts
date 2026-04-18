@@ -89,9 +89,7 @@ export class SummaryViewFactory {
       },
       latestNumPlaythorughs: NUM_LATEST_PLAYTHROUGHTS,
       latestPlaythroughs: formatPlaythroughs(this.gamekeeper.gameplay.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
-      numPlaysPerDayThisYear: {
-        ...toNumPlaysPerDay(numPlaysByDateThisYear, year)
-      },
+      numPlaysPerDayThisYear: toNumPlaysPerDay(numPlaysByDateThisYear, year),
       avgPlaysPerDayThisYear: formatNumber(ArrayUtils.average(numPlaysByDateThisYear.map(i => i.plays))),
       mostPlaysInDayThisYear: numPlaysByDateThisYear.reduce((most, cur) => cur.plays > most ? cur.plays : most, 0),
       topPlayedGames
