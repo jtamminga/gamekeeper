@@ -1,6 +1,6 @@
 import type { GameId, StatsQuery, StatPerGame, StatsService, PlayerWinrateData, CoopWinratesData, HistoricalScoreData, ScoreStatsData, PlaysByDateData, PlayStreakData } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
-import { encodeStatsQuery } from './queryParams'
+import { encodeStatsQuery } from '../utils/queryParams'
 import { Route } from '@gamekeeper/views'
 
 

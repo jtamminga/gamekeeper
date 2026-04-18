@@ -1,7 +1,7 @@
 import { GoalData, GoalId, GoalService, GoalsQuery, GoalType, NewGoalData, UpdatedGoalData } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { Route } from '@gamekeeper/views'
-import { encodeGoalsQuery } from './queryParams'
+import { encodeGoalsQuery } from '../utils/queryParams'
 
 
 // types

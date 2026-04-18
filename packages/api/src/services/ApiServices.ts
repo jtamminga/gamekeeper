@@ -1,11 +1,11 @@
 import { GameService, GoalService, PlayerService, PlaythroughService, Services, StatsService } from '@gamekeeper/core'
 import { ViewService } from '@gamekeeper/views'
-import { ApiClient } from './ApiClient'
+import { ApiClient } from '../client/ApiClient'
+import { ApiCachingClient } from '../client/ApiCachingClient'
 import { ApiGameService } from './GameService'
 import { ApiPlayerService } from './PlayerService'
 import { ApiPlaythroughService } from './PlaythroughService'
 import { ApiStatsService } from './StatsService'
-import { ApiCachingClient } from './ApiCachingClient'
 import { ApiGoalService } from './GoalService'
 import { ApiViewService } from './ApiViewService'
 

@@ -13,19 +13,21 @@ export function encodePlaythroughQuery(options: PlaythroughQueryOptions): Record
   if (options.fromDate !== undefined) query.fromDate = options.fromDate.toISOString()
   if (options.toDate !== undefined) query.toDate = options.toDate.toISOString()
   if (options.gameId !== undefined) query.gameId = options.gameId
+  if (options.year !== undefined) query.year = options.year.toString()
   if (options.playerIds !== undefined) query.playerIds = options.playerIds.join(',')
   return query
 }
 
 export function decodePlaythroughQuery(params: Record<string, unknown>): PlaythroughQueryOptions {
-  const { limit, fromDate, toDate, gameId, playerIds } = params
-  const query: PlaythroughQueryOptions = {}
-  if (typeof limit === 'string') query.limit = Number.parseInt(limit)
-  if (typeof fromDate === 'string') query.fromDate = new Date(fromDate)
-  if (typeof toDate === 'string') query.toDate = new Date(toDate)
-  if (typeof gameId === 'string') query.gameId = gameId as GameId
-  if (typeof playerIds === 'string') query.playerIds = playerIds.split(',') as PlayerId[]
-  return query
+  const { limit, fromDate, toDate, gameId, year, playerIds } = params
+  const options: PlaythroughQueryOptions = {}
+  if (typeof limit === 'string') options.limit = Number.parseInt(limit)
+  if (typeof fromDate === 'string') options.fromDate = new Date(fromDate)
+  if (typeof toDate === 'string') options.toDate = new Date(toDate)
+  if (typeof gameId === 'string') options.gameId = gameId as GameId
+  if (typeof year === 'string') options.year = Number.parseInt(year)
+  if (typeof playerIds === 'string') options.playerIds = playerIds.split(',') as PlayerId[]
+  return options
 }
 
 

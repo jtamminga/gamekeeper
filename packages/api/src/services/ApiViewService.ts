@@ -1,8 +1,8 @@
 import type { GameId, PlayerId, PlaythroughId, PlaythroughQueryOptions } from '@gamekeeper/core'
 import type { FormatPlaythroughOptions, GameView, GamesView, PlayerView, PlaythroughsView, PlaythroughView, SummaryView, ViewService } from '@gamekeeper/views'
 import { Route } from '@gamekeeper/views'
-import type { IApiClient } from './IApiClient'
-import { encodePlaythroughQuery, encodeFormatOptions } from './queryParams'
+import type { IApiClient } from '../client/IApiClient'
+import { encodePlaythroughQuery, encodeFormatOptions } from '../utils/queryParams'
 
 
 export class ApiViewService implements ViewService {

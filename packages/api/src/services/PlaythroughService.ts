@@ -10,7 +10,7 @@ import {
   UpdatedPlaythroughData
 } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
-import { toCleanQuery } from './utils'
+import { encodePlaythroughQuery } from '../utils/queryParams'
 import { Route } from '@gamekeeper/views'
 
 
@@ -43,7 +43,7 @@ export class ApiPlaythroughService extends ApiService implements PlaythroughServ
   }
 
   public async getPlaythroughs(options?: PlaythroughQueryOptions): Promise<readonly PlaythroughData[]> {
-    const playthroughs = await this.apiClient.get<ApiPlaythroughDto[]>(Route.PLAYTHROUGHS, toCleanQuery(options))
+    const playthroughs = await this.apiClient.get<ApiPlaythroughDto[]>(Route.PLAYTHROUGHS, options ? encodePlaythroughQuery(options) : undefined)
     return playthroughs.map(this.transform)
   }
 

@@ -1,4 +1,4 @@
-import type { IApiClient } from './IApiClient'
+import type { IApiClient } from '../client/IApiClient'
 
 export abstract class ApiService {
 

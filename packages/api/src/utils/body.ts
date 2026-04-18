@@ -9,45 +9,47 @@ import type {
   ScoreData,
   UpdatedGoalData
 } from '@gamekeeper/core'
-import { InvalidParamsError } from './InvalidParamsError'
+import { DecodeError, RequiredError } from '../errors'
 
 
 export function decodeNewGoalBody(body: Record<string, unknown>): NewGoalData {
   const { type, value, year } = body
 
-  if (typeof type !== 'number') {
-    throw new InvalidParamsError('type is required')
-  }
-  if (typeof value !== 'number') {
-    throw new InvalidParamsError('value is required')
-  }
-  if (typeof year !== 'number') {
-    throw new InvalidParamsError('year is required')
-  }
+  // validate
+  if (typeof type !== 'number') throw new RequiredError('type')
+  if (typeof value !== 'number') throw new RequiredError('value')
+  if (typeof year !== 'number') throw new RequiredError('year')
 
   return { type, value, year }
 }
 
 export function decodeUpdatedGoalBody(body: Record<string, unknown>): Omit<UpdatedGoalData, 'id'> {
   const { type, value, year } = body
+
   const data: Omit<UpdatedGoalData, 'id'> = {}
   if (typeof type === 'number') data.type = type
   if (typeof value === 'number') data.value = value
   if (typeof year === 'number') data.year = year
+
   return data
 }
 
 export function decodeNewPlaythroughBody(body: Record<string, unknown>): NewPlaythroughData {
   const { gameId, playerIds, playedOn, winnerId, scores, playersWon, score, notes, startedOn, endedOn } = body
 
+  // validate
+  if (typeof gameId !== 'string') throw new RequiredError('gameId')
+  if (typeof playerIds !== 'object') throw new RequiredError('playerIds')
+  if (typeof playedOn !== 'string') throw new RequiredError('playedOn')
+
   const baseData: NewBasePlaythroughData = {
     gameId: gameId as GameId,
     playerIds: playerIds as ReadonlyArray<PlayerId>,
-    playedOn: new Date(playedOn as string)
+    playedOn: new Date(playedOn)
   }
-  if (notes) baseData.notes = notes as string
-  if (startedOn) baseData.startedOn = new Date(startedOn as string)
-  if (endedOn) baseData.endedOn = new Date(endedOn as string)
+  if (typeof notes === 'string') baseData.notes = notes
+  if (typeof startedOn === 'string') baseData.startedOn = new Date(startedOn)
+  if (typeof endedOn === 'string') baseData.endedOn = new Date(endedOn)
 
   if (winnerId !== undefined) {
     const vsData: NewVsPlaythroughData = {
@@ -74,6 +76,6 @@ export function decodeNewPlaythroughBody(body: Record<string, unknown>): NewPlay
   }
 
   else {
-    throw new Error('invalid playthrough data')
+    throw new DecodeError('invalid playthrough data')
   }
 }

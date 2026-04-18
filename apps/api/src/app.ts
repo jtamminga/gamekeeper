@@ -1,4 +1,4 @@
-import { decodeFormatOptions, decodeGoalsQuery, decodeNewGoalBody, decodeNewPlaythroughBody, decodePlaythroughQuery, decodeStatsQuery, decodeUpdatedGoalBody, InvalidParamsError } from '@gamekeeper/api-services'
+import { DecodeError, decodeFormatOptions, decodeGoalsQuery, decodeNewGoalBody, decodeNewPlaythroughBody, decodePlaythroughQuery, decodeStatsQuery, decodeUpdatedGoalBody } from '@gamekeeper/api-services'
 import { GameId, GameKeeperFactory, GoalId, NewGameData, NewPlayerData, NotFoundError, PlayerId, PlaythroughId, UpdatedGameData } from '@gamekeeper/core'
 import { DbServices, UserId } from '@gamekeeper/db-services'
 import { GamekeeperViewService, Route } from '@gamekeeper/views'
@@ -353,7 +353,7 @@ function errorHandler(err: Error, req: Request, res: Response, next: NextFunctio
     return next(err)
   }
   
-  if (err instanceof InvalidParamsError) {
+  if (err instanceof DecodeError) {
     res.status(400)
     res.json({ error: err.message })
   }
