@@ -6,9 +6,9 @@
   "type": "module",
   "typings": "dist/app.d.ts",
   "dependencies": {
+    "@gamekeeper/api-services": "0.0.1",
     "@gamekeeper/core": "1.0.85",
     "@gamekeeper/db-services": "0.0.2",
-    "@gamekeeper/api-services": "0.0.1",
     "@gamekeeper/views": "0.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",

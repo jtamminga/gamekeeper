@@ -3,7 +3,7 @@ import {
   decodeFormatOptions, decodeGoalsQuery, decodeNewGoalBody,
   decodeNewPlaythroughBody, decodePlaythroughQuery, decodeStatsQuery,
   decodeUpdatedGoalBody, encodeFormatOptions, encodeGoalsQuery,
-  encodePlaythroughQuery, encodeStatsQuery, InvalidParamsError
+  encodePlaythroughQuery, encodeStatsQuery, RequiredError
 } from '@gamekeeper/api-services'
 import type { GameId, PlayerId } from '@gamekeeper/core'
 
@@ -61,7 +61,7 @@ describe('api encode/decode', function () {
     it('throws InvalidParamsError when a required field is missing', function () {
       assert.throws(
         () => decodeNewGoalBody({ value: 50, year: 2024 }),
-        InvalidParamsError
+        RequiredError
       )
     })
   })
