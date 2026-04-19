@@ -1,5 +1,5 @@
 import type { Game, Player } from '@domains/gameplay'
-import { type HistoricalScoreData, type PlaysByDateData, type PlaythroughId, ScoringType } from '@services'
+import { type HistoricalScoreData, type PlayerWinStreakData, type PlaysByDateData, type PlaythroughId, ScoringType } from '@services'
 import type { InsightsDeps } from '../Insights'
 import type { CoopWinrates } from './CoopWinrates'
 import type { OverallStatsQuery } from './Stats'
@@ -98,5 +98,11 @@ export class GameStats {
       averageScore: gameResult.averageScore
     }
   }
+
+  public async playerWinStreaks(query?: OverallStatsQuery): Promise<PlayerWinStreakData[]> {
+    const result = await this._deps.service.getPlayerWinStreaks({ ...this._query, ...query, gameId: this.game.id })
+    return result[this.game.id] ?? []
+  }
+
 
 }

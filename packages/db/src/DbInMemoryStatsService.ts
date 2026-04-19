@@ -4,6 +4,7 @@ import {
   InMemoryStats,
   PlaysByDateData,
   PlayStreakData,
+  PlayerWinStreakData,
   PlaythroughData,
   PlaythroughQueryOptions,
   PlayerWinrateData,
@@ -83,6 +84,16 @@ export class DbInMemoryStatsService implements StatsService {
   public async getPlayStreak(query: StatsQuery = {}, userId?: UserId): Promise<PlayStreakData> {
     const playthroughs = await this.getPlaythroughs(query, userId)
     return this._inMemoryStats.getPlayStreak(playthroughs)
+  }
+
+  public async getOverallWinStreaks(year?: number, userId?: UserId): Promise<PlayerWinStreakData[]> {
+    const playthroughs = await this.getPlaythroughs({ year }, userId)
+    return this._inMemoryStats.getOverallWinStreaks(playthroughs)
+  }
+
+  public async getPlayerWinStreaks(query: StatsQuery = {}, userId?: UserId): Promise<StatPerGame<PlayerWinStreakData[]>> {
+    const playthroughs = await this.getPlaythroughs(query, userId)
+    return this._inMemoryStats.getPlayerWinStreaks(playthroughs)
   }
 
 

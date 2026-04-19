@@ -268,6 +268,18 @@ app.get(Route.STATS.PLAY_STREAK, async function (req, res) {
   const stats = await statsService.getPlayStreak(query, userId)
   res.json({ data: stats })
 })
+app.get(Route.STATS.PLAYER_WIN_STREAKS, async function (req, res) {
+  const userId = getUserId(req)
+  const query = decodeStatsQuery(req.query)
+  const stats = await statsService.getPlayerWinStreaks(query, userId)
+  res.json({ data: stats })
+})
+app.get(Route.STATS.OVERALL_WIN_STREAKS, async function (req, res) {
+  const userId = getUserId(req)
+  const query = decodeStatsQuery(req.query)
+  const stats = await statsService.getOverallWinStreaks(query.year, userId)
+  res.json({ data: stats })
+})
 
 
 //

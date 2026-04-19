@@ -5,7 +5,7 @@ import type { GameId } from '../game'
 import type { PlayerId } from '../player'
 import { CoopPlaythroughData, PlaythroughData, ScoreData, VsPlaythroughData } from '../playthrough'
 import type { StatPerGame, StatsService } from './StatsService'
-import type { CoopWinratesData, HistoricalScoreData, PlayerWinrateData, PlaysByDateData, PlayStreakData, ScoreStatData, ScoreStatsData, WinrateData } from './WinrateData'
+import type { CoopWinratesData, HistoricalScoreData, PlayerWinrateData, PlayerWinStreakData, PlaysByDateData, PlayStreakData, ScoreStatData, ScoreStatsData, WinrateData } from './StatsData'
 
 
 
@@ -69,7 +69,7 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
   }
 
   public async getNumPlaysByDate(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlaysByDateData[]> {
-    // by default playthroughs are ordered by played_on date desc
+    // by default playthroughs are ordered by played_on date desc (latest first)
     playthroughs = playthroughs.toReversed()
     
     const result: PlaysByDateData[] = []
@@ -95,7 +95,7 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
   }
 
   public async getPlayStreak(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlayStreakData> {
-    // by default playthroughs are ordered by played_on date desc
+    // by default playthroughs are ordered by played_on date desc (latest first)
     playthroughs = playthroughs.toReversed()
 
     let bestStreak = 0
@@ -126,6 +126,15 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     }
 
     return { bestStreak, bestStart, currentStreak }
+  }
+
+  public async getOverallWinStreaks(playthroughs: ReadonlyArray<PlaythroughData>): Promise<PlayerWinStreakData[]> {
+    return this.buildWinStreaksFromPlaythroughs(playthroughs)
+  }
+
+  public async getPlayerWinStreaks(playthroughs: ReadonlyArray<PlaythroughData>): Promise<StatPerGame<PlayerWinStreakData[]>> {
+    const grouped = this.groupedByGame(playthroughs)
+    return this.forEachGroup(grouped, group => this.buildWinStreaksFromPlaythroughs(group))
   }
 
 
@@ -164,6 +173,52 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     }
 
     return result
+  }
+
+  private buildWinStreaksFromPlaythroughs(playthroughs: ReadonlyArray<PlaythroughData>): PlayerWinStreakData[] {
+    // by default playthroughs are ordered by played_on date desc (lastest first)
+    const vsPlaythroughs = playthroughs
+      .filter(playthrough => VsPlaythroughData.guard(playthrough))
+      .toReversed()
+
+    // get all players in this set of playthroughs
+    const players = new Set<PlayerId>()
+    vsPlaythroughs.forEach(playthrough => playthrough.playerIds.forEach(id => players.add(id)))
+
+    // for each player build win streak data
+    const result: PlayerWinStreakData[] = []
+    for (const playerId of players) {
+      const playerPlaythroughs = vsPlaythroughs.filter(p => p.playerIds.includes(playerId))
+      result.push(this.buildWinStreakForPlayer(playerPlaythroughs, playerId))
+    }
+
+    // only return data if they have any streak
+    return result.filter(player => player.currentStreak > 0 || player.bestStreak > 0)
+  }
+
+  private buildWinStreakForPlayer(playthroughs: VsPlaythroughData[], playerId: PlayerId): PlayerWinStreakData {
+    let bestStreak = 0
+    let currentStreak = 0
+    let bestStart: Date | undefined = undefined
+    let currentStart: Date | undefined = undefined
+
+    for (const playthrough of playthroughs) {
+      if (playthrough.winnerId === playerId) {
+        if (currentStreak === 0) {
+          currentStart = playthrough.playedOn
+        }
+        currentStreak++
+        if (currentStreak > bestStreak) {
+          bestStreak = currentStreak
+          bestStart = currentStart
+        }
+      } else {
+        currentStreak = 0
+        currentStart = undefined
+      }
+    }
+
+    return { playerId, currentStreak, bestStreak, bestStart }
   }
 
   private calculateWinrates(playthroughs: ReadonlyArray<PlaythroughData>): PlayerWinrateData[] {

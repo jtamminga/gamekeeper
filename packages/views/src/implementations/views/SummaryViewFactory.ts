@@ -1,8 +1,8 @@
 import { SummaryView } from '@def/views'
 import { ArrayUtils, GameKeeper, StatsResult } from '@gamekeeper/core'
-import { toNumPlaysPerDay } from '../transforms'
+import { toNumPlaysPerDay, topCurrentWinStreaksForGame } from '../transforms'
 import { differenceInDays } from 'date-fns'
-import { formatDate, formatGoal, formatNumber, formatPercent, formatPlaythroughs, formatWinrate } from '../formatters'
+import { formatDate, formatGoal, formatNumber, formatPercent, formatPlaythroughs, formatWinrate, formatBestWinStreaks } from '../formatters'
 
 
 const NUM_LATEST_PLAYTHROUGHTS = 10
@@ -25,7 +25,9 @@ export class SummaryViewFactory {
       overallWinratesLatest,
       numPlaysByDateThisYear,
       winratesThisYear,
-      playStreakThisYear
+      playStreakThisYear,
+      overallWinStreaksThisYear,
+      playerWinStreaksThisYear
     ] = await Promise.all([
       stats.numPlaythroughs({ year }),
       stats.numPlaythroughs({}),
@@ -36,6 +38,8 @@ export class SummaryViewFactory {
       stats.numPlaysByDate({ year }),
       stats.winrates({ year }),
       stats.playStreak({ year }),
+      stats.overallWinStreaks(year),
+      stats.playerWinStreaks({ year }),
       // hydration requirements
       this.gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS }),
       this.gamekeeper.insights.goals.hydrate({ year })
@@ -92,7 +96,9 @@ export class SummaryViewFactory {
       numPlaysPerDayThisYear: toNumPlaysPerDay(numPlaysByDateThisYear, year),
       avgPlaysPerDayThisYear: formatNumber(ArrayUtils.average(numPlaysByDateThisYear.map(i => i.plays))),
       mostPlaysInDayThisYear: numPlaysByDateThisYear.reduce((most, cur) => cur.plays > most ? cur.plays : most, 0),
-      topPlayedGames
+      topPlayedGames,
+      bestOverallWinStreaksThisYear: formatBestWinStreaks(overallWinStreaksThisYear, this.gamekeeper.gameplay.players),
+      topCurrentWinStreaksForGame: topCurrentWinStreaksForGame(playerWinStreaksThisYear, this.gamekeeper.gameplay.players)
     }
 
     if (winningWinrate) {

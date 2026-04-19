@@ -11,6 +11,7 @@ To build the API run `yarn build:api`. To build the web app run `yarn build:web`
 - core domain is located in `/packages/core`
 
 ## Testing
+Run `yarn test` from root to test.
 Tests live in `apps/testing/tests/`. Use `Factory` helpers — `Factory.createVsGame()`,
 `Factory.createCoopGame()`, `Factory.createScores(johnsScore, alexsScore)`, etc.
 Players `john` (id `'1'`), `alex` (id `'2'`), `otherPlayer` (id `'3'`) are pre-seeded.

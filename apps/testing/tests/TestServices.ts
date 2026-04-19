@@ -107,7 +107,8 @@ export class TestPlaythroughService implements PlaythroughService {
       throw new Error('not implemented')
     }
 
-    return playthroughs
+    // simulate playthroughs in played on desc (latest first)
+    return playthroughs.reverse()
   }
 
   public async addPlaythrough(playthrough: VsPlaythroughData | CoopPlaythroughData): Promise<PlaythroughData> {

@@ -33,3 +33,10 @@ export type HistoricalScoreData = { score: number, playerId?: PlayerId }
 export type PlayStreakData = { bestStreak: number, bestStart?: Date, currentStreak: number }
 
 export type PlaysByDateData = { date: Date, plays: number }
+
+export type PlayerWinStreakData = {
+  playerId: PlayerId
+  currentStreak: number
+  bestStreak: number
+  bestStart?: Date
+}

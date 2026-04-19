@@ -4,7 +4,7 @@ import type { GameId, GoalId, PlayerId, PlaythroughId } from '@gamekeeper/core'
 export namespace Route {
 
   const _stats = '/stats'
-  const _view = '/view'
+  const _view = '/views'
 
   export const GAMES = '/games'
   export const PLAYERS = '/players'
@@ -28,7 +28,9 @@ export namespace Route {
     SCORE_STATS: `${_stats}/score-stats`,
     HISTORICAL_SCORES: `${_stats}/historical-scores`,
     NUM_PLAYS_BY_DATE: `${_stats}/num-plays-by-date`,
-    PLAY_STREAK: `${_stats}/play-streak`
+    PLAY_STREAK: `${_stats}/play-streak`,
+    PLAYER_WIN_STREAKS: `${_stats}/player-win-streaks`,
+    OVERALL_WIN_STREAKS: `${_stats}/overall-win-streaks`
   } as const
 
   export function forGame(id: GameId) {

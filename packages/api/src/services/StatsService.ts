@@ -1,4 +1,4 @@
-import type { GameId, StatsQuery, StatPerGame, StatsService, PlayerWinrateData, CoopWinratesData, HistoricalScoreData, ScoreStatsData, PlaysByDateData, PlayStreakData } from '@gamekeeper/core'
+import type { GameId, PlayerId, StatsQuery, StatPerGame, StatsService, PlayerWinrateData, CoopWinratesData, HistoricalScoreData, PlayerWinStreakData, ScoreStatsData, PlaysByDateData, PlayStreakData } from '@gamekeeper/core'
 import { ApiService } from './ApiService'
 import { encodeStatsQuery } from '../utils/queryParams'
 import { Route } from '@gamekeeper/views'
@@ -14,6 +14,13 @@ type ApiPlayStreakDto = {
   bestStreak: number
   bestStart?: string
   currentStreak: number
+}
+
+type ApiPlayerWinStreakDto = {
+  playerId: string
+  currentStreak: number
+  bestStreak: number
+  bestStart?: string
 }
 
 
@@ -76,6 +83,31 @@ export class ApiStatsService extends ApiService implements StatsService {
       bestStart: result.bestStart ? new Date(result.bestStart) : undefined,
       currentStreak: result.currentStreak
     }
+  }
+
+  public async getOverallWinStreaks(year?: number): Promise<PlayerWinStreakData[]> {
+    const result = await this.apiClient.get<ApiPlayerWinStreakDto[]>(Route.STATS.OVERALL_WIN_STREAKS, encodeStatsQuery({ year }))
+    return result.map(dto => ({
+      playerId: dto.playerId as PlayerId,
+      currentStreak: dto.currentStreak,
+      bestStreak: dto.bestStreak,
+      bestStart: dto.bestStart ? new Date(dto.bestStart) : undefined
+    }))
+  }
+
+  public async getPlayerWinStreaks(query?: StatsQuery): Promise<StatPerGame<PlayerWinStreakData[]>> {
+    const result = await this.apiClient.get<StatPerGame<ApiPlayerWinStreakDto[]>>(Route.STATS.PLAYER_WIN_STREAKS, encodeStatsQuery(query))
+    const streaks: StatPerGame<PlayerWinStreakData[]> = {}
+    for (const id in result) {
+      const gameId = id as GameId
+      streaks[gameId] = result[gameId].map(dto => ({
+        playerId: dto.playerId as PlayerId,
+        currentStreak: dto.currentStreak,
+        bestStreak: dto.bestStreak,
+        bestStart: dto.bestStart ? new Date(dto.bestStart) : undefined
+      }))
+    }
+    return streaks
   }
 
 }

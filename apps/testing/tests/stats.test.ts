@@ -20,7 +20,7 @@ describe('stats', function () {
     insights = gamekeeper.insights
   })
 
-  describe('playthrough counts', async function () {
+  describe('playthrough counts', function () {
     it('should count 1 playthrough', async function () {
       const game = await gameplay.games.create(Factory.createVsGame())
       await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
@@ -235,7 +235,7 @@ describe('stats', function () {
     })
   })
 
-  describe('calculating scoring', async function () {
+  describe('calculating scoring', function () {
     it('no scores results in undefined score stats', async function () {
       const game = await gameplay.games.create(Factory.createVsGame())
       await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
@@ -295,7 +295,7 @@ describe('stats', function () {
     })
   })
 
-  describe('historical scores', async function () {
+  describe('historical scores', function () {
     it('no score game returns empty array', async function () {
       const game = await gameplay.games.create(Factory.createVsGame({ scoring: ScoringType.NO_SCORE }))
       await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
@@ -362,7 +362,7 @@ describe('stats', function () {
     })
   })
 
-  describe('play streak', async function () {
+  describe('play streak', function () {
     it('no playthroughs should be streak of zero', async function () {
       const game = await gameplay.games.create(Factory.createVsGame())
 
@@ -400,11 +400,11 @@ describe('stats', function () {
       const game = await gameplay.games.create(Factory.createVsGame())
       await gameplay.playthroughs.create({
         ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
-        playedOn: new Date(2000, 0, 2)
+        playedOn: new Date(2000, 0, 1)
       })
       await gameplay.playthroughs.create({
         ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
-        playedOn: new Date(2000, 0, 1)
+        playedOn: new Date(2000, 0, 2)
       })
 
       const {currentStreak, bestStreak} = await insights.stats.playStreak()
@@ -416,15 +416,7 @@ describe('stats', function () {
       const game = await gameplay.games.create(Factory.createVsGame())
       await gameplay.playthroughs.create({
         ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
-        playedOn: new Date(2000, 0, 10)
-      })
-      await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
-        playedOn: new Date(2000, 0, 9)
-      })
-      await gameplay.playthroughs.create({
-        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
-        playedOn: new Date(2000, 0, 3)
+        playedOn: new Date(2000, 0, 1)
       })
       await gameplay.playthroughs.create({
         ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
@@ -432,7 +424,15 @@ describe('stats', function () {
       })
       await gameplay.playthroughs.create({
         ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
-        playedOn: new Date(2000, 0, 1)
+        playedOn: new Date(2000, 0, 3)
+      })
+      await gameplay.playthroughs.create({
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
+        playedOn: new Date(2000, 0, 9)
+      })
+      await gameplay.playthroughs.create({
+        ...Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }),
+        playedOn: new Date(2000, 0, 10)
       })
 
       const {currentStreak, bestStreak} = await insights.stats.playStreak()
@@ -441,7 +441,7 @@ describe('stats', function () {
     })
   })
 
-  describe('plays by date', async function () {
+  describe('plays by date', function () {
     it('no playthroughs should be empty array', async function () {
       const playsByDate = await insights.stats.numPlaysByDate()
       assert.equal(playsByDate.length, 0)
@@ -481,6 +481,96 @@ describe('stats', function () {
 
       const playsByDate = await insights.stats.numPlaysByDate()
       assert.equal(playsByDate.length, 2, 'multiple item')
+    })
+  })
+
+  describe('player win streaks', function () {
+
+    it('single playthrough should have current and best streak of one if won', async function () {
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+
+      const winStreaks = await insights.stats.overallWinStreaks()
+      const alexWinStreak = winStreaks.find(i => i.playerId === alex.id)
+      const johnWinStreak = winStreaks.find(i => i.playerId === john.id)
+
+      assert.ok(alexWinStreak)
+      assert.ok(!johnWinStreak)
+
+      assert.equal(alexWinStreak.currentStreak, 1, 'alex current streak')
+      assert.equal(alexWinStreak.bestStreak, 1, 'alex best streak')
+    })
+
+    it('multiple playthroughs of same game should properly reflect current and best streak', async function () {
+      const game = await gameplay.games.create(Factory.createVsGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: alex.id }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: game.id, winnerId: john.id }))
+
+      const winStreaks = await insights.stats.overallWinStreaks()
+      const alexWinStreak = winStreaks.find(i => i.playerId === alex.id)
+      const johnWinStreak = winStreaks.find(i => i.playerId === john.id)
+
+      assert.ok(alexWinStreak)
+      assert.ok(johnWinStreak)
+
+      assert.equal(alexWinStreak.currentStreak, 0, 'alex current streak')
+      assert.equal(alexWinStreak.bestStreak, 2, 'alex best streak')
+      assert.equal(johnWinStreak.currentStreak, 1, 'john current streak')
+      assert.equal(johnWinStreak.bestStreak, 1, 'john best streak')
+    })
+
+    it('overall win streak across multiple games', async function () {
+      const vsGameA = await gameplay.games.create(Factory.createVsGame())
+      const vsGameB = await gameplay.games.create(Factory.createVsGame())
+      const coopGame = await gameplay.games.create(Factory.createCoopGame())
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: vsGameA.id, winnerId: alex.id }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: vsGameB.id, winnerId: alex.id }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: vsGameB.id, winnerId: john.id }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: coopGame.id, playersWon: false }))
+      await gameplay.playthroughs.create(Factory.createVsPlaythrough({ gameId: vsGameB.id, winnerId: john.id }))
+      await gameplay.playthroughs.create(Factory.createCoopPlaythrough({ gameId: coopGame.id, playersWon: false }))
+
+      const overall = await insights.stats.overallWinStreaks()
+      const alexOverall = overall.find(i => i.playerId === alex.id)
+      const johnOverall = overall.find(i => i.playerId === john.id)
+
+      // overall
+      assert.ok(alexOverall)
+      assert.ok(johnOverall)
+
+      assert.equal(alexOverall.currentStreak, 0, 'alex overall current streak')
+      assert.equal(alexOverall.bestStreak, 2, 'alex overall best streak')
+      assert.equal(johnOverall.currentStreak, 2, 'john overall current streak')
+      assert.equal(johnOverall.bestStreak, 2, 'john overall best streak')
+
+      // coop
+      const coopWinStreaks = await insights.stats.forGame(coopGame).playerWinStreaks()
+      assert.equal(coopWinStreaks.length, 0, 'should be zero player results for coop games')
+
+      // game a
+      const gameAWinStreaks = await insights.stats.forGame(vsGameA).playerWinStreaks()
+      const alexGameA = gameAWinStreaks.find(i => i.playerId === alex.id)
+      const johnGameA = gameAWinStreaks.find(i => i.playerId === john.id)
+
+      assert.ok(alexGameA)
+      assert.ok(!johnGameA)
+
+      assert.equal(alexGameA.currentStreak, 1, 'alex game a current streak')
+      assert.equal(alexGameA.bestStreak, 1, 'alex game a best streak')
+
+      // game b
+      const gameBWinStreaks = await insights.stats.forGame(vsGameB).playerWinStreaks()
+      const alexGameB = gameBWinStreaks.find(i => i.playerId === alex.id)
+      const johnGameB = gameBWinStreaks.find(i => i.playerId === john.id)
+
+      assert.ok(alexGameB)
+      assert.ok(johnGameB)
+
+      assert.equal(alexGameB.currentStreak, 0, 'alex game b current streak')
+      assert.equal(alexGameB.bestStreak, 1, 'alex game b best streak')
+      assert.equal(johnGameB.currentStreak, 2, 'john game b current streak')
+      assert.equal(johnGameB.bestStreak, 2, 'john game b best streak')
     })
   })
 

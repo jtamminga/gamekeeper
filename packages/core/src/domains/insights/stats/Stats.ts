@@ -1,5 +1,5 @@
 import type { Game } from '@domains/gameplay'
-import type { GameId, PlaysByDateData, PlayStreakData, StatsQuery } from '@services'
+import type { GameId, PlayerWinStreakData, PlaysByDateData, PlayStreakData, StatPerGame, StatsQuery } from '@services'
 import type { InsightsDeps } from '../Insights'
 import type { CoopWinrates } from './CoopWinrates'
 import { GameStats } from './GameStats'
@@ -30,26 +30,12 @@ export class Stats {
 
   public async numPlaythroughs(query: OverallStatsQuery): Promise<StatsResult<number>> {
     const result = await this._deps.service.getNumPlays(query)
-
-    const map = new Map<Game, number>()
-    for (const id in result) {
-      const gameId = id as GameId
-      map.set(this._deps.gameplay.games.get(gameId), result[gameId])
-    }
-
-    return map
+    return this.toStatsResult(result)
   }
 
   public async lastPlayed(query: OverallStatsQuery): Promise<StatsResult<Date | undefined>> {
     const result = await this._deps.service.getLastPlayed(query)
-
-    const map = new Map<Game, Date | undefined>()
-    for (const id in result) {
-      const gameId = id as GameId
-      map.set(this._deps.gameplay.games.get(gameId), result[gameId])
-    }
-
-    return map
+    return this.toStatsResult(result)
   }
 
   public async winrates(query: OverallStatsQuery): Promise<StatsResult<Winrates | CoopWinrates>> {
@@ -83,6 +69,25 @@ export class Stats {
 
   public async playStreak(query?: OverallStatsQuery): Promise<PlayStreakData> {
     return this._deps.service.getPlayStreak(query)
+  }
+
+  public async overallWinStreaks(year?: number): Promise<PlayerWinStreakData[]> {
+    return this._deps.service.getOverallWinStreaks(year)
+  }
+
+  public async playerWinStreaks(query?: OverallStatsQuery): Promise<StatsResult<PlayerWinStreakData[]>> {
+    const result = await this._deps.service.getPlayerWinStreaks(query)
+    return this.toStatsResult(result)
+  }
+
+  private toStatsResult<T>(data: StatPerGame<T>): StatsResult<T> {
+    const map = new Map<Game, T>()
+    for (const id in data) {
+      const gameId = id as GameId
+      map.set(this._deps.gameplay.games.get(gameId), data[gameId])
+    }
+
+    return map
   }
 
 }
