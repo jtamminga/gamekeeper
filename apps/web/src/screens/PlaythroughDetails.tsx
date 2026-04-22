@@ -41,7 +41,7 @@ export function PlaythroughDetails({ playthroughId }: Props) {
       </div>
 
       <h3>Winner</h3>
-      <div className="callout">
+      <div className="callout callout-success">
         The winner <PlayerColor playerId={view.winnerId}>{view.winner}</PlayerColor>
       </div>
 

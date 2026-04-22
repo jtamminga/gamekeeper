@@ -20,13 +20,24 @@ export function PlaythroughAdded({ playthrough }: Props) {
   }
 
   const { winnerId, winner } = formatPlaythrough(playthrough)
+  const isNewHighScore = view.scoreStats?.best.playthroughId === playthrough.id
 
   // render
   return (
     <>
       <h1>Playthrough recorded</h1>
 
-      <p>🎉 winner is <PlayerColor playerId={winnerId}>{winner}</PlayerColor></p>
+      {/* winner */}
+      <div className="callout callout-success">
+        🎉 winner is <PlayerColor playerId={winnerId}>{winner}</PlayerColor>
+      </div>
+
+      {/* new high score */}
+      {isNewHighScore && (
+        <div className="callout callout-success">
+          🏆 New high score!
+        </div>
+      )}
 
       <GameSummary view={view} />
     </>

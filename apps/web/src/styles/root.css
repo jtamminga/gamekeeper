@@ -127,6 +127,9 @@ a.danger {
   border-radius: var(--border-radius);
   margin-bottom: var(--space-md);
 }
+.callout-success {
+  border-left: 3px solid var(--color-success);
+}
 
 .empty {
   padding: 0.6em 1.2em;

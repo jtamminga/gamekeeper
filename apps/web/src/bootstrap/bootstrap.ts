@@ -39,7 +39,9 @@ async function initialize(token?: string) {
   viewService = apiServices.viewService
 
   // hydrate
-  await gamekeeper.gameplay.hydrate()
+  // load 1 game so we can use it for things like default players
+  // in add-playthrough flow
+  await gamekeeper.gameplay.hydrate({ limit: 1 })
 }
 
 // function constants
