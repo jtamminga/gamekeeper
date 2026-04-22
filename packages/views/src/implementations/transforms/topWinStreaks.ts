@@ -10,5 +10,5 @@ export function topCurrentWinStreaksForGame(winStreaks: StatsResult<PlayerWinStr
       return formatWinStreakForGame(best, game, players)
     })
     .sort((a, b) => b.streak - a.streak)
-    .slice(0, 3)
+    .slice(0, 5)
 }

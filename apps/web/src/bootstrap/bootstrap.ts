@@ -33,11 +33,13 @@ async function initialize(token?: string) {
     }
   }
 
+  // create core services and domains
   const apiServices = new ApiServices(apiUrl, token)
   gamekeeper = GameKeeperFactory.create(apiServices)
-  viewService = new GamekeeperViewService(gamekeeper)
+  viewService = apiServices.viewService
 
-  await gamekeeper.gameplay.hydrate({ limit: 10 })
+  // hydrate
+  await gamekeeper.gameplay.hydrate()
 }
 
 // function constants

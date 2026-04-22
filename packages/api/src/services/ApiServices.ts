@@ -7,7 +7,7 @@ import { ApiPlayerService } from './PlayerService'
 import { ApiPlaythroughService } from './PlaythroughService'
 import { ApiStatsService } from './StatsService'
 import { ApiGoalService } from './GoalService'
-import { ApiViewService } from './ApiViewService'
+import { ApiViewService } from './ViewService'
 
 
 export class ApiServices implements Services {

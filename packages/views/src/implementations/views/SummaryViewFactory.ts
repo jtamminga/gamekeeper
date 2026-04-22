@@ -39,7 +39,7 @@ export class SummaryViewFactory {
       stats.winrates({ year }),
       stats.playStreak({ year }),
       stats.overallWinStreaks(year),
-      stats.playerWinStreaks({ year }),
+      stats.playerWinStreaks({}),
       // hydration requirements
       this.gamekeeper.gameplay.playthroughs.hydrate({ limit: NUM_LATEST_PLAYTHROUGHTS }),
       this.gamekeeper.insights.goals.hydrate({ year })

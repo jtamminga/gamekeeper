@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard, YearSelect } from '@app/components'
+import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard, WinStreaks, YearSelect } from '@app/components'
 import { TopPlayedGames } from '@app/components/TopPlayedGames'
 import { useRouter, useSummaryView } from '@app/hooks'
 
@@ -31,7 +31,8 @@ export function Summary() {
     avgPlaysPerDayThisYear,
     mostPlaysInDayThisYear,
     topPlayedGames,
-    playStreakThisYear
+    playStreakThisYear,
+    topCurrentWinStreaksForGame
   } = view
 
   return (
@@ -117,6 +118,13 @@ export function Summary() {
           />
         </>
       }
+
+      {/* win streaks */}
+      <div className="page-subtitle">
+        <h2>Win Streak</h2>
+        <h3>best current</h3>
+      </div>
+      <WinStreaks winStreaks={topCurrentWinStreaksForGame} />
 
       {/* game day stats */}
       <div className="page-subtitle">
