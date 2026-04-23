@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { ApiServices } from '@gamekeeper/api-services'
 import { GameKeeper, GameKeeperFactory } from '@gamekeeper/core'
-import { GamekeeperViewService, ViewService } from '@gamekeeper/views'
+import { ViewService } from '@gamekeeper/views'
 
 
 const API_URL = import.meta.env.VITE_API_URL
