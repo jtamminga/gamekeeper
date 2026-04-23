@@ -34,14 +34,14 @@ export interface SummaryView {
     bestStartDate?: string
     currentStreak: number
   }
-  latestNumPlaythorughs: number
+  latestNumPlaythroughs: number
   numPlaysPerDayThisYear: FormattedPlaysPerDay
   avgPlaysPerDayThisYear: string
   mostPlaysInDayThisYear: number
   topPlayedGames: {
-    gameName: string,
-    gameId: GameId,
-    numPlays: number,
+    gameName: string
+    gameId: GameId
+    numPlays: number
     highestWinrate: FormattedWinrate | undefined
   }[]
   bestOverallWinStreaksThisYear: FormattedBestWinStreaks

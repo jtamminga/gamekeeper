@@ -91,7 +91,7 @@ export class SummaryViewFactory {
           : undefined,
         currentStreak: playStreakThisYear.currentStreak
       },
-      latestNumPlaythorughs: NUM_LATEST_PLAYTHROUGHTS,
+      latestNumPlaythroughs: NUM_LATEST_PLAYTHROUGHTS,
       latestPlaythroughs: formatPlaythroughs(this.gamekeeper.gameplay.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
       numPlaysPerDayThisYear: toNumPlaysPerDay(numPlaysByDateThisYear, year),
       avgPlaysPerDayThisYear: formatNumber(ArrayUtils.average(numPlaysByDateThisYear.map(i => i.plays))),

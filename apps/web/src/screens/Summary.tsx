@@ -25,7 +25,7 @@ export function Summary() {
     numUniqueGamesPlayedThisYear,
     numPlaysByMonth,
     latestWinner,
-    latestNumPlaythorughs,
+    latestNumPlaythroughs,
     latestPlaythroughs,
     numPlaysPerDayThisYear,
     avgPlaysPerDayThisYear,
@@ -87,7 +87,7 @@ export function Summary() {
         <>
           <div className="page-subtitle">
             <h2>Recent stats</h2>
-            <h3>latest {latestNumPlaythorughs} games</h3>
+            <h3>latest {latestNumPlaythroughs} games</h3>
           </div>
           {latestWinner &&
             <StatCard
