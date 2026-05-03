@@ -49,25 +49,12 @@ export class DbGameService extends DbService implements GameService {
       own: 'own'
     }
 
-    const mappedKeys = Object.keys(updatedGame)
-      .map(key => mapping[key])
-      .filter(key => key !== undefined)
-    const setStatements = mappedKeys
-      .map(key => `${key} = ?`)
-      .join(',')
-    const updatedValues = mappedKeys.map(key => {
-      const value = updatedGame[key as keyof UpdatedGameData]
-      if (key === 'own') {
-        return value ? 1 : 0
-      }
-      else {
-        return value
-      }
-    })
-      
+    const { setStatements, values } = this.buildUpdate(updatedGame, mapping,
+      (dbKey, value) => dbKey === 'own' ? (value ? 1 : 0) : value
+    )
 
     const query = `UPDATE games SET ${setStatements} WHERE id = ? AND ${whereUserId(userId)}`
-    await this._dataService.run(query, ...updatedValues, updatedGame.id, userId)
+    await this._dataService.run(query, ...values, updatedGame.id, userId)
     return this.getGame(updatedGame.id, userId)
   }
 

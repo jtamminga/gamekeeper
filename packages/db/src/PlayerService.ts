@@ -45,17 +45,10 @@ export class DbPlayerService extends DbService implements PlayerService {
       color: 'color'
     }
 
-    const mappedKeys = Object.keys(player)
-      .map(key => mapping[key])
-      .filter(key => key !== undefined)
-    const setStatements = mappedKeys
-      .map(key => `${key} = ?`)
-      .join(',')
-    const updatedValues = mappedKeys.map(key =>
-      player[key as keyof UpdatedPlayerData])
+    const { setStatements, values } = this.buildUpdate(player, mapping)
 
     const query = `UPDATE players SET ${setStatements} WHERE id = ? AND ${whereUserId(userId)}`
-    await this._dataService.run(query, ...updatedValues, player.id, userId)
+    await this._dataService.run(query, ...values, player.id, userId)
     return this.getPlayer(player.id, userId)
   }
 

@@ -127,18 +127,10 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
       endedOn: 'ended_on'
     }
 
-    const mappedKeys = Object.keys(playthrough)
-      .map(key => mapping[key])
-      .filter(key => key !== undefined)
-    const setStatements = mappedKeys
-      .map(key => `${key} = ?`)
-      .join(',')
-    const updatedValues = mappedKeys.map(key =>
-      playthrough[key as keyof UpdatedPlaythroughData]
-    )
-    
+    const { setStatements, values } = this.buildUpdate(playthrough, mapping)
+
     const query = `UPDATE playthroughs SET ${setStatements} WHERE id = ? AND ${whereUserId(userId)}`
-    await this._dataService.run(query, ...updatedValues, playthrough.id, userId)
+    await this._dataService.run(query, ...values, playthrough.id, userId)
     return this.getPlaythrough(playthrough.id, userId)
   }
 

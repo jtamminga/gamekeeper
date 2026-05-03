@@ -49,17 +49,10 @@ export class DbGoalService extends DbService implements GoalService {
       year: 'year'
     }
 
-    const mappedKeys = Object.keys(updatedGoal)
-      .map(key => mapping[key])
-      .filter(key => key !== undefined)
-    const setStatements = mappedKeys
-      .map(key => `${key} = ?`)
-      .join(',')
-    const updatedValues = mappedKeys.map(key =>
-      updatedGoal[key as keyof UpdatedGoalData])
+    const { setStatements, values } = this.buildUpdate(updatedGoal, mapping)
 
     const query = `UPDATE goals SET ${setStatements} WHERE id = ? AND ${whereUserId(userId)}`
-    await this._dataService.run(query, ...updatedValues, updatedGoal.id, userId)
+    await this._dataService.run(query, ...values, updatedGoal.id, userId)
     return this.getGoal(updatedGoal.id)
   }
 
