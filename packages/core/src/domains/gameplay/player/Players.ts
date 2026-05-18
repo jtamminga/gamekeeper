@@ -4,7 +4,7 @@ import type { GameplayDeps } from '../Gameplay'
 import type { Player } from './Player'
 
 
-const MAX_PLAYERS = 10
+const MAX_PLAYERS = 100
 
 
 /**
@@ -31,6 +31,13 @@ export class Players {
     return this._deps.repo.getPlayer(id)
   }
 
+  public sortedBy(option: PlayerSortOption): ReadonlyArray<Player> {
+    switch (option) {
+      case 'recentlyPlayed':
+        return this.sortByRecentlyPlayed()
+    }
+  }
+
   public async create(data: NewPlayerData): Promise<Player> {
     NewPlayerData.throwIfInvalid(data)
     if (this._deps.repo.players.length >= MAX_PLAYERS) {
@@ -51,4 +58,35 @@ export class Players {
     return this.all().map(player => player.toData())
   }
 
+  private sortByRecentlyPlayed(): ReadonlyArray<Player> {
+    const playCount = new Map<Player, number>()
+    const playthroughs = this._deps.repo.getPlaythroughs()
+
+    // determine play count for each of the latest playthroughs
+    for (const playthrough of playthroughs) {
+      for (const player of playthrough.players) {
+        const count = playCount.get(player) ?? 0
+        playCount.set(player, count + 1)
+      }
+    }
+
+    // get players ordered by play count
+    const orderedPlayers = [...playCount.entries()]
+      .sort(([,a], [,b]) => b - a)
+      .map(([player]) => player)
+
+    // return all players
+    return [
+      ...orderedPlayers,
+
+      // add remaining players
+      ...this.all().filter(player => !playCount.has(player))
+    ]
+  }
+
 }
+
+
+// types
+export type PlayerSortOption =
+ | 'recentlyPlayed'
