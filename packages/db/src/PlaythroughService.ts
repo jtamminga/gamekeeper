@@ -29,7 +29,8 @@ export class DbPlaythroughService extends DbService implements PlaythroughServic
         p.played_on as "playedOn",
         p.players,
         p.scores,
-        p.result
+        p.result,
+        p.notes
       FROM playthroughs p
       JOIN games g ON g.id = p.game_id
       WHERE p.id=? AND p.${whereUserId(userId)}
