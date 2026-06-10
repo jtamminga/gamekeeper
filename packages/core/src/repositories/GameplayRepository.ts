@@ -1,5 +1,5 @@
 import type { Game, Player, Playthrough } from '@domains/gameplay'
-import type { GameData, GameId, NewGameData, NewPlayerData, NewPlaythroughData, PlayerData, PlayerId, PlaythroughId, PlaythroughQueryOptions } from '@services'
+import type { GameData, GameId, NewGameData, NewPlayerData, NewPlaythroughData, PlayerData, PlayerId, PlaythroughId, PlaythroughQueryOptions, UpdatedPlaythroughData } from '@services'
 
 
 export interface GameplayRepository {
@@ -27,6 +27,7 @@ export interface GameplayRepository {
   findPlaythrough(id: PlaythroughId): Playthrough | undefined
   createPlaythrough<T extends Playthrough = Playthrough>(data: NewPlaythroughData): Promise<T>
   getPlaythroughs(options?: PlaythroughQueryOptions): ReadonlyArray<Playthrough>
+  updatePlaythrough(playthrough: UpdatedPlaythroughData): Promise<void>
   removePlaythrough(id: PlaythroughId): Promise<void>
 
 }

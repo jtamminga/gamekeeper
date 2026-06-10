@@ -131,6 +131,30 @@ a.danger {
   border-left: 3px solid var(--color-success);
 }
 
+.danger-zone {
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  border: 1px solid #b7515166;
+  border-radius: var(--border-radius);
+  background-color: #b751511a;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.danger-zone > h3 {
+  margin: 0;
+  color: var(--color-danger);
+}
+.danger-zone button {
+  background-color: transparent;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+.danger-zone button:hover {
+  border-color: var(--color-danger);
+  background-color: #b751511a;
+}
+
 .empty {
   padding: 0.6em 1.2em;
   border-radius: var(--border-radius);

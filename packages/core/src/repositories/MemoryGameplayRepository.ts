@@ -13,6 +13,7 @@ import {
   PlaythroughData,
   PlaythroughQueryOptions,
   NewPlaythroughData,
+  UpdatedPlaythroughData,
   Logger
 } from '@services'
 
@@ -146,6 +147,10 @@ export class MemoryGameplayRepository implements GameplayRepository {
   public async createPlaythrough<T extends Playthrough = Playthrough>(data: NewPlaythroughData): Promise<T> {
     const playthroughData = await this._services.playthroughService.addPlaythrough(data)
     return this.bindPlaythrough(playthroughData) as T
+  }
+
+  public async updatePlaythrough(playthrough: UpdatedPlaythroughData): Promise<void> {
+    await this._services.playthroughService.updatePlaythrough(playthrough)
   }
 
   public async removePlaythrough(id: PlaythroughId): Promise<void> {

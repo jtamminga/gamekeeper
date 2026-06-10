@@ -1,5 +1,5 @@
 import { type PlaythroughFlow, PlaythroughFlowFactory } from './flow'
-import { GameId, NewBasePlaythroughData, NewPlaythroughData, PlaythroughId, PlaythroughQueryOptions } from '@services'
+import { BasePlaythroughData, GameId, NewBasePlaythroughData, NewPlaythroughData, PlaythroughId, PlaythroughQueryOptions, UpdatedPlaythroughData } from '@services'
 import type { GameplayDeps } from '../Gameplay'
 import type { Playthrough } from './Playthrough'
 
@@ -49,6 +49,14 @@ export class Playthroughs {
     NewPlaythroughData.throwIfInvalid(data)
 
     return this._deps.repo.createPlaythrough(data)
+  }
+
+  public async save(playthrough: Playthrough): Promise<void> {
+    const updatedData = playthrough.toData()
+    BasePlaythroughData.throwIfInvalid(updatedData)
+
+    // only update if notes
+    await this._deps.repo.updatePlaythrough({id: updatedData.id, notes: updatedData.notes})
   }
 
   public async remove(id: PlaythroughId): Promise<void> {

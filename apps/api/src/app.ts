@@ -1,5 +1,5 @@
 import { DecodeError, decodeFormatOptions, decodeGoalsQuery, decodeNewGoalBody, decodeNewPlaythroughBody, decodePlaythroughQuery, decodeStatsQuery, decodeUpdatedGoalBody } from '@gamekeeper/api-services'
-import { GameId, GameKeeperFactory, GoalId, NewGameData, NewPlayerData, NotFoundError, PlayerId, PlaythroughId, UpdatedGameData } from '@gamekeeper/core'
+import { GameId, GameKeeperFactory, GoalId, NewGameData, NewPlayerData, NotFoundError, PlayerId, PlaythroughId, UpdatedGameData, UpdatedPlaythroughData } from '@gamekeeper/core'
 import { DbServices, UserId } from '@gamekeeper/db-services'
 import { GamekeeperViewService, Route } from '@gamekeeper/views'
 import cors from 'cors'
@@ -153,10 +153,10 @@ app.post(Route.PLAYTHROUGHS, async function (req, res) {
 })
 
 // update playthrough
-// TODO: complete api playthroug patch
 app.patch(`${Route.PLAYTHROUGHS}/:id`, async function (req, res) {
   const userId = getUserId(req)
-  const playthrough = await playthroughService.updatePlaythrough({ id: req.params.id as PlaythroughId }, userId)
+  const data = req.body as Omit<UpdatedPlaythroughData, 'id'>
+  const playthrough = await playthroughService.updatePlaythrough({ ...data, id: req.params.id as PlaythroughId }, userId)
   return res.json({ data: playthrough })
 })
 

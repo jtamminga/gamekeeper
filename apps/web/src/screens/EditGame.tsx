@@ -21,7 +21,7 @@ export function EditGame({ gameId, callback = { name: 'GameDetails', props: { ga
   async function onUpdate() {
     game.update({
       name,
-      weight: weight === undefined
+      weight: weight === ''
         ? undefined
         : Number.parseFloat(weight),
       own

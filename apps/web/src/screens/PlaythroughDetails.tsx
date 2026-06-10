@@ -1,5 +1,5 @@
-import { Loading, PlayerColor, StatCard } from '@app/components'
-import { useGamekeeper, usePlaythroughView } from '@app/hooks'
+import { Link, Loading, PlayerColor, StatCard } from '@app/components'
+import { usePlaythroughView } from '@app/hooks'
 import type { PlaythroughId } from '@gamekeeper/core'
 
 
@@ -10,23 +10,18 @@ type Props = {
 
 export function PlaythroughDetails({ playthroughId }: Props) {
 
-  const { gameplay } = useGamekeeper()
   const view = usePlaythroughView(playthroughId)
 
   if (!view) {
     return <Loading />
   }
 
-  async function onDelete() {
-    if (confirm('Are you sure you want to delete?')) {
-      await gameplay.playthroughs.remove(playthroughId)
-      history.back()
-    }
-  }
-
   return (
     <>
-      <h1>{view.game}</h1>
+      <div className="title-with-link">
+        <h1>{view.game}</h1>
+        <Link page={{ name: 'EditPlaythrough', props: { playthroughId }}}>Edit</Link>
+      </div>
 
       <h3>Played on</h3>
       <div>{view.playedOn}</div>
@@ -67,11 +62,6 @@ export function PlaythroughDetails({ playthroughId }: Props) {
           </div>
         </>
       }
-      
-
-      <button onClick={onDelete}>
-        Delete
-      </button>
     </>
   )
 }

@@ -13,6 +13,7 @@ import {
   EditGame,
   EditGoal,
   EditPlayer,
+  EditPlaythrough,
   GameDetails,
   GamePlaythroughs,
   Games,
@@ -42,6 +43,7 @@ export type Page =
   | { name: 'Summary' }
   | { name: 'AddPlaythrough', props?: { gameId?: GameId, resetKey?: number } }
   | { name: 'PlaythroughDetails', props: { playthroughId: PlaythroughId }}
+  | { name: 'EditPlaythrough', props: { playthroughId: PlaythroughId } & CallbackPageProps }
   | { name: 'Games' }
   | { name: 'AddGame', props?: CallbackPageProps }
   | { name: 'GameDetails', props: { gameId: GameId } }
@@ -79,6 +81,8 @@ export function router(page: Page) {
       return <GamePlaythroughs {...page.props} />
     case 'PlaythroughDetails':
       return <PlaythroughDetails {...page.props} />
+    case 'EditPlaythrough':
+      return <EditPlaythrough {...page.props} />
     case 'Playthroughs':
       return <Playthroughs {...page.props} />
     case 'EditGame':

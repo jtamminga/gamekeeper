@@ -21,8 +21,8 @@ export type NewBasePlaythroughData = NewData<BasePlaythroughData>
 
 export type UpdatedPlaythroughData = {
   id: PlaythroughId
-  startedOn?: Date
-  endedOn?: Date
+  // startedOn?: Date
+  // endedOn?: Date
   notes?: string
   // scores?: ReadonlyArray<ScoreData>
   // score?: number
@@ -95,6 +95,9 @@ export namespace NewBasePlaythroughData {
     if (data.playerIds.length === 0) {
       errors.push('playerIds must have at least one player')
     }
+    if (data.notes && data.notes.length > 300) {
+      errors.push('notes cannot be greater than 300 characters')
+    }
 
     return errors
   }
@@ -119,6 +122,24 @@ export namespace NewPlaythroughData {
 
   export function throwIfInvalid(data: NewPlaythroughData): void {
     const errors = NewPlaythroughData.errors(data)
+    if (errors.length > 0) {
+      throw new InvalidState(errors)
+    }
+  }
+}
+
+export namespace BasePlaythroughData {
+  export function errors(data: BasePlaythroughData): string[] {
+    const errors: string[] = []
+    if (!data.id) {
+      errors.push('id is required')
+    }
+
+    return NewBasePlaythroughData.errors(data).concat(errors)
+  }
+
+  export function throwIfInvalid(data: BasePlaythroughData): void {
+    const errors = BasePlaythroughData.errors(data)
     if (errors.length > 0) {
       throw new InvalidState(errors)
     }

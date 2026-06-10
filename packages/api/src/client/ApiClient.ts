@@ -18,6 +18,10 @@ export type ApiResponse<T> = {
   data: T
 }
 
+function nullifyUndefined(_key: string, value: unknown): unknown {
+  return value === undefined ? null : value
+}
+
 
 export class ApiClient implements IApiClient {
 
@@ -38,7 +42,7 @@ export class ApiClient implements IApiClient {
     return this.handledFetch(path, {
       ...this.generateOptions(),
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data, nullifyUndefined)
     })
   }
 
@@ -46,7 +50,7 @@ export class ApiClient implements IApiClient {
     return this.handledFetch(path, {
       ...this.generateOptions(),
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data, nullifyUndefined)
     })
   }
 

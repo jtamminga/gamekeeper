@@ -17,18 +17,13 @@ export function EditGoal({ goalId }: Props) {
   async function onDelete() {
     if (confirm('Are you sure you want to delete?')) {
       await insights.goals.remove(goalId)
-      history.back()
+      router.setPage({ name: 'Goals' })
     }
   }
 
   return (
     <>
-      <div className="title-with-link">
-        <h1>{nameForGoalType(goal.type)}</h1>
-        <a onClick={onDelete} className="danger">
-          delete
-        </a>
-      </div>
+      <h1>{nameForGoalType(goal.type)}</h1>
 
       <GoalForm
         submitText="Update"
@@ -40,6 +35,13 @@ export function EditGoal({ goalId }: Props) {
         }}
         disableType
       />
+
+      <div className="danger-zone">
+        <h3>Danger zone</h3>
+        <button onClick={onDelete}>
+          Delete
+        </button>
+      </div>
     </>
   )
 }
