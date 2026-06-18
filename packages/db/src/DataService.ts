@@ -1,33 +1,41 @@
 import { open, Database } from 'sqlite'
 import sqlite3 from 'sqlite3'
+import { readFile } from 'fs/promises'
+import { fileURLToPath } from 'url'
+import { resolve, dirname } from 'path'
 
 sqlite3.verbose()
+
+const SCHEMA_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '../scripts/create.sql')
 
 
 export class DataService {
 
-  private _db?: Database
+  private _db?: Promise<Database>
 
   public constructor(
     private _path: string
   ) { }
 
-  public async open(): Promise<void> {
-    this._db = await open({
+  private async openDb(): Promise<Database> {
+    const db = await open({
       filename: this._path,
       driver: sqlite3.Database
     })
 
-    // this._db.on('trace', (sql: any) => {
-    //   console.debug('SQL:', sql)
-    // })
+    if (this._path === ':memory:') {
+      const schema = await readFile(SCHEMA_PATH, 'utf8')
+      await db.exec(schema)
+    }
+
+    return db
   }
 
   private async db(): Promise<Database> {
     if (!this._db) {
-      await this.open()
+      this._db = this.openDb()
     }
-    return this._db!
+    return this._db
   }
 
   public async get<T>(sql: string, ...params: any[]): Promise<T | undefined> {

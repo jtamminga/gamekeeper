@@ -92,12 +92,19 @@ export namespace Factory {
     return GameKeeperFactory.create(createTestServices(db))
   }
 
-  export function createGame({ name, scoring, type }: Pick<NewGameData, 'type'> & Partial<NewGameData>): NewGameData {
+  export function createGame({
+    name = 'test',
+    scoring = ScoringType.HIGHEST_WINS,
+    own = true,
+    type,
+    weight
+  }: Pick<NewGameData, 'type'> & Partial<NewGameData>): NewGameData {
     return {
-      name: name ?? 'test',
-      scoring: scoring ?? ScoringType.HIGHEST_WINS,
+      name,
+      scoring,
       type,
-      own: true
+      own,
+      weight
     }
   }
 
