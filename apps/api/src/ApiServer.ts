@@ -12,6 +12,7 @@ export namespace ApiServer {
 
   export type Config = {
     dbPath: string
+    initSql?: string
     allowedOrigins?: string[]
     authEnabled?: boolean
     auth0?: {
@@ -49,7 +50,7 @@ export namespace ApiServer {
       console.info('auth enabled')
     }
 
-    const dbServices = new DbServices(config.dbPath)
+    const dbServices = new DbServices(config.dbPath, config.initSql)
     const { gameService, playerService, playthroughService, goalService, statsService } = dbServices
 
 

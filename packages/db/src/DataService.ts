@@ -1,12 +1,5 @@
-import { open, Database } from 'sqlite'
+import { Database, open } from 'sqlite'
 import sqlite3 from 'sqlite3'
-import { readFile } from 'fs/promises'
-import { fileURLToPath } from 'url'
-import { resolve, dirname } from 'path'
-
-sqlite3.verbose()
-
-const SCHEMA_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '../scripts/create.sql')
 
 
 export class DataService {
@@ -14,7 +7,8 @@ export class DataService {
   private _db?: Promise<Database>
 
   public constructor(
-    private _path: string
+    private _path: string,
+    private _initSql?: string
   ) { }
 
   private async openDb(): Promise<Database> {
@@ -23,9 +17,8 @@ export class DataService {
       driver: sqlite3.Database
     })
 
-    if (this._path === ':memory:') {
-      const schema = await readFile(SCHEMA_PATH, 'utf8')
-      await db.exec(schema)
+    if (this._initSql) {
+      await db.exec(this._initSql)
     }
 
     return db

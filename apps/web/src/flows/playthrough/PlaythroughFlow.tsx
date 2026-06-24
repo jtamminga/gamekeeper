@@ -22,7 +22,7 @@ export function PlaythroughFlow() {
   async function onComplete(flow: PlaythroughFlowModel) {
     setCompleted(true)
 
-    const playthrough = await flow.build()
+    const playthrough = await flow.savePlaythrough()
     setPlaythrough(playthrough)
 
     // set the completed game onto the page props so that clicking

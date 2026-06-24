@@ -15,8 +15,8 @@ export class DbServices implements Services {
   public readonly goalService: DbGoalService
   public readonly statsService: DbStatsService
 
-  public constructor(path: string) {
-    const dataService = new DataService(path)
+  public constructor(path: string, initSql?: string) {
+    const dataService = new DataService(path, initSql)
 
     this.gameService = new DbGameService(dataService)
     this.playerService = new DbPlayerService(dataService)

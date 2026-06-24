@@ -4,7 +4,7 @@ import type { NewBasePlaythroughData, NewPlaythroughData } from '@services'
 
 /**
  * Abstract builder for recording a new playthrough step by step.
- * Holds the in-progress data until `build()` is called to persist it.
+ * Holds the in-progress data until `savePlaythrough()` is called to persist it.
  * Subclasses (CoopFlow, VsFlow) add game-type-specific setters.
  *
  * Use `Playthroughs.startFlow()` to create a flow instance.
@@ -23,7 +23,7 @@ export abstract class PlaythroughFlow<TGame extends Game = Game> {
 
   public abstract buildData(): NewPlaythroughData
 
-  public async build(): Promise<Playthrough> {
+  public async savePlaythrough(): Promise<Playthrough> {
     return this.deps.repo.createPlaythrough(this.buildData())
   }
 
