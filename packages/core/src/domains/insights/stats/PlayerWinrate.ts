@@ -10,7 +10,7 @@ export class PlayerWinrate extends Winrate {
 
   public constructor(
     public readonly player: Player,
-    public readonly winrate: number,
+    public readonly winrate: number | undefined,
     public readonly plays: number
   ) {
     super(winrate, plays)

@@ -5,7 +5,7 @@
 export class Winrate {
 
   public constructor(
-    public readonly winrate: number,
+    public readonly winrate: number | undefined,
     public readonly plays: number
   ) { }
 }

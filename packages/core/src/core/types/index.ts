@@ -1,5 +1,6 @@
 export * from './Data'
 export * from './Functions'
+export * from './Object'
 export * from './Opaque'
 export * from './Range'
 export * from './Serializable'

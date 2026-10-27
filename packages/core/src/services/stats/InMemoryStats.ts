@@ -222,51 +222,62 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
   }
 
   private calculateWinrates(playthroughs: ReadonlyArray<PlaythroughData>): PlayerWinrateData[] {
-    // 1. store for each player how many plays and wins they got
-    const allStats = new Map<PlayerId, {plays: number, wins: number}>()
+    // keep track of plays and wins for each player
+    const allStats = new Map<PlayerId, {plays: number, nonTiePlays: number, wins: number}>()
     for (const playthrough of playthroughs) {
-      
-      // a. set/update play for each player in this playthrough
-      // tied games are ignored (coop games don't support tying)
-      if ((VsPlaythroughData.guard(playthrough) && playthrough.winnerId !== null) || CoopPlaythroughData.guard(playthrough)) {
+
+      // increase play count for each player
+      playthrough.playerIds.forEach(playerId => {
+        let playerStats = allStats.get(playerId)
+        if (!playerStats) {
+          playerStats = {plays: 0, nonTiePlays: 0, wins: 0}
+          allStats.set(playerId, playerStats)
+        }
+        playerStats.plays++
+      })
+
+      // vs playthrough
+      // also make sure game isn't tied (winnerId null),
+      // tied games don't count when calculating winrate (tied games don't reduce winrate)
+      if (VsPlaythroughData.guard(playthrough) && playthrough.winnerId !== null) {
+        
+        // increase each players non-tie play count (used to calc winrate later)
         playthrough.playerIds.forEach(playerId => {
-          const playerStats = allStats.get(playerId)
-          if (playerStats) {
-            playerStats.plays++
-          } else {
-            allStats.set(playerId, {wins: 0, plays: 1})
-          }
+          allStats.get(playerId)!.nonTiePlays++
         })
+
+        // increase win count for winning player
+        allStats.get(playthrough.winnerId)!.wins++
       }
 
-      // b. update wins count based on playthrough result
-      // make sure to check winnerId (it can be null which means a tie)
-      if (VsPlaythroughData.guard(playthrough) && playthrough.winnerId !== null) {
-        const playerId = playthrough.winnerId
-        const stats = allStats.get(playerId)!
-        stats.wins++
-      }
-      // make sure to check if result equal to true (it can be null which means a tie)
+      // coop playgthrough
+      // note that coop games don't support ties so don't need to check for that condition
       else if (CoopPlaythroughData.guard(playthrough)) {
-        if (playthrough.playersWon) {
-          playthrough.playerIds.forEach(playerId => {
-            allStats.get(playerId)!.wins++
-          })
-        }
+
+        // increase each players non-tie play count (used to calc winrate later)
+        // also increase each players wins if players won
+        playthrough.playerIds.forEach(playerId => {
+          const playerStats = allStats.get(playerId)!
+          playerStats.nonTiePlays++
+          if (playerStats.wins) playerStats.wins++
+        })
       }
     }
 
-    // 2. once all plays and wins are counted then we calculate winrates for each player
+    // calculate winrates for each player
     const winrates: PlayerWinrateData[] = []
     for (const [playerId, stats] of allStats) {
-      winrates.push({ playerId, plays: stats.plays, winrate: stats.wins / stats.plays })
+      const winrate = stats.nonTiePlays === 0
+        ? undefined
+        : stats.wins / stats.nonTiePlays
+      winrates.push({ playerId, plays: stats.plays, winrate })
     }
 
     return winrates
   }
 
   private calculateCoopWinrates(playthroughs: ReadonlyArray<CoopPlaythroughData>): CoopWinratesData {
-    // 1. store stats for each player and the game itself
+    // store stats for each player and the game itself
     const allStats = new Map<PlayerId, { plays: number, wins: number }>()
     let gamePlays = 0
     let gameWins = 0
@@ -274,13 +285,13 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
     // go through each playthrough, tracking plays and wins
     for (const playthrough of playthroughs) {
 
-      // a. track game
+      // track game
       gamePlays++
       if (!playthrough.playersWon) {
         gameWins++
       }
 
-      // b. track players
+      // track players
       playthrough.playerIds.forEach(playerId => {
         const stats = allStats.get(playerId)
         if (stats) {
@@ -294,10 +305,10 @@ export class InMemoryStats implements PlaythroughArgs<StatsService> {
       })
     }
 
-    // 2. calculate winrates for players and game
-    const game: WinrateData = { plays: gamePlays, winrate: gameWins / gamePlays }
+    // calculate winrates for players and game
+    const game = { plays: gamePlays, winrate: gameWins / gamePlays }
     // players (overall) winrate is derived from the game winrate
-    const players: WinrateData = { plays: game.plays, winrate: 1 - game.winrate }
+    const players = { plays: game.plays, winrate: 1 - game.winrate }
     const winrates: PlayerWinrateData[] = []
     for (const [playerId, stats] of allStats) {
       winrates.push({ playerId, plays: stats.plays, winrate: stats.wins / stats.plays })

@@ -60,6 +60,8 @@ describe('stats', function () {
         assert.equal(gameWinrates.winrateFor(john.id), 0)
         assert.equal(gameWinrates.highest?.player.id, alex.id)
         assert.equal(gameWinrates.highest?.winrate, 1)
+        assert.equal(gameWinrates.for(john.id)?.plays, 1)
+        assert.equal(gameWinrates.for(alex.id)?.plays, 1)
       })
 
       it('single tied playthrough', async function () {
@@ -69,8 +71,10 @@ describe('stats', function () {
         const winrates = await insights.stats.winrates({})
         const gameWinrates = winrates.get(game)!
         assert.ok(gameWinrates instanceof Winrates)
-        assert.equal(gameWinrates.for(alex.id), undefined)
-        assert.equal(gameWinrates.for(john.id), undefined)
+        assert.equal(gameWinrates.for(alex.id)!.winrate, undefined)
+        assert.equal(gameWinrates.for(john.id)!.winrate, undefined)
+        assert.equal(gameWinrates.for(john.id)?.plays, 1)
+        assert.equal(gameWinrates.for(alex.id)?.plays, 1)
       })
 
       it('single game with multiple playthroughs', async function () {
@@ -86,6 +90,8 @@ describe('stats', function () {
         assert.equal(gameWinrates.winrateFor(john.id), 1 / 3)
         assert.equal(gameWinrates.highest?.player.id, alex.id)
         assert.equal(gameWinrates.highest?.winrate, 2 / 3)
+        assert.equal(gameWinrates.for(john.id)?.plays, 3)
+        assert.equal(gameWinrates.for(alex.id)?.plays, 3)
       })
 
       it('tied games should be ignored for winrates', async function () {
@@ -100,6 +106,8 @@ describe('stats', function () {
         assert.equal(gameWinrates.winrateFor(john.id), 0)
         assert.equal(gameWinrates.highest?.player.id, alex.id)
         assert.equal(gameWinrates.highest?.winrate, 1)
+        assert.equal(gameWinrates.for(john.id)?.plays, 2)
+        assert.equal(gameWinrates.for(alex.id)?.plays, 2)
       })
 
       it('multiple games', async function () {

@@ -15,6 +15,6 @@
   },
   "devDependencies": {
     "tsc-alias": "^1.7.0",
-    "typescript": "^5"
+    "typescript": "^6"
   }
 }

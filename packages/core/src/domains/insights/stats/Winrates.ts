@@ -1,3 +1,4 @@
+import type { NonNullableObject } from '@core'
 import type { PlayerId } from '@services'
 import type { PlayerWinrate } from './PlayerWinrate'
 
@@ -11,14 +12,16 @@ export class Winrates {
   public readonly highest: PlayerWinrate | undefined
 
   public constructor(public readonly winrates: ReadonlyArray<PlayerWinrate>) {
-    let highestWinrate = this.winrates[0]
-    for (let i = 1; i < this.winrates.length; i++) {
-      if (this.winrates[i].winrate > highestWinrate.winrate) {
-        highestWinrate = this.winrates[i]
+
+    const definedWinrates = winrates.filter(winrate => winrate.winrate !== undefined) as Array<NonNullableObject<PlayerWinrate>>
+    let highestWinrate = definedWinrates[0]
+    for (let i = 1; i < definedWinrates.length; i++) {
+      if (definedWinrates[i].winrate > highestWinrate.winrate) {
+        highestWinrate = definedWinrates[i]
       }
     }
 
-    this.highest = highestWinrate
+    this.highest = highestWinrate ?? winrates[0]
   }
 
   public for(id: PlayerId): PlayerWinrate | undefined {

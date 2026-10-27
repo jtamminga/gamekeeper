@@ -2,7 +2,7 @@ import type { PlayerId, PlaythroughId } from '@services'
 
 
 export type WinrateData = {
-  winrate: number
+  winrate?: number
   plays: number
 }
 

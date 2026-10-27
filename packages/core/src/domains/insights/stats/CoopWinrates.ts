@@ -19,6 +19,11 @@ export class CoopWinrates {
     public readonly winrates: ReadonlyArray<PlayerWinrate>
   ) {
 
+    // throw if no winrate defined
+    if (game.winrate === undefined || players.winrate === undefined) {
+      throw new Error('Coop winrates cannot be undefined')
+    }
+
     // game winrate higher
     if (game.winrate > players.winrate) {
       this.highest = new HighestCoopWinrate('game', game.winrate, game.plays)

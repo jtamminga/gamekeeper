@@ -51,7 +51,7 @@ function sortBest(gamesWithWinrates: GameWithWinrate[]): GameWithWinrate[] {
 
     // primary sort
     if (b.winrate.winrate !== a.winrate.winrate) {
-      return b.winrate.winrate - a.winrate.winrate
+      return (b.winrate.winrate ?? 0) - (a.winrate.winrate ?? 0)
     }
 
     // secondary sort
@@ -64,7 +64,7 @@ function sortWorst(gamesWithWinrates: GameWithWinrate[]): GameWithWinrate[] {
 
     // primary sort
     if (a.winrate.winrate !== b.winrate.winrate) {
-      return a.winrate.winrate - b.winrate.winrate
+      return (a.winrate.winrate ?? 0) - (b.winrate.winrate ?? 0)
     }
 
     // secondary sort
