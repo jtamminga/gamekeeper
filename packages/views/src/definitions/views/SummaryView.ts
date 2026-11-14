@@ -1,5 +1,5 @@
 import { GameId, PlayerId } from '@gamekeeper/core'
-import { FormattedGoal, FormattedPlaysPerDay, FormattedPlaythroughs, FormattedWinrate, FormattedWinStreakForGame, FormattedBestWinStreaks } from '../models'
+import { FormattedGoal, FormattedPlaysPerDay, FormattedPlaythroughs, FormattedWinrate, FormattedWinStreakForGame, FormattedBestWinStreaks, FormattedMostPlaysInDay, FormattedPlayStreak } from '../models'
 
 
 // types
@@ -29,15 +29,11 @@ export interface SummaryView {
     player: string
     playerId: PlayerId
   }
-  playStreakThisYear: {
-    bestStreak: number
-    bestStartDate?: string
-    currentStreak: number
-  }
+  playStreakThisYear: FormattedPlayStreak
   latestNumPlaythroughs: number
   numPlaysPerDayThisYear: FormattedPlaysPerDay
   avgPlaysPerDayThisYear: string
-  mostPlaysInDayThisYear: number
+  mostPlaysInDayThisYear: FormattedMostPlaysInDay
   topPlayedGames: {
     gameName: string
     gameId: GameId

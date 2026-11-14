@@ -1,8 +1,8 @@
 import { SummaryView } from '@def/views'
 import { ArrayUtils, GameKeeper, StatsResult } from '@gamekeeper/core'
-import { toNumPlaysPerDay, topCurrentWinStreaksForGame } from '../transforms'
 import { differenceInDays } from 'date-fns'
-import { formatDate, formatGoal, formatNumber, formatPercent, formatPlaythroughs, formatWinrate, formatBestWinStreaks } from '../formatters'
+import { formatBestWinStreaks, formatGoal, formatMostPlaysInDay, formatNumber, formatPercent, formatPlayStreak, formatPlaythroughs, formatWinrate } from '../formatters'
+import { toNumPlaysPerDay, topCurrentWinStreaksForGame } from '../transforms'
 
 
 const NUM_LATEST_PLAYTHROUGHTS = 10
@@ -84,18 +84,12 @@ export class SummaryViewFactory {
         thisYear: numPlaysByMonthThisYear,
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
       },
-      playStreakThisYear: {
-        bestStreak: playStreakThisYear.bestStreak,
-        bestStartDate: playStreakThisYear.bestStart
-          ? formatDate(playStreakThisYear.bestStart)
-          : undefined,
-        currentStreak: playStreakThisYear.currentStreak
-      },
+      playStreakThisYear: formatPlayStreak(playStreakThisYear),
       latestNumPlaythroughs: NUM_LATEST_PLAYTHROUGHTS,
       latestPlaythroughs: formatPlaythroughs(this.gamekeeper.gameplay.playthroughs.latest(NUM_LATEST_PLAYTHROUGHTS), { gameNames: true }),
       numPlaysPerDayThisYear: toNumPlaysPerDay(numPlaysByDateThisYear, year),
       avgPlaysPerDayThisYear: formatNumber(ArrayUtils.average(numPlaysByDateThisYear.map(i => i.plays))),
-      mostPlaysInDayThisYear: numPlaysByDateThisYear.reduce((most, cur) => cur.plays > most ? cur.plays : most, 0),
+      mostPlaysInDayThisYear: formatMostPlaysInDay(numPlaysByDateThisYear),
       topPlayedGames,
       bestOverallWinStreaksThisYear: formatBestWinStreaks(overallWinStreaksThisYear, this.gamekeeper.gameplay.players),
       topCurrentWinStreaksForGame: topCurrentWinStreaksForGame(playerWinStreaksThisYear, this.gamekeeper.gameplay.players)

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { CalendarGraph, Goal, Loading, PlayerColor, PlaysByMonth, PlaythroughsList, StatCard, WinStreaks, YearSelect } from '@app/components'
 import { TopPlayedGames } from '@app/components/TopPlayedGames'
 import { useRouter, useSummaryView } from '@app/hooks'
+import { addDays } from 'date-fns'
 
 
 export function Summary() {
@@ -137,13 +138,29 @@ export function Summary() {
           description="average plays per day"
         />
         <StatCard
-          value={mostPlaysInDayThisYear}
+          value={mostPlaysInDayThisYear.plays}
           description="most plays in one day"
+          onClick={() => {
+            const date = new Date(mostPlaysInDayThisYear.date)
+            setPage({
+              name: 'Playthroughs',
+              props: { fromDate: date, toDate: addDays(date, 1), desc: `Most plays in day (${viewingYear})` }
+            })
+          }}
         />
         {playStreakThisYear.bestStreak > 1 &&
           <StatCard
             value={playStreakThisYear.bestStreak}
             description="best game day streak"
+            onClick={() => {
+              const {bestStreak, bestStartDate} = playStreakThisYear
+              if (!bestStartDate) return
+              const date = new Date(bestStartDate)
+              setPage({
+                name: 'Playthroughs',
+                props: { fromDate: date, toDate: addDays(date, bestStreak), desc: `Best game day streak (${viewingYear})`}
+              })
+            }}
           />
         }
       </div>
